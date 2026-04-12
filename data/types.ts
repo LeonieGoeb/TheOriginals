@@ -7,8 +7,8 @@ export interface Token {
 
 export interface Paragraphe {
   id: string;
-  ru: Token[];
-  fr: Token[];
+  // Textes par code de langue (clé = code ISO : 'ru', 'en', 'fr', 'de')
+  textes: Record<string, Token[]>;
 }
 
 export interface Chapitre {
@@ -28,4 +28,5 @@ export interface Livre {
   langueCible: string;
   chapitres: Chapitre[];
   gratuit: boolean;
+  couvertureCouleur: string;
 }

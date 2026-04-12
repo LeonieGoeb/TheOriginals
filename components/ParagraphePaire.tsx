@@ -6,6 +6,8 @@ import TokenTexte from './TokenTexte';
 
 interface ParagraphePaireProps {
   paragraphe: Paragraphe;
+  langueSource: string;
+  langueCible: string;
   analyseActive: boolean;
   traductionVisible: boolean;
   onToggleAnalyse: () => void;
@@ -14,24 +16,29 @@ interface ParagraphePaireProps {
 
 export default function ParagraphePaire({
   paragraphe,
+  langueSource,
+  langueCible,
   analyseActive,
   traductionVisible,
   onToggleAnalyse,
   onToggleTraduction,
 }: ParagraphePaireProps) {
+  const tokensSource = paragraphe.textes[langueSource] ?? [];
+  const tokensCible = paragraphe.textes[langueCible] ?? [];
+
   return (
     <View style={styles.container}>
       <View style={styles.content}>
         <TokenTexte
-          tokens={paragraphe.ru}
+          tokens={tokensSource}
           analyseActive={analyseActive}
-          style={styles.textRu}
+          style={styles.textSource}
         />
         {traductionVisible && (
           <TokenTexte
-            tokens={paragraphe.fr}
+            tokens={tokensCible}
             analyseActive={analyseActive}
-            style={styles.textFr}
+            style={styles.textCible}
           />
         )}
       </View>
@@ -66,12 +73,12 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 6,
   },
-  textRu: {
+  textSource: {
     fontSize: 16,
     lineHeight: 24,
     color: COLORS.textDark,
   },
-  textFr: {
+  textCible: {
     fontSize: 14,
     lineHeight: 22,
     color: COLORS.textMid,

@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { View, ScrollView, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import { View, ScrollView, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter, useNavigation } from 'expo-router';
 import { COLORS } from '@/constants/colors';
 import { BIBLIOTHEQUE } from '@/data/bibliotheque';
@@ -67,6 +68,8 @@ export default function LecteurScreen() {
           <ParagraphePaire
             key={para.id}
             paragraphe={para}
+            langueSource={livre.langueSource}
+            langueCible={livre.langueCible}
             analyseActive={isAnalyseActive(para.id)}
             traductionVisible={isTraductionVisible(para.id)}
             onToggleAnalyse={() => toggleAnalyseParagraphe(para.id)}

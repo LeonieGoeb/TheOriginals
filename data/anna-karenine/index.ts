@@ -11,6 +11,7 @@ const annaKarenine: Livre = {
   langueSource: 'ru',
   langueCible: 'fr',
   gratuit: true,
+  couvertureCouleur: '#ede0c8',
   chapitres: [chapitre01, chapitre02],
 };
 

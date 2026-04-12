@@ -82,11 +82,12 @@ function parsePairs(html) {
   return pairs;
 }
 
-function tokensToTS(tokens) {
+function tokensToTS(tokens, indent) {
+  const pad = ' '.repeat(indent);
   return tokens.map(t => {
     const type = t.type === null ? 'null' : `'${t.type}'`;
     const text = t.text.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-    return `        { text: '${text}', type: ${type} }`;
+    return `${pad}{ text: '${text}', type: ${type} }`;
   }).join(',\n');
 }
 
@@ -94,12 +95,14 @@ function generateTS(chapitreId, titre, titreCyrilique, varName, pairs) {
   const paragraphes = pairs.map(p => {
     return `    {
       id: '${p.id}',
-      ru: [
-${tokensToTS(p.ru)},
-      ],
-      fr: [
-${tokensToTS(p.fr)},
-      ],
+      textes: {
+        ru: [
+${tokensToTS(p.ru, 10)},
+        ],
+        fr: [
+${tokensToTS(p.fr, 10)},
+        ],
+      },
     }`;
   }).join(',\n');
 
