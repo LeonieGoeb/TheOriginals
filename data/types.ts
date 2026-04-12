@@ -1,3 +1,5 @@
+import { CodeNiveau } from '../constants/niveaux';
+
 export type TokenType = 's' | 'v' | 'c' | null;
 
 export interface Token {
@@ -29,4 +31,6 @@ export interface Livre {
   chapitres: Chapitre[];
   gratuit: boolean;
   couvertureCouleur: string;
+  niveau: CodeNiveau;
+  niveauNote: string;
 }

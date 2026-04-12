@@ -6,32 +6,41 @@ import { useRouter } from 'expo-router';
 import { COLORS } from '@/constants/colors';
 import { BIBLIOTHEQUE } from '@/data/bibliotheque';
 import { LANGUES } from '@/constants/langues';
+import { NIVEAUX, CodeNiveau } from '@/constants/niveaux';
 import CarteLivre from '@/components/CarteLivre';
 
 const STORAGE_KEY_LANGUE_CIBLE  = 'app_langue_cible';
 const STORAGE_KEY_LANGUE_SOURCE = 'app_langue_source';
+const STORAGE_KEY_NIVEAU        = 'app_niveau_choisi';
 
 const CIBLES  = ['all', 'fr', 'de'] as const;
 const SOURCES = ['all', 'ru', 'en'] as const;
+const NIVEAUX_CODES = ['all', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2'] as const;
 
 function nomLangue(code: string): string {
   if (code === 'all') return 'Toutes';
   return LANGUES.find(l => l.code === code)?.nom ?? code;
 }
 
+function nomNiveau(code: string): string {
+  if (code === 'all') return 'Tous';
+  return NIVEAUX.find(n => n.code === code)?.code ?? code;
+}
+
 export default function BibliothequeScreen() {
   const router = useRouter();
   const [langueCible, setLangueCible] = useState<string>('all');
   const [langueSource, setLangueSource] = useState<string>('all');
+  const [niveauChoisi, setNiveauChoisi] = useState<string>('all');
 
-  // Chargement des préférences persistées
   useEffect(() => {
-    AsyncStorage.multiGet([STORAGE_KEY_LANGUE_CIBLE, STORAGE_KEY_LANGUE_SOURCE])
-      .then(([cible, source]) => {
+    AsyncStorage.multiGet([STORAGE_KEY_LANGUE_CIBLE, STORAGE_KEY_LANGUE_SOURCE, STORAGE_KEY_NIVEAU])
+      .then(([cible, source, niveau]) => {
         if (cible[1]) setLangueCible(cible[1]);
         if (source[1]) setLangueSource(source[1]);
+        if (niveau[1]) setNiveauChoisi(niveau[1]);
       })
-      .catch(() => {/* premier lancement, pas de préférences */});
+      .catch(() => {});
   }, []);
 
   const handleSetCible = useCallback((code: string) => {
@@ -44,10 +53,16 @@ export default function BibliothequeScreen() {
     AsyncStorage.setItem(STORAGE_KEY_LANGUE_SOURCE, code).catch(() => {});
   }, []);
 
+  const handleSetNiveau = useCallback((code: string) => {
+    setNiveauChoisi(code);
+    AsyncStorage.setItem(STORAGE_KEY_NIVEAU, code).catch(() => {});
+  }, []);
+
   const livresFiltres = BIBLIOTHEQUE.filter(l => {
     const matchCible  = langueCible  === 'all' || l.langueCible  === langueCible;
     const matchSource = langueSource === 'all' || l.langueSource === langueSource;
-    return matchCible && matchSource;
+    const matchNiveau = niveauChoisi === 'all' || l.niveau       === niveauChoisi;
+    return matchCible && matchSource && matchNiveau;
   });
 
   return (
@@ -55,7 +70,7 @@ export default function BibliothequeScreen() {
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
         <Text style={styles.header}>Ma bibliothèque</Text>
 
-        {/* Filtre langue cible */}
+        {/* Filtre langue cible (langue parlée par l'utilisateur) */}
         <View style={styles.filtreSection}>
           <Text style={styles.filtreLabel}>Je parle le</Text>
           <View style={styles.pills}>
@@ -74,7 +89,7 @@ export default function BibliothequeScreen() {
           </View>
         </View>
 
-        {/* Filtre langue source */}
+        {/* Filtre langue source (langue apprise) */}
         <View style={styles.filtreSection}>
           <Text style={styles.filtreLabel}>Et j'apprends le</Text>
           <View style={styles.pills}>
@@ -93,6 +108,25 @@ export default function BibliothequeScreen() {
           </View>
         </View>
 
+        {/* Filtre niveau */}
+        <View style={styles.filtreSection}>
+          <Text style={styles.filtreLabel}>Au niveau</Text>
+          <View style={styles.pills}>
+            {NIVEAUX_CODES.map(code => (
+              <TouchableOpacity
+                key={code}
+                style={[styles.pill, niveauChoisi === code && styles.pillActive]}
+                onPress={() => handleSetNiveau(code)}
+                activeOpacity={0.7}
+              >
+                <Text style={[styles.pillText, niveauChoisi === code && styles.pillTextActive]}>
+                  {nomNiveau(code)}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+
         <View style={styles.divider} />
 
         {/* Liste des livres */}
@@ -105,7 +139,9 @@ export default function BibliothequeScreen() {
             />
           ))
         ) : (
-          <Text style={styles.empty}>Aucun livre disponible pour cette combinaison.</Text>
+          <Text style={styles.empty}>
+            Aucun livre disponible pour cette combinaison. Essayez d'élargir vos filtres.
+          </Text>
         )}
       </ScrollView>
     </SafeAreaView>
@@ -134,7 +170,7 @@ const styles = StyleSheet.create({
   },
   filtreSection: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     paddingHorizontal: 16,
     marginBottom: 10,
     gap: 10,
@@ -143,8 +179,10 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: COLORS.textLight,
     width: 120,
+    paddingTop: 7,
   },
   pills: {
+    flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 6,

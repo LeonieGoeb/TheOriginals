@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Livre } from '@/data/types';
 import { COLORS } from '@/constants/colors';
 import { getLangue } from '@/constants/langues';
+import NiveauBadge from './NiveauBadge';
 
 interface CarteLivreProps {
   livre: Livre;
@@ -27,12 +28,13 @@ export default function CarteLivre({ livre, onPress }: CarteLivreProps) {
           <Text style={styles.drapeaux}>
             {drapeauSource} → {drapeauCible}
           </Text>
-          <View style={[styles.badge, livre.gratuit ? styles.badgeFree : styles.badgeLocked]}>
+          <View style={[styles.badgeAccess, livre.gratuit ? styles.badgeFree : styles.badgeLocked]}>
             <Text style={[styles.badgeText, livre.gratuit ? styles.badgeFreeText : styles.badgeLockedText]}>
               {livre.gratuit ? 'Gratuit' : 'Verrouillé 🔒'}
             </Text>
           </View>
         </View>
+        <NiveauBadge code={livre.niveau} style={styles.niveauBadge} />
       </View>
     </TouchableOpacity>
   );
@@ -75,7 +77,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     letterSpacing: 2,
   },
-  badge: {
+  niveauBadge: {
+    marginTop: 8,
+  },
+  badgeAccess: {
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 20,

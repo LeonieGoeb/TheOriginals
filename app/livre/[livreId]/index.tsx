@@ -5,6 +5,8 @@ import { useLocalSearchParams, useRouter, useNavigation } from 'expo-router';
 import { useEffect } from 'react';
 import { COLORS } from '@/constants/colors';
 import { BIBLIOTHEQUE } from '@/data/bibliotheque';
+import { getLangue } from '@/constants/langues';
+import NiveauBadge from '@/components/NiveauBadge';
 
 export default function ChapitresScreen() {
   const { livreId } = useLocalSearchParams<{ livreId: string }>();
@@ -27,11 +29,23 @@ export default function ChapitresScreen() {
     );
   }
 
+  const drapeauSource = getLangue(livre.langueSource).drapeau;
+  const drapeauCible  = getLangue(livre.langueCible).drapeau;
+  const langueSourceNom = getLangue(livre.langueSource).nom;
+  const langueCibleNom  = getLangue(livre.langueCible).nom;
   return (
     <SafeAreaView style={styles.safe}>
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
         <Text style={styles.titreOriginal}>{livre.titreOriginal}</Text>
         <Text style={styles.auteur}>{livre.auteurOriginal}</Text>
+        <View style={styles.meta}>
+          <Text style={styles.metaLangues}>
+            {drapeauSource} {langueSourceNom} → {drapeauCible} {langueCibleNom}
+          </Text>
+          <Text style={styles.metaSeparateur}>·</Text>
+          <NiveauBadge code={livre.niveau} />
+        </View>
+        <Text style={styles.niveauNote}>{livre.niveauNote}</Text>
         <View style={styles.divider} />
         {livre.chapitres.map((ch, index) => (
           <TouchableOpacity
@@ -86,7 +100,28 @@ const styles = StyleSheet.create({
   auteur: {
     fontSize: 15,
     color: COLORS.textLight,
-    marginBottom: 20,
+    marginBottom: 10,
+  },
+  meta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 8,
+    flexWrap: 'wrap',
+  },
+  metaLangues: {
+    fontSize: 14,
+    color: COLORS.textMid,
+  },
+  metaSeparateur: {
+    fontSize: 14,
+    color: COLORS.textLight,
+  },
+  niveauNote: {
+    fontSize: 13,
+    color: COLORS.textLight,
+    fontStyle: 'italic',
+    marginBottom: 16,
   },
   divider: {
     height: 1,

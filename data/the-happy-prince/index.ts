@@ -11,6 +11,8 @@ const theHappyPrince: Livre = {
   langueCible: 'fr',
   gratuit: true,
   couvertureCouleur: '#fef0c8',
+  niveau: 'B2',
+  niveauNote: "Anglais victorien littéraire d'Oscar Wilde, métaphores et dialogues élaborés, vocabulaire riche mais accessible",
   chapitres: [chapitre01],
 };
 
