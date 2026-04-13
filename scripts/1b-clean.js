@@ -126,6 +126,14 @@ async function main() {
 
   for (let i = 0; i < blocs.length; i++) {
     process.stdout.write(`\r   ${i + 1}/${blocs.length} blocs traités`);
+
+    // Préserver les marqueurs de chapitre (chiffres isolés : 1, 2, 3...)
+    // Mistral les confondrait avec des numéros de page et les supprimerait.
+    if (/^\d{1,3}$/.test(blocs[i].trim())) {
+      blocsNettoyés.push(blocs[i].trim());
+      continue;
+    }
+
     const nettoyé = await nettoyerBloc(blocs[i]);
     blocsNettoyés.push(nettoyé);
     // Respecter le rate limit du free tier (~1 req/s)
