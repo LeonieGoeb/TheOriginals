@@ -17,7 +17,9 @@ if (!config.langues[langueSource]) {
   process.exit(1);
 }
 
-const inputPath = path.join(config.tmpDir, slug, 'raw.txt');
+// Utiliser le texte nettoyé par Mistral s'il existe, sinon le texte brut
+const cleanPath = path.join(config.tmpDir, slug, 'raw-clean.txt');
+const inputPath = fs.existsSync(cleanPath) ? cleanPath : path.join(config.tmpDir, slug, 'raw.txt');
 const outputPath = path.join(config.tmpDir, slug, 'split.json');
 
 if (!fs.existsSync(inputPath)) {
@@ -26,6 +28,7 @@ if (!fs.existsSync(inputPath)) {
   process.exit(1);
 }
 
+console.log(`   Source : ${path.basename(inputPath)}`);
 const texte = fs.readFileSync(inputPath, 'utf-8');
 
 // ── Patterns de détection des chapitres ──────────────────────────────────────
