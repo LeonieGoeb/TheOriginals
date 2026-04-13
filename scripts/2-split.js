@@ -41,6 +41,11 @@ const texte = fs.readFileSync(inputPath, 'utf-8');
 // L'ordre est important : les patterns les plus spécifiques en premier.
 
 const PATTERNS_CHAPITRES = [
+  // Marqueurs injectés par 1b-clean.js pour survivre au nettoyage Mistral
+  {
+    re: /^<<<CHAPITRE_(.+)>>>$/,
+    construireTitre: (m) => m[1],
+  },
   // "CHAPTER IV", "Chapter 4", "CHAPTER IV — The Title", "Chapter 4: Subtitle"
   {
     re: /^(CHAPTER|CHAPITRE|KAPITTEL|KAPITEL|CAPITOLO|CAP[IÍ]TULO)\s+([IVXLCDM]+|\d+)(?:\s*[:.\u2014\u2013\-]\s*(.+))?$/i,

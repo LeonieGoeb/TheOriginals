@@ -36,18 +36,34 @@ if (!fs.existsSync(inputPath)) {
 const texte = fs.readFileSync(inputPath, 'utf-8');
 
 // ── Protection des marqueurs de chapitre ──────────────────────────────────────
-// Les chiffres isolés (1, 2, 3...) indiquent des sections dans le PDF.
-// On les remplace par un placeholder avant d'envoyer à Mistral pour éviter
-// qu'il ne les supprime en les confondant avec des numéros de page.
+// Avant d'envoyer à Mistral, on détecte les lignes qui sont des titres de
+// chapitres (via les mêmes patterns que 2-split.js) et on les remplace par
+// des placeholders <<<CHAPITRE_titre>>> que Mistral est instruit de conserver.
+// Après nettoyage, 2-split.js reconnaît ces placeholders directement.
+
+const PATTERNS_CHAPITRES = [
+  { re: /^(CHAPTER|CHAPITRE|KAPITTEL|KAPITEL|CAPITOLO|CAP[IÍ]TULO)\s+([IVXLCDM]+|\d+)(?:\s*[:.\u2014\u2013\-]\s*(.+))?$/i,
+    titre: (m) => m[3] ? `${m[1]} ${m[2]} — ${m[3].trim()}` : `${m[1]} ${m[2]}` },
+  { re: /^(PART|PARTIE|PARTE|TEIL)\s+([IVXLCDM]+|\d+|\w+)(?:\s*[:.\u2014\u2013\-]\s*(.+))?$/i,
+    titre: (m) => m[3] ? `${m[1]} ${m[2]} — ${m[3].trim()}` : `${m[1]} ${m[2]}` },
+  { re: /^(ГЛАВА|Глава|ЧАСТЬ|Часть|РАЗДЕЛ|Раздел)\s+(.+?)(?:\s*[\u2014\u2013]\s*(.+))?$/,
+    titre: (m) => m[3] ? `${m[1]} ${m[2]} — ${m[3].trim()}` : `${m[1]} ${m[2]}` },
+  { re: /^(I{2,3}|IV|VI{0,3}|XI{0,3}|XIV|XV|XVI{0,3}|XIX|XX|XXI{0,3}|XXIV|XXV|XXVI{0,3}|XXIX|XXX|XL|L|LI{0,3}|LX{0,3})$/,
+    titre: (m) => `Chapitre ${m[1]}` },
+  { re: /^I$/, titre: () => 'Chapitre I' },
+  { re: /^(\d{1,3})\.?$/, titre: (m) => `Chapitre ${m[1]}` },
+];
 
 function protégerMarqueurs(texte) {
-  return texte
-    .replace(/^(\d{1,3})(\n|$)/gm, '<<<CHAPITRE_$1>>>\n')  // début de ligne
-    .replace(/\n(<<<CHAPITRE_\d+>>>)/g, '\n\n$1');           // assurer ligne vide avant
-}
-
-function restaurerMarqueurs(texte) {
-  return texte.replace(/<<<CHAPITRE_(\d+)>>>/g, '$1');
+  return texte.split('\n').map(ligne => {
+    const l = ligne.trim();
+    if (l.length === 0 || l.length >= 80) return ligne;
+    for (const p of PATTERNS_CHAPITRES) {
+      const m = l.match(p.re);
+      if (m) return `<<<CHAPITRE_${p.titre(m)}>>>`;
+    }
+    return ligne;
+  }).join('\n');
 }
 
 // ── Découpage en blocs ─────────────────────────────────────────────────────────
@@ -89,6 +105,9 @@ DIALOGUE:
 
 REMOVING:
 7. Remove ALL non-story content: page numbers, print markers (e.g. "T-La Ciudad de Vapor.indd 22 5/10/20 11:08"), chapter headers repeated as running headers, publisher info, copyright notices, and any other editorial/technical metadata
+
+PRESERVE:
+8. Keep any <<<CHAPITRE_...>>> markers exactly as they are — do not modify or remove them.
 
 If there is no story text at all in the input, return exactly: [EMPTY]
 
@@ -143,13 +162,6 @@ async function main() {
   for (let i = 0; i < blocs.length; i++) {
     process.stdout.write(`\r   ${i + 1}/${blocs.length} blocs traités`);
 
-    // Préserver les marqueurs de chapitre (chiffres isolés : 1, 2, 3...)
-    // Mistral les confondrait avec des numéros de page et les supprimerait.
-    if (/^\d{1,3}$/.test(blocs[i].trim())) {
-      blocsNettoyés.push(blocs[i].trim());
-      continue;
-    }
-
     const nettoyé = await nettoyerBloc(blocs[i]);
     blocsNettoyés.push(nettoyé);
     // Respecter le rate limit du free tier (~1 req/s)
@@ -158,7 +170,7 @@ async function main() {
     }
   }
 
-  const texteNettoyé = restaurerMarqueurs(blocsNettoyés.filter(b => b.length > 0).join('\n\n'));
+  const texteNettoyé = blocsNettoyés.filter(b => b.length > 0).join('\n\n');
   fs.writeFileSync(outputPath, texteNettoyé);
   console.log(`\n✅ Texte nettoyé → ${outputPath}`);
 }
