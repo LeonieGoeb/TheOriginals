@@ -163,29 +163,9 @@ jobs:
           git commit -m "feat: add book ${SLUG}"
           git push -f origin "$PR_BRANCH"
 
-          python3 -c "
-import os
-slug = os.environ['SLUG']
-lines = [
-    '## Nouveau livre ajoute automatiquement',
-    '',
-    '**Slug:** ' + slug,
-    '',
-    '### Avant de merger',
-    '- [ ] Verifier la qualite de la traduction',
-    '- [ ] Verifier les annotations grammaticales (S/V/C)',
-    '- [ ] Tester avec npx expo start',
-    '',
-    '### Ce qui a ete genere',
-    '- data/' + slug + '/',
-    '- data/bibliotheque.ts',
-]
-with open('/tmp/pr-body.md', 'w') as f:
-    f.write('\n'.join(lines))
-"
           gh pr create \
             --title "Nouveau livre : ${SLUG}" \
-            --body-file /tmp/pr-body.md \
+            --body "Nouveau livre ${SLUG} ajoute automatiquement. Verifier la traduction et les annotations avant de merger." \
             --base "$BASE_BRANCH" \
             --head "$PR_BRANCH" \
           || echo "PR existe deja"
