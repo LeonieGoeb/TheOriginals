@@ -148,7 +148,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "feat: add book ${{ steps.find-book.outputs.slug }}"
-          base: main
           branch: "add-book/${{ steps.find-book.outputs.slug }}"
           title: "📚 Nouveau livre : ${{ steps.find-book.outputs.slug }}"
           body: |
