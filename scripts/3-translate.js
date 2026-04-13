@@ -63,9 +63,11 @@ async function traduire(texte) {
   return avecRetry(async () => {
     const response = await fetch(DEEPL_ENDPOINT, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      headers: {
+        'Authorization': `DeepL-Auth-Key ${DEEPL_KEY}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
       body: new URLSearchParams({
-        auth_key: DEEPL_KEY,
         text: texte,
         source_lang: deeplSource,
         target_lang: deeplCible,
