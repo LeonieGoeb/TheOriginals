@@ -5,7 +5,7 @@ export default function RootLayout() {
   return (
     <>
       <Stack>
-        <Stack.Screen name="index" options={{ title: 'Ma bibliothèque' }} />
+        <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="livre/[livreId]" options={{ headerShown: false }} />
       </Stack>
       <StatusBar style="dark" />

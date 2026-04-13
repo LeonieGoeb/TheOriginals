@@ -1,12 +1,15 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import {
+  View, Text, ScrollView, StyleSheet, TouchableOpacity,
+  Modal, Pressable, FlatList,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { COLORS } from '@/constants/colors';
 import { BIBLIOTHEQUE } from '@/data/bibliotheque';
 import { LANGUES } from '@/constants/langues';
-import { NIVEAUX, CodeNiveau } from '@/constants/niveaux';
+import { NIVEAUX } from '@/constants/niveaux';
 import CarteLivre from '@/components/CarteLivre';
 
 const STORAGE_KEY_LANGUE_CIBLE  = 'app_langue_cible';
@@ -26,6 +29,62 @@ function nomNiveau(code: string): string {
   if (code === 'all') return 'Tous';
   return NIVEAUX.find(n => n.code === code)?.code ?? code;
 }
+
+// ─── Composant dropdown ───────────────────────────────────────────────────────
+
+interface DropdownOption { code: string; label: string; }
+
+interface DropdownProps {
+  value: string;
+  options: readonly string[];
+  labelFn: (code: string) => string;
+  onChange: (code: string) => void;
+}
+
+function Dropdown({ value, options, labelFn, onChange }: DropdownProps) {
+  const [open, setOpen] = useState(false);
+
+  const items: DropdownOption[] = options.map(c => ({ code: c, label: labelFn(c) }));
+
+  return (
+    <>
+      <TouchableOpacity
+        style={styles.dropdownBtn}
+        onPress={() => setOpen(true)}
+        activeOpacity={0.7}
+      >
+        <Text style={styles.dropdownBtnText}>{labelFn(value)}</Text>
+        <Text style={styles.dropdownArrow}>▾</Text>
+      </TouchableOpacity>
+
+      <Modal
+        visible={open}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setOpen(false)}
+      >
+        <Pressable style={styles.modalOverlay} onPress={() => setOpen(false)}>
+          <View style={styles.modalMenu}>
+            {items.map(item => (
+              <TouchableOpacity
+                key={item.code}
+                style={[styles.modalItem, item.code === value && styles.modalItemActive]}
+                onPress={() => { onChange(item.code); setOpen(false); }}
+                activeOpacity={0.7}
+              >
+                <Text style={[styles.modalItemText, item.code === value && styles.modalItemTextActive]}>
+                  {item.code === value ? '✓  ' : '    '}{item.label}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </Pressable>
+      </Modal>
+    </>
+  );
+}
+
+// ─── Écran bibliothèque ───────────────────────────────────────────────────────
 
 export default function BibliothequeScreen() {
   const router = useRouter();
@@ -67,48 +126,30 @@ export default function BibliothequeScreen() {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+      {/* Bandeau sticky filtres */}
+      <View style={styles.sticky}>
         <Text style={styles.header}>Ma bibliothèque</Text>
 
-        {/* Filtre langue cible (langue parlée par l'utilisateur) */}
         <View style={styles.filtreSection}>
           <Text style={styles.filtreLabel}>Je parle le</Text>
-          <View style={styles.pills}>
-            {CIBLES.map(code => (
-              <TouchableOpacity
-                key={code}
-                style={[styles.pill, langueCible === code && styles.pillActive]}
-                onPress={() => handleSetCible(code)}
-                activeOpacity={0.7}
-              >
-                <Text style={[styles.pillText, langueCible === code && styles.pillTextActive]}>
-                  {nomLangue(code)}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+          <Dropdown
+            value={langueCible}
+            options={CIBLES}
+            labelFn={nomLangue}
+            onChange={handleSetCible}
+          />
         </View>
 
-        {/* Filtre langue source (langue apprise) */}
         <View style={styles.filtreSection}>
           <Text style={styles.filtreLabel}>Et j'apprends le</Text>
-          <View style={styles.pills}>
-            {SOURCES.map(code => (
-              <TouchableOpacity
-                key={code}
-                style={[styles.pill, langueSource === code && styles.pillActive]}
-                onPress={() => handleSetSource(code)}
-                activeOpacity={0.7}
-              >
-                <Text style={[styles.pillText, langueSource === code && styles.pillTextActive]}>
-                  {nomLangue(code)}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
+          <Dropdown
+            value={langueSource}
+            options={SOURCES}
+            labelFn={nomLangue}
+            onChange={handleSetSource}
+          />
         </View>
 
-        {/* Filtre niveau */}
         <View style={styles.filtreSection}>
           <Text style={styles.filtreLabel}>Au niveau</Text>
           <View style={styles.pills}>
@@ -128,8 +169,10 @@ export default function BibliothequeScreen() {
         </View>
 
         <View style={styles.divider} />
+      </View>
 
-        {/* Liste des livres */}
+      {/* Liste scrollable */}
+      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
         {livresFiltres.length > 0 ? (
           livresFiltres.map(livre => (
             <CarteLivre
@@ -148,29 +191,30 @@ export default function BibliothequeScreen() {
   );
 }
 
+// ─── Styles ───────────────────────────────────────────────────────────────────
+
 const styles = StyleSheet.create({
   safe: {
     flex: 1,
     backgroundColor: COLORS.bg,
   },
-  scroll: {
-    flex: 1,
-    backgroundColor: COLORS.bg,
-  },
-  content: {
-    paddingTop: 24,
-    paddingBottom: 40,
+  sticky: {
+    backgroundColor: COLORS.bgBar,
+    paddingTop: 16,
+    paddingBottom: 4,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
   },
   header: {
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: '700',
     color: COLORS.textDark,
-    marginBottom: 20,
+    marginBottom: 14,
     paddingHorizontal: 16,
   },
   filtreSection: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     paddingHorizontal: 16,
     marginBottom: 10,
     gap: 10,
@@ -179,8 +223,66 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: COLORS.textLight,
     width: 120,
-    paddingTop: 7,
   },
+  // Dropdown
+  dropdownBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.bg,
+  },
+  dropdownBtnText: {
+    fontSize: 13,
+    color: COLORS.textMid,
+    fontWeight: '500',
+  },
+  dropdownArrow: {
+    fontSize: 11,
+    color: COLORS.textLight,
+  },
+  // Modal dropdown
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.25)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalMenu: {
+    backgroundColor: COLORS.bg,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    minWidth: 180,
+    overflow: 'hidden',
+    elevation: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
+  },
+  modalItem: {
+    paddingHorizontal: 20,
+    paddingVertical: 13,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
+  },
+  modalItemActive: {
+    backgroundColor: COLORS.bgBar,
+  },
+  modalItemText: {
+    fontSize: 15,
+    color: COLORS.textMid,
+  },
+  modalItemTextActive: {
+    color: COLORS.textDark,
+    fontWeight: '600',
+  },
+  // Pills niveau
   pills: {
     flex: 1,
     flexDirection: 'row',
@@ -188,8 +290,8 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   pill: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
     borderRadius: 20,
     borderWidth: 1,
     borderColor: COLORS.border,
@@ -200,7 +302,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.accent,
   },
   pillText: {
-    fontSize: 13,
+    fontSize: 12,
     color: COLORS.textMid,
     fontWeight: '500',
   },
@@ -210,8 +312,15 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: COLORS.border,
-    marginHorizontal: 16,
-    marginVertical: 16,
+    marginTop: 4,
+  },
+  scroll: {
+    flex: 1,
+    backgroundColor: COLORS.bg,
+  },
+  content: {
+    paddingTop: 16,
+    paddingBottom: 40,
   },
   empty: {
     textAlign: 'center',
