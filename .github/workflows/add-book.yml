@@ -144,26 +144,46 @@ jobs:
 
       # ── Créer une Pull Request ──────────────────────────────────────────────
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "feat: add book ${{ steps.find-book.outputs.slug }}"
-          branch: "add-book/${{ steps.find-book.outputs.slug }}"
-          title: "📚 Nouveau livre : ${{ steps.find-book.outputs.slug }}"
-          body: |
-            ## Nouveau livre ajouté automatiquement
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          SLUG="${{ steps.find-book.outputs.slug }}"
+          BASE_BRANCH="${{ github.ref_name }}"
+          PR_BRANCH="add-book/${SLUG}"
 
-            **Slug :** `${{ steps.find-book.outputs.slug }}`
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-            ### Avant de merger
-            - [ ] Vérifier la qualité de la traduction sur quelques paragraphes
-            - [ ] Vérifier les annotations grammaticales (S/V/C)
-            - [ ] S'assurer que `data/bibliotheque.ts` a bien été mis à jour
-            - [ ] Tester l'app avec `npx expo start`
+          # Créer la branche PR à partir de la branche courante
+          git checkout -b "$PR_BRANCH"
 
-            ### Ce qui a été généré
-            - Fichiers TypeScript dans `data/${{ steps.find-book.outputs.slug }}/`
-            - Le livre a été ajouté à `data/bibliotheque.ts`
+          # Stager uniquement les fichiers générés + déplacement pending→processed
+          git add "data/${SLUG}/" data/bibliotheque.ts
+          git add "_source/processed/${SLUG}.pdf" "_source/processed/${SLUG}.json" || true
+          git rm --cached "_source/pending/${SLUG}.pdf" "_source/pending/${SLUG}.json" 2>/dev/null || true
+
+          git commit -m "feat: add book ${SLUG}"
+          git push -f origin "$PR_BRANCH"
+
+          # Créer la PR si elle n'existe pas encore
+          gh pr create \
+            --title "📚 Nouveau livre : ${SLUG}" \
+            --body "## Nouveau livre ajouté automatiquement
+
+**Slug :** \`${SLUG}\`
+
+### Avant de merger
+- [ ] Vérifier la qualité de la traduction sur quelques paragraphes
+- [ ] Vérifier les annotations grammaticales (S/V/C)
+- [ ] S'assurer que \`data/bibliotheque.ts\` a bien été mis à jour
+- [ ] Tester l'app avec \`npx expo start\`
+
+### Ce qui a été généré
+- Fichiers TypeScript dans \`data/${SLUG}/\`
+- Le livre a été ajouté à \`data/bibliotheque.ts\`" \
+            --base "$BASE_BRANCH" \
+            --head "$PR_BRANCH" \
+          || echo "ℹ️  La PR existe déjà"
 
       # ── Sauvegarde de la progression en cas d'échec ─────────────────────────
       - name: Save progress on failure
