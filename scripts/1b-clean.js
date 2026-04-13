@@ -35,6 +35,21 @@ if (!fs.existsSync(inputPath)) {
 
 const texte = fs.readFileSync(inputPath, 'utf-8');
 
+// ── Protection des marqueurs de chapitre ──────────────────────────────────────
+// Les chiffres isolés (1, 2, 3...) indiquent des sections dans le PDF.
+// On les remplace par un placeholder avant d'envoyer à Mistral pour éviter
+// qu'il ne les supprime en les confondant avec des numéros de page.
+
+function protégerMarqueurs(texte) {
+  return texte
+    .replace(/^(\d{1,3})(\n|$)/gm, '<<<CHAPITRE_$1>>>\n')  // début de ligne
+    .replace(/\n(<<<CHAPITRE_\d+>>>)/g, '\n\n$1');           // assurer ligne vide avant
+}
+
+function restaurerMarqueurs(texte) {
+  return texte.replace(/<<<CHAPITRE_(\d+)>>>/g, '$1');
+}
+
 // ── Découpage en blocs ─────────────────────────────────────────────────────────
 // On envoie ~1500 caractères par appel pour rester dans les limites du free tier
 // tout en donnant assez de contexte à Mistral.
@@ -119,7 +134,8 @@ async function nettoyerBloc(bloc) {
 // ── Main ───────────────────────────────────────────────────────────────────────
 
 async function main() {
-  const blocs = splitEnBlocs(texte);
+  const texteProtégé = protégerMarqueurs(texte);
+  const blocs = splitEnBlocs(texteProtégé);
   console.log(`🧹 Nettoyage du texte via Mistral (${blocs.length} blocs)...`);
 
   const blocsNettoyés = [];
@@ -142,7 +158,7 @@ async function main() {
     }
   }
 
-  const texteNettoyé = blocsNettoyés.filter(b => b.length > 0).join('\n\n');
+  const texteNettoyé = restaurerMarqueurs(blocsNettoyés.filter(b => b.length > 0).join('\n\n'));
   fs.writeFileSync(outputPath, texteNettoyé);
   console.log(`\n✅ Texte nettoyé → ${outputPath}`);
 }
