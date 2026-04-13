@@ -105,7 +105,12 @@ jobs:
             "_source/pending/${{ steps.find-book.outputs.slug }}.pdf" \
             "${{ steps.find-book.outputs.slug }}"
 
-      - name: Step 2 - Split into paragraphs
+      - name: Step 1b - Clean text with Mistral AI
+        env:
+          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+        run: node scripts/1b-clean.js "${{ steps.find-book.outputs.slug }}"
+
+      - name: Step 2 - Split into sentences
         run: |
           LANGUE_SOURCE=$(node -e "const c=require('./_source/pending/${{ steps.find-book.outputs.slug }}.json'); console.log(c.langueSource)")
           node scripts/2-split.js "${{ steps.find-book.outputs.slug }}" "$LANGUE_SOURCE"
