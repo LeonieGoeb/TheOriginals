@@ -148,6 +148,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "feat: add book ${{ steps.find-book.outputs.slug }}"
+          base: main
           branch: "add-book/${{ steps.find-book.outputs.slug }}"
           title: "📚 Nouveau livre : ${{ steps.find-book.outputs.slug }}"
           body: |
@@ -164,8 +165,6 @@ jobs:
             ### Ce qui a été généré
             - Fichiers TypeScript dans `data/${{ steps.find-book.outputs.slug }}/`
             - Le livre a été ajouté à `data/bibliotheque.ts`
-
-          labels: "nouveau-livre"
 
       # ── Sauvegarde de la progression en cas d'échec ─────────────────────────
       - name: Save progress on failure
