@@ -26,16 +26,18 @@ if (!langues[langueCible]) {
   process.exit(1);
 }
 
-const DEEPL_KEY = process.env.DEEPL_API_KEY;
+const DEEPL_KEY = process.env.DEEPL_API_KEY?.trim();
 if (!DEEPL_KEY) {
   console.error('❌ DEEPL_API_KEY manquante. Ajoute-la dans .env ou dans les secrets GitHub.');
   process.exit(1);
 }
 
 // Endpoint selon le type de clé : les clés gratuites finissent par ":fx"
-const DEEPL_ENDPOINT = DEEPL_KEY.endsWith(':fx')
+const estCleGratuite = DEEPL_KEY.endsWith(':fx');
+const DEEPL_ENDPOINT = estCleGratuite
   ? 'https://api-free.deepl.com/v2/translate'
   : 'https://api.deepl.com/v2/translate';
+console.log(`   Clé : ...${DEEPL_KEY.slice(-6)} (${estCleGratuite ? 'gratuit' : 'payant'})`);
 
 const deeplSource = langues[langueSource].deeplCode;
 const deeplCible  = langues[langueCible].deeplCode;
