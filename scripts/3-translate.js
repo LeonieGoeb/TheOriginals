@@ -1,5 +1,5 @@
 // Usage: node scripts/3-translate.js <slug> <langueSource> <langueCible>
-// Traduit les paragraphes via DeepL, avec reprise automatique sur rate limit
+// Traduit les paragraphes phrase par phrase via DeepL, avec reprise automatique sur rate limit
 
 require('dotenv').config();
 const fs = require('fs');
@@ -16,7 +16,6 @@ if (!slug || !langueSource || !langueCible) {
   process.exit(1);
 }
 
-// Validation des langues
 if (!langues[langueSource]) {
   console.error(`❌ Langue source inconnue: ${langueSource}`);
   console.error(`   Langues disponibles: ${Object.keys(langues).join(', ')}`);
@@ -33,10 +32,15 @@ if (!DEEPL_KEY) {
   process.exit(1);
 }
 
-const deeplSource = langues[langueSource].deeplCode;
-const deeplCible = langues[langueCible].deeplCode;
+// Endpoint selon le type de clé : les clés gratuites finissent par ":fx"
+const DEEPL_ENDPOINT = DEEPL_KEY.endsWith(':fx')
+  ? 'https://api-free.deepl.com/v2/translate'
+  : 'https://api.deepl.com/v2/translate';
 
-const inputPath = path.join(config.tmpDir, slug, 'split.json');
+const deeplSource = langues[langueSource].deeplCode;
+const deeplCible  = langues[langueCible].deeplCode;
+
+const inputPath  = path.join(config.tmpDir, slug, 'split.json');
 const outputPath = path.join(config.tmpDir, slug, 'translated.json');
 const checkpoint = new Checkpoint(slug, 'translate');
 
@@ -53,9 +57,11 @@ if (fs.existsSync(outputPath)) {
   console.log('♻️  Reprise depuis la sauvegarde existante');
 }
 
+// ── Appel DeepL ────────────────────────────────────────────────────────────────
+
 async function traduire(texte) {
   return avecRetry(async () => {
-    const response = await fetch('https://api-free.deepl.com/v2/translate', {
+    const response = await fetch(DEEPL_ENDPOINT, {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
       body: new URLSearchParams({
@@ -63,7 +69,7 @@ async function traduire(texte) {
         text: texte,
         source_lang: deeplSource,
         target_lang: deeplCible,
-        formality: 'prefer_more', // style soutenu pour la littérature
+        formality: 'prefer_more',
       }).toString(),
     });
 
@@ -79,35 +85,35 @@ async function traduire(texte) {
     maxTentatives: 10,
     delaiInitial: 5000,
     onRateLimit: () => {
-      // Sauvegarder immédiatement avant d'attendre
       fs.writeFileSync(outputPath, JSON.stringify(data, null, 2));
       console.log('   💾 Progression sauvegardée');
     },
   });
 }
 
+// ── Main ───────────────────────────────────────────────────────────────────────
+
 async function main() {
-  const paras = data.flatMap(ch => ch.paragraphes);
-  const total = paras.length;
+  const paras  = data.flatMap(ch => ch.paragraphes);
+  const total  = paras.length;
   let traduits = paras.filter(p => p[langueCible]).length;
 
   console.log(`🌍 Traduction ${langueSource.toUpperCase()} → ${langueCible.toUpperCase()} (DeepL)`);
-  console.log(`   ${traduits}/${total} paragraphes déjà traduits`);
+  console.log(`   Endpoint : ${DEEPL_ENDPOINT}`);
+  console.log(`   ${traduits}/${total} phrases déjà traduites`);
 
   for (const chapitre of data) {
     for (const para of chapitre.paragraphes) {
-      if (para[langueCible]) continue; // déjà traduit
+      if (para[langueCible]) continue;
 
       para[langueCible] = await traduire(para[langueSource]);
       traduits++;
-      process.stdout.write(`\r   ${traduits}/${total} paragraphes traduits`);
+      process.stdout.write(`\r   ${traduits}/${total} phrases traduites`);
 
-      // Sauvegarde toutes les 5 traductions
       if (traduits % 5 === 0) {
         fs.writeFileSync(outputPath, JSON.stringify(data, null, 2));
       }
 
-      // Pause légère entre requêtes (respecter rate limits)
       await new Promise(r => setTimeout(r, 300));
     }
   }
@@ -118,20 +124,15 @@ async function main() {
 }
 
 main().catch(err => {
-  // Sauvegarder la progression avant de quitter dans tous les cas
   fs.writeFileSync(outputPath, JSON.stringify(data, null, 2));
 
   if (err instanceof ErreurQuotaMensuel) {
     const traduits = data.flatMap(ch => ch.paragraphes).filter(p => p[langueCible]).length;
     const total    = data.flatMap(ch => ch.paragraphes).length;
     console.error('\n\n💾 Quota mensuel DeepL épuisé.');
-    console.error(`   Progression sauvegardée : ${traduits}/${total} paragraphes traduits.`);
-    console.error('\n📅 Quand faire ?');
-    console.error('   Le quota DeepL se réinitialise le 1er de chaque mois.');
-    console.error('   Relancez simplement le pipeline GitHub Actions le mois prochain :');
-    console.error('   → Onglet Actions → "Add Book Pipeline" → "Run workflow"');
-    console.error('   → Le pipeline reprendra exactement là où il s\'est arrêté.\n');
-    // Code de sortie spécial pour que GitHub Actions affiche un message distinct
+    console.error(`   Progression sauvegardée : ${traduits}/${total} phrases traduites.`);
+    console.error('\n📅 Le quota DeepL se réinitialise le 1er de chaque mois.');
+    console.error('   Relancez le pipeline GitHub Actions le mois prochain — il reprendra là où il s\'est arrêté.\n');
     process.exit(2);
   }
 
