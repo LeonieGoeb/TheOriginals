@@ -126,42 +126,42 @@ fs.writeFileSync(path.join(outputDir, 'index.ts'), indexContent);
 console.log(`   ✅ index.ts`);
 
 // ── Mise à jour de data/bibliotheque.ts ───────────────────────────────────────
+// Approche robuste : on scanne data/ pour trouver tous les livres existants,
+// puis on réécrit le fichier entièrement — pas de manipulation regex fragile.
 
 const bibPath = path.join(config.dataDir, 'bibliotheque.ts');
 
-if (!fs.existsSync(bibPath)) {
-  // Créer le fichier s'il n'existe pas
-  const bibContent =
+// Livres existants = dossiers dans data/ qui ont un index.ts
+const livresExistants = fs.readdirSync(config.dataDir)
+  .filter(d => {
+    const dPath = path.join(config.dataDir, d);
+    return fs.statSync(dPath).isDirectory()
+      && fs.existsSync(path.join(dPath, 'index.ts'));
+  });
+
+// S'assurer que le livre courant est dans la liste
+if (!livresExistants.includes(slug)) {
+  livresExistants.push(slug);
+}
+
+const bibImports = livresExistants
+  .map(s => `import ${camelCase(s)} from './${s}';`)
+  .join('\n');
+
+const bibItems = livresExistants
+  .map(s => `  ${camelCase(s)},`)
+  .join('\n');
+
+const bibContent =
 `import { Livre } from './types';
-import ${camelCase(slug)} from './${slug}';
+${bibImports}
 
 export const BIBLIOTHEQUE: Livre[] = [
-  ${camelCase(slug)},
+${bibItems}
 ];
 `;
-  fs.writeFileSync(bibPath, bibContent);
-  console.log(`   ✅ data/bibliotheque.ts créé`);
-} else {
-  let bibContent = fs.readFileSync(bibPath, 'utf-8');
-  const importLine = `import ${camelCase(slug)} from './${slug}';`;
 
-  if (bibContent.includes(importLine)) {
-    console.log(`   ℹ️  data/bibliotheque.ts : "${slug}" déjà présent, aucune modification`);
-  } else {
-    // Ajouter l'import avant la ligne "export const BIBLIOTHEQUE"
-    bibContent = bibContent.replace(
-      /(export const BIBLIOTHEQUE)/,
-      `${importLine}\n$1`
-    );
-    // Ajouter le livre dans le tableau en s'assurant que l'entrée précédente
-    // se termine bien par une virgule
-    bibContent = bibContent.replace(
-      /,?\s*\];\s*$/,
-      `,\n  ${camelCase(slug)},\n];`
-    );
-    fs.writeFileSync(bibPath, bibContent);
-    console.log(`   ✅ data/bibliotheque.ts mis à jour`);
-  }
-}
+fs.writeFileSync(bibPath, bibContent);
+console.log(`   ✅ data/bibliotheque.ts réécrit (${livresExistants.length} livre(s))`);
 
 console.log('\n✅ Génération terminée');
