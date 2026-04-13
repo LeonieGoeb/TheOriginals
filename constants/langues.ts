@@ -7,8 +7,9 @@ export interface DefinitionLangue {
 export const LANGUES: DefinitionLangue[] = [
   { code: 'fr', nom: 'Français',  drapeau: '🇫🇷' },
   { code: 'de', nom: 'Allemand',  drapeau: '🇩🇪' },
-  { code: 'ru', nom: 'Russe',     drapeau: '🇷🇺' },
   { code: 'en', nom: 'Anglais',   drapeau: '🇬🇧' },
+  { code: 'ru', nom: 'Russe',     drapeau: '🇷🇺' },
+  { code: 'es', nom: 'Espagnol',  drapeau: '🇪🇸' },
 ];
 
 export function getLangue(code: string): DefinitionLangue {

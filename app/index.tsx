@@ -16,8 +16,8 @@ const STORAGE_KEY_LANGUE_CIBLE  = 'app_langue_cible';
 const STORAGE_KEY_LANGUE_SOURCE = 'app_langue_source';
 const STORAGE_KEY_NIVEAU        = 'app_niveau_choisi';
 
-const CIBLES  = ['all', 'fr', 'de'] as const;
-const SOURCES = ['all', 'ru', 'en'] as const;
+const CIBLES  = ['all', 'fr', 'de', 'en'] as const;
+const SOURCES = ['all', 'ru', 'en', 'es'] as const;
 const NIVEAUX_CODES = ['all', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2'] as const;
 
 function nomLangue(code: string): string {
