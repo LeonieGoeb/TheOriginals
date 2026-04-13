@@ -66,8 +66,9 @@ const PROMPT_NETTOYAGE = `Fix the following issues in this PDF-extracted text:
 3. Fix spurious spaces within words caused by PDF extraction
 4. Join lines that are clearly part of the same sentence (no punctuation at end of line)
 5. Preserve paragraph breaks (blank lines between paragraphs)
+6. Remove ALL non-story content: page numbers, print markers (e.g. "T-La Ciudad de Vapor.indd 22 5/10/20 11:08"), chapter headers repeated as running headers, publisher info, copyright notices, and any other editorial/technical metadata
 
-Return ONLY the cleaned text, nothing else.
+Return ONLY the cleaned story text, nothing else.
 
 Text:
 `;
