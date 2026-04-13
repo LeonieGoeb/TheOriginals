@@ -1,0 +1,27 @@
+name: Validate Book Config
+
+on:
+  push:
+    paths:
+      - '_source/pending/*.json'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Validate config files
+        run: |
+          for f in _source/pending/*.json; do
+            echo "Validating $f..."
+            node scripts/validate-config.js "$f"
+          done

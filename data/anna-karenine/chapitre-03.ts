@@ -3,7 +3,7 @@ import { Chapitre } from '../types';
 const chapitre03: Chapitre = {
   id: 'chapitre-03',
   titre: 'Partie I — Ch. 3',
-  titreCyrilique: 'Часть первая · III',
+  titreOriginal: 'Часть первая · III',
   paragraphes: [
     {
       id: 'p1',

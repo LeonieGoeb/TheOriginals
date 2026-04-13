@@ -3,7 +3,7 @@ import { Chapitre } from '../types';
 const chapitre01: Chapitre = {
   id: 'chapitre-01',
   titre: 'Le Prince Heureux',
-  titreCyrilique: 'The Happy Prince',
+  titreOriginal: 'The Happy Prince',
   paragraphes: [
     {
       id: 'p1',
