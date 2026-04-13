@@ -75,7 +75,7 @@ jobs:
           if [ -n "${{ github.event.inputs.slug }}" ]; then
             SLUG="${{ github.event.inputs.slug }}"
           else
-            PDF=$(git diff --name-only HEAD~1 HEAD -- '_source/pending/*.pdf' | head -1)
+            PDF=$(git diff-tree --no-commit-id -r --name-only HEAD -- '_source/pending/*.pdf' | head -1)
             SLUG=$(basename "$PDF" .pdf)
           fi
           echo "slug=$SLUG" >> $GITHUB_OUTPUT
