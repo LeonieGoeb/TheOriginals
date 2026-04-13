@@ -60,13 +60,22 @@ function splitEnBlocs(texte, tailleMax = 1500) {
 
 const PROMPT_SYSTEME = `You are a text cleaning assistant. Your only job is to fix formatting issues in text extracted from PDF files. You must NEVER translate, summarize, rewrite or alter the content in any way. Return only the cleaned text.`;
 
-const PROMPT_NETTOYAGE = `Fix the following issues in this PDF-extracted text:
-1. Rejoin words broken across lines with a hyphen (e.g. "ca-\nsa" → "casa")
-2. Join dialogue attribution that is on its own line back to the dialogue line (e.g. "—Hola.\\n—dijo." → "—Hola —dijo.")
-3. Fix spurious spaces within words caused by PDF extraction
-4. Join lines that are clearly part of the same sentence (no punctuation at end of line)
-5. Preserve paragraph breaks (blank lines between paragraphs)
-6. Remove ALL non-story content: page numbers, print markers (e.g. "T-La Ciudad de Vapor.indd 22 5/10/20 11:08"), chapter headers repeated as running headers, publisher info, copyright notices, and any other editorial/technical metadata
+const PROMPT_NETTOYAGE = `Clean this PDF-extracted literary text. Apply these rules:
+
+FIXING:
+1. Rejoin words broken across lines with a hyphen (e.g. "ca-\\nsa" → "casa")
+2. Fix spurious spaces within words caused by PDF extraction
+3. Join lines that are clearly part of the same sentence (no punctuation at end of line)
+
+DIALOGUE:
+4. Join dialogue attribution back to its dialogue line (e.g. "—Hola.\\n—dijo." → "—Hola —dijo.")
+5. Group consecutive sentences spoken/narrated by the same character into one paragraph
+6. Each change of speaker or narrator = new paragraph (blank line between)
+
+REMOVING:
+7. Remove ALL non-story content: page numbers, print markers (e.g. "T-La Ciudad de Vapor.indd 22 5/10/20 11:08"), chapter headers repeated as running headers, publisher info, copyright notices, and any other editorial/technical metadata
+
+If there is no story text at all in the input, return exactly: [EMPTY]
 
 Return ONLY the cleaned story text, nothing else.
 
@@ -98,7 +107,9 @@ async function nettoyerBloc(bloc) {
     }
 
     const json = await response.json();
-    return json.choices[0].message.content.trim();
+    const contenu = json.choices[0].message.content.trim();
+    if (contenu === '[EMPTY]' || contenu.startsWith('There is no')) return '';
+    return contenu;
   }, {
     maxTentatives: 5,
     delaiInitial: 2000,
@@ -123,7 +134,7 @@ async function main() {
     }
   }
 
-  const texteNettoyé = blocsNettoyés.join('\n\n');
+  const texteNettoyé = blocsNettoyés.filter(b => b.length > 0).join('\n\n');
   fs.writeFileSync(outputPath, texteNettoyé);
   console.log(`\n✅ Texte nettoyé → ${outputPath}`);
 }

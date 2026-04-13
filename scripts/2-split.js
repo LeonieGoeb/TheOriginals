@@ -186,28 +186,6 @@ function decouper(texte) {
     });
 }
 
-// ── Découpage en phrases ───────────────────────────────────────────────────────
-
-// Abréviations courantes à ne pas confondre avec une fin de phrase
-const ABREVIATIONS = /\b(Mr|Mrs|Ms|Dr|Prof|Sr|Jr|St|vs|etc|op|vol|pp|fig|cf|núm|pág|Mme|M|Mlle)\./g;
-const PLACEHOLDER  = '\x00';
-
-/**
- * Découpe un bloc de texte en phrases individuelles.
- * Chaque phrase conserve sa ponctuation de fin.
- */
-function splitEnPhrases(bloc) {
-  // Masquer les points d'abréviation
-  const masque = bloc.replace(ABREVIATIONS, m => m.replace('.', PLACEHOLDER));
-
-  // Découper après . ! ? (et guillemets/tirets éventuels) suivis d'un espace
-  const phrases = masque.split(/(?<=[.!?»"'])\s+(?=\S)/u);
-
-  return phrases
-    .map(p => p.replace(new RegExp(PLACEHOLDER, 'g'), '.').trim())
-    .filter(p => p.length > 0);
-}
-
 // ── Traitement ────────────────────────────────────────────────────────────────
 
 console.log('✂️  Découpage en chapitres et phrases...');
@@ -218,14 +196,12 @@ console.log(`   ${chapitres.length} chapitre(s) détecté(s)`);
 const result = chapitres
   .filter(ch => decouper(ch.texte).length > 0)
   .map(ch => {
-    const phrases = decouper(ch.texte).flatMap(bloc => splitEnPhrases(bloc));
-
-    const paragraphes = phrases.map((phrase, i) => ({
+    const paragraphes = decouper(ch.texte).map((bloc, i) => ({
       id: `p${i + 1}`,
-      [langueSource]: phrase,
+      [langueSource]: bloc,
     }));
 
-    console.log(`   ${ch.id} "${ch.titre}" : ${paragraphes.length} phrases`);
+    console.log(`   ${ch.id} "${ch.titre}" : ${paragraphes.length} paragraphes`);
 
     return {
       id: ch.id,
