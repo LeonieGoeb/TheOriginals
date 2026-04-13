@@ -144,7 +144,6 @@ export const BIBLIOTHEQUE: Livre[] = [
 } else {
   let bibContent = fs.readFileSync(bibPath, 'utf-8');
   const importLine = `import ${camelCase(slug)} from './${slug}';`;
-  const itemLine = `  ${camelCase(slug)},`;
 
   if (bibContent.includes(importLine)) {
     console.log(`   ℹ️  data/bibliotheque.ts : "${slug}" déjà présent, aucune modification`);
@@ -152,12 +151,13 @@ export const BIBLIOTHEQUE: Livre[] = [
     // Ajouter l'import avant la ligne "export const BIBLIOTHEQUE"
     bibContent = bibContent.replace(
       /(export const BIBLIOTHEQUE)/,
-      `${importLine}\n\n$1`
+      `${importLine}\n$1`
     );
-    // Ajouter le livre dans le tableau (avant le "];")
+    // Ajouter le livre dans le tableau en s'assurant que l'entrée précédente
+    // se termine bien par une virgule
     bibContent = bibContent.replace(
-      /\];\s*$/,
-      `${itemLine}\n];`
+      /,?\s*\];\s*$/,
+      `,\n  ${camelCase(slug)},\n];`
     );
     fs.writeFileSync(bibPath, bibContent);
     console.log(`   ✅ data/bibliotheque.ts mis à jour`);
