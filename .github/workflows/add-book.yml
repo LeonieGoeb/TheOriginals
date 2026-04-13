@@ -1,0 +1,167 @@
+name: Add Book Pipeline
+
+on:
+  push:
+    paths:
+      - '_source/pending/*.pdf'
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: 'Slug du livre à traiter (ex: mon-livre)'
+        required: true
+      force:
+        description: 'Force replace existing book (if already in app)'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    # Timeout long pour les gros livres (6 heures max)
+    timeout-minutes: 360
+
+    steps:
+      # ── Setup ──────────────────────────────────────────────────────────────
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # ── Cache pour accélérer les relances ──────────────────────────────────
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+
+      - name: Cache spaCy models
+        uses: actions/cache@v4
+        with:
+          path: ~/.local/lib/python3.11/site-packages
+          key: ${{ runner.os }}-spacy-models-v2
+
+      - name: Cache pipeline progress
+        uses: actions/cache@v4
+        with:
+          path: scripts/tmp
+          key: pipeline-${{ github.run_id }}
+          restore-keys: |
+            pipeline-
+
+      # ── Installation ───────────────────────────────────────────────────────
+      - name: Install Node dependencies
+        run: npm ci
+
+      - name: Install system tools
+        run: sudo apt-get install -y poppler-utils
+
+      - name: Install Python dependencies
+        run: |
+          pip install spacy
+          python scripts/install-spacy-models.py
+
+      # ── Détection du livre à traiter ───────────────────────────────────────
+      - name: Find book to process
+        id: find-book
+        run: |
+          if [ -n "${{ github.event.inputs.slug }}" ]; then
+            SLUG="${{ github.event.inputs.slug }}"
+          else
+            PDF=$(git diff --name-only HEAD~1 HEAD -- '_source/pending/*.pdf' | head -1)
+            SLUG=$(basename "$PDF" .pdf)
+          fi
+          echo "slug=$SLUG" >> $GITHUB_OUTPUT
+          echo "📚 Livre à traiter: $SLUG"
+
+      - name: Validate config
+        run: |
+          FORCE_FLAG=""
+          if [ "${{ github.event.inputs.force }}" = "true" ]; then
+            FORCE_FLAG="--force"
+          fi
+          node scripts/validate-config.js "_source/pending/${{ steps.find-book.outputs.slug }}.json" $FORCE_FLAG
+
+      # ── Pipeline ───────────────────────────────────────────────────────────
+      - name: Step 1 - Extract text from PDF
+        run: |
+          bash scripts/1-extract.sh \
+            "_source/pending/${{ steps.find-book.outputs.slug }}.pdf" \
+            "${{ steps.find-book.outputs.slug }}"
+
+      - name: Step 2 - Split into paragraphs
+        run: |
+          LANGUE_SOURCE=$(node -e "const c=require('./_source/pending/${{ steps.find-book.outputs.slug }}.json'); console.log(c.langueSource)")
+          node scripts/2-split.js "${{ steps.find-book.outputs.slug }}" "$LANGUE_SOURCE"
+
+      - name: Step 3 - Translate (with auto-retry on rate limits)
+        env:
+          DEEPL_API_KEY: ${{ secrets.DEEPL_API_KEY }}
+        run: |
+          LANGUE_SOURCE=$(node -e "const c=require('./_source/pending/${{ steps.find-book.outputs.slug }}.json'); console.log(c.langueSource)")
+          LANGUE_CIBLE=$(node -e "const c=require('./_source/pending/${{ steps.find-book.outputs.slug }}.json'); console.log(c.langueCible)")
+          node scripts/3-translate.js \
+            "${{ steps.find-book.outputs.slug }}" \
+            "$LANGUE_SOURCE" \
+            "$LANGUE_CIBLE"
+
+      - name: Step 4 - Grammatical annotation
+        run: |
+          LANGUE_SOURCE=$(node -e "const c=require('./_source/pending/${{ steps.find-book.outputs.slug }}.json'); console.log(c.langueSource)")
+          LANGUE_CIBLE=$(node -e "const c=require('./_source/pending/${{ steps.find-book.outputs.slug }}.json'); console.log(c.langueCible)")
+          python scripts/4-annotate.py \
+            "${{ steps.find-book.outputs.slug }}" \
+            "$LANGUE_SOURCE" \
+            "$LANGUE_CIBLE"
+
+      - name: Step 5 - Generate TypeScript files
+        run: |
+          node scripts/5-generate.js \
+            "_source/pending/${{ steps.find-book.outputs.slug }}.json"
+
+      # ── Déplacer le PDF dans processed/ ────────────────────────────────────
+      - name: Move files to processed
+        run: |
+          mkdir -p _source/processed
+          mv "_source/pending/${{ steps.find-book.outputs.slug }}.pdf" _source/processed/
+          mv "_source/pending/${{ steps.find-book.outputs.slug }}.json" _source/processed/
+
+      # ── Créer une Pull Request ──────────────────────────────────────────────
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "feat: add book ${{ steps.find-book.outputs.slug }}"
+          branch: "add-book/${{ steps.find-book.outputs.slug }}"
+          title: "📚 Nouveau livre : ${{ steps.find-book.outputs.slug }}"
+          body: |
+            ## Nouveau livre ajouté automatiquement
+
+            **Slug :** `${{ steps.find-book.outputs.slug }}`
+
+            ### Avant de merger
+            - [ ] Vérifier la qualité de la traduction sur quelques paragraphes
+            - [ ] Vérifier les annotations grammaticales (S/V/C)
+            - [ ] S'assurer que `data/bibliotheque.ts` a bien été mis à jour
+            - [ ] Tester l'app avec `npx expo start`
+
+            ### Ce qui a été généré
+            - Fichiers TypeScript dans `data/${{ steps.find-book.outputs.slug }}/`
+            - Le livre a été ajouté à `data/bibliotheque.ts`
+
+          labels: "nouveau-livre"
+
+      # ── Sauvegarde de la progression en cas d'échec ─────────────────────────
+      - name: Save progress on failure
+        if: failure()
+        uses: actions/cache/save@v4
+        with:
+          path: scripts/tmp
+          key: pipeline-${{ github.run_id }}-failed

@@ -16,7 +16,7 @@ export interface Paragraphe {
 export interface Chapitre {
   id: string;
   titre: string;
-  titreCyrilique: string;
+  titreOriginal: string;
   paragraphes: Paragraphe[];
 }
 

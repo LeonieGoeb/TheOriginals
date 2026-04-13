@@ -57,7 +57,7 @@ export default function ChapitresScreen() {
             <Text style={styles.chapitreNum}>{index + 1}</Text>
             <View style={styles.chapitreInfo}>
               <Text style={styles.chapitreTitre}>{ch.titre}</Text>
-              <Text style={styles.chapitreCyril}>{ch.titreCyrilique}</Text>
+              <Text style={styles.chapitreCyril}>{ch.titreOriginal}</Text>
             </View>
             <Text style={styles.arrow}>›</Text>
           </TouchableOpacity>

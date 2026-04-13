@@ -91,7 +91,7 @@ function tokensToTS(tokens, indent) {
   }).join(',\n');
 }
 
-function generateTS(chapitreId, titre, titreCyrilique, varName, pairs) {
+function generateTS(chapitreId, titre, titreOriginal, varName, pairs) {
   const paragraphes = pairs.map(p => {
     return `    {
       id: '${p.id}',
@@ -111,7 +111,7 @@ ${tokensToTS(p.fr, 10)},
 const ${varName}: Chapitre = {
   id: '${chapitreId}',
   titre: '${titre}',
-  titreCyrilique: '${titreCyrilique}',
+  titreOriginal: '${titreOriginal}',
   paragraphes: [
 ${paragraphes},
   ],

@@ -63,7 +63,7 @@ export default function LecteurScreen() {
         onChangerChapitre={handleChangerChapitre}
       />
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-        <Text style={styles.chapitreTitle}>{chapitre.titreCyrilique}</Text>
+        <Text style={styles.chapitreTitle}>{chapitre.titreOriginal}</Text>
         {chapitre.paragraphes.map(para => (
           <ParagraphePaire
             key={para.id}
