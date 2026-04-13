@@ -75,7 +75,12 @@ jobs:
           if [ -n "${{ github.event.inputs.slug }}" ]; then
             SLUG="${{ github.event.inputs.slug }}"
           else
-            PDF=$(git diff-tree --no-commit-id -r --name-only HEAD -- '_source/pending/*.pdf' | head -1)
+            # Chercher un PDF ajouté dans ce commit (--diff-filter=A = ajouts seulement)
+            PDF=$(git diff-tree --no-commit-id -r --name-only --diff-filter=A HEAD -- '_source/pending/*.pdf' | head -1)
+            # Fallback : prendre le premier PDF présent dans le dossier pending
+            if [ -z "$PDF" ]; then
+              PDF=$(ls _source/pending/*.pdf 2>/dev/null | head -1)
+            fi
             SLUG=$(basename "$PDF" .pdf)
           fi
           echo "slug=$SLUG" >> $GITHUB_OUTPUT
