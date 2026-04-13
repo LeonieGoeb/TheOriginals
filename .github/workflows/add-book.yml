@@ -166,9 +166,8 @@ jobs:
           git push -f origin "$PR_BRANCH"
 
           # Créer la PR si elle n'existe pas encore
-          gh pr create \
-            --title "📚 Nouveau livre : ${SLUG}" \
-            --body "## Nouveau livre ajouté automatiquement
+          cat > /tmp/pr-body.md << EOF
+## Nouveau livre ajouté automatiquement
 
 **Slug :** \`${SLUG}\`
 
@@ -180,7 +179,11 @@ jobs:
 
 ### Ce qui a été généré
 - Fichiers TypeScript dans \`data/${SLUG}/\`
-- Le livre a été ajouté à \`data/bibliotheque.ts\`" \
+- Le livre a été ajouté à \`data/bibliotheque.ts\`
+EOF
+          gh pr create \
+            --title "📚 Nouveau livre : ${SLUG}" \
+            --body-file /tmp/pr-body.md \
             --base "$BASE_BRANCH" \
             --head "$PR_BRANCH" \
           || echo "ℹ️  La PR existe déjà"
