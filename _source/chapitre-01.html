@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anna Karénine — Partie I, Chapitre 1</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#ede3d0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Anna Karénine">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>Анна Каренина</h1>
+  <div class="subtitle">Anna Karénine</div>
+  <div class="author">Лев Николаевич Толстой &nbsp;·&nbsp; Léon Tolstoï</div>
+</header>
+
+<div class="sticky-bar">
+  <div class="legend">
+    <div class="legend-item"><span class="legend-pill s">S</span> Sujet</div>
+    <div class="legend-item"><span class="legend-pill v">V</span> Verbe</div>
+    <div class="legend-item"><span class="legend-pill c">C</span> Compl.</div>
+  </div>
+  <div class="bar-right">
+    <div class="chapter-select-wrap">
+      <select id="chapterSelect" title="Changer de chapitre">
+        <option value="chapitre-01.html" selected>Partie I — Ch. 1</option>
+        <option value="chapitre-02.html">Partie I — Ch. 2</option>
+        <option value="chapitre-03.html">Partie I — Ch. 3</option>
+      </select>
+    </div>
+    <div class="bar-sep"></div>
+    <button class="bar-btn" id="toggleHl">🔍 Analyse</button>
+    <div class="bar-sep"></div>
+    <button class="bar-btn" id="toggleTr">🇫🇷 Traduction</button>
+  </div>
+</div>
+
+<main>
+  <div class="chapter-title">Часть первая · I</div>
+
+  <!-- ══ p1 ══ -->
+  <div class="pair" id="p1">
+    <div class="ru">
+      <span class="s">Все счастливые семьи</span> <span class="v">похожи</span> <span class="c">друг на друга</span>, <span class="s">каждая несчастливая семья</span> <span class="v">несчастлива</span> <span class="c">по-своему</span>.
+    </div>
+    <div class="fr">
+      <span class="s">Toutes les familles heureuses</span> <span class="v">se ressemblent</span> <span class="c">entre elles</span>, <span class="s">chaque famille malheureuse</span> <span class="v">est malheureuse</span> <span class="c">à sa façon</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p1">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p1">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p2 ══ -->
+  <div class="pair" id="p2">
+    <div class="ru">
+      <span class="c">Всё</span> <span class="v">смешалось</span> <span class="c">в доме Облонских</span>.
+    </div>
+    <div class="fr">
+      <span class="c">Tout</span> <span class="v">s'était mêlé</span> <span class="c">dans la maison des Oblonski</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p2">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p2">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p3 ══ -->
+  <div class="pair" id="p3">
+    <div class="ru">
+      <span class="s">Жена</span> <span class="v">узнала</span>, что <span class="s">муж</span> <span class="v">был в связи</span> <span class="c">с бывшею в их доме француженкою-гувернанткой</span>, и <span class="v">объявила</span> <span class="c">мужу</span>, что не <span class="v">может жить</span> <span class="c">с ним в одном доме</span>.
+    </div>
+    <div class="fr">
+      <span class="s">La femme</span> <span class="v">avait appris</span> que <span class="s">son mari</span> <span class="v">avait eu une liaison</span> <span class="c">avec la gouvernante française qui vivait chez eux</span>, et <span class="v">avait déclaré</span> <span class="c">à son mari</span> qu'elle ne <span class="v">pouvait plus vivre</span> <span class="c">avec lui sous le même toit</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p3">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p3">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p4 ══ -->
+  <div class="pair" id="p4">
+    <div class="ru">
+      <span class="s">Положение это</span> <span class="v">продолжалось</span> уже <span class="c">третий день</span> и мучительно <span class="v">чувствовалось</span> и <span class="s">самими супругами</span>, и <span class="s">всеми членами семьи</span>, и <span class="s">домочадцами</span>.
+    </div>
+    <div class="fr">
+      <span class="s">Cette situation</span> <span class="v">durait</span> déjà <span class="c">depuis trois jours</span> et <span class="v">se faisait douloureusement ressentir</span> par <span class="s">les époux eux-mêmes</span>, par <span class="s">tous les membres de la famille</span> et par <span class="s">les gens de maison</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p4">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p4">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p5 ══ -->
+  <div class="pair" id="p5">
+    <div class="ru">
+      <span class="s">Все члены семьи и домочадцы</span> <span class="v">чувствовали</span>, что <span class="c">нет смысла</span> <span class="c">в их сожительстве</span> и что <span class="c">на каждом постоялом дворе</span> <span class="s">случайно сошедшиеся люди</span> более <span class="v">связаны</span> <span class="c">между собой</span>, чем <span class="s">они</span>, <span class="s">члены семьи и домочадцы Облонских</span>.
+    </div>
+    <div class="fr">
+      <span class="s">Tous les membres de la famille et les gens de maison</span> <span class="v">sentaient</span> qu'il n'y <span class="v">avait</span> <span class="c">aucun sens à leur vie commune</span> et que <span class="s">des gens</span> <span class="c">réunis par hasard dans n'importe quelle auberge</span> <span class="v">étaient</span> plus <span class="c">liés entre eux</span> qu'<span class="s">eux</span>, <span class="s">les membres de la famille des Oblonski</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p5">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p5">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p6 ══ -->
+  <div class="pair" id="p6">
+    <div class="ru">
+      <span class="s">Жена</span> не <span class="v">выходила</span> <span class="c">из своих комнат</span>, <span class="s">мужа</span> <span class="c">третий день</span> не <span class="v">было</span> <span class="c">дома</span>.
+    </div>
+    <div class="fr">
+      <span class="s">La femme</span> ne <span class="v">sortait</span> plus <span class="c">de ses appartements</span>, <span class="s">le mari</span> n'<span class="v">était</span> pas <span class="c">à la maison</span> <span class="c">depuis trois jours</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p6">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p6">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p7 ══ -->
+  <div class="pair" id="p7">
+    <div class="ru">
+      <span class="s">Дети</span> <span class="v">бегали</span> <span class="c">по всему дому</span>, как <span class="c">потерянные</span> ; <span class="s">англичанка</span> <span class="v">поссорилась</span> <span class="c">с экономкой</span> и <span class="v">написала</span> <span class="c">записку приятельнице</span>, <span class="v">прося</span> <span class="v">приискать</span> <span class="c">ей новое место</span> ; <span class="s">повар</span> <span class="v">ушёл</span> ещё <span class="c">вчера со двора</span>, <span class="c">во время обеда</span> ; <span class="s">чёрная кухарка</span> и <span class="s">кучер</span> <span class="v">просили</span> <span class="c">расчёта</span>.
+    </div>
+    <div class="fr">
+      <span class="s">Les enfants</span> <span class="v">couraient</span> <span class="c">à travers toute la maison</span>, comme <span class="c">perdus</span> ; <span class="s">la gouvernante anglaise</span> <span class="v">s'était disputée</span> <span class="c">avec l'intendante</span> et <span class="v">avait écrit</span> <span class="c">un billet à une amie</span>, la <span class="v">priant</span> de lui <span class="v">trouver</span> <span class="c">une nouvelle place</span> ; <span class="s">le cuisinier</span> <span class="v">était parti</span> <span class="c">de la cour</span> dès <span class="c">la veille</span>, <span class="c">au milieu du dîner</span> ; <span class="s">la cuisinière noire</span> et <span class="s">le cocher</span> <span class="v">réclamaient</span> <span class="c">leur compte</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p7">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p7">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p8 ══ -->
+  <div class="pair" id="p8">
+    <div class="ru">
+      <span class="c">На третий день после ссоры</span> <span class="s">князь Степан Аркадьич Облонский</span> — <span class="s">Стива</span>, как <span class="v">звали</span> <span class="c">его</span> <span class="c">в свете</span>, — <span class="c">в обычный час, то есть в восемь часов утра</span>, <span class="v">проснулся</span> не <span class="c">в спальне жены</span>, а <span class="c">в своём кабинете, на сафьянном диване</span>.
+    </div>
+    <div class="fr">
+      <span class="c">Le troisième jour après la querelle</span>, <span class="s">le prince Stépane Arcadiévitch Oblonski</span> — <span class="s">Stiva</span>, comme <span class="c">on</span> l'<span class="v">appelait</span> <span class="c">dans le monde</span> —, <span class="c">à son heure habituelle, c'est-à-dire à huit heures du matin</span>, <span class="v">se réveilla</span> non <span class="c">dans la chambre de sa femme</span>, mais <span class="c">dans son cabinet de travail, sur un canapé de maroquin</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p8">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p8">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p9 ══ -->
+  <div class="pair" id="p9">
+    <div class="ru">
+      <span class="s">Он</span> <span class="v">повернул</span> <span class="c">своё полное, выхоленное тело</span> <span class="c">на пружинах дивана</span>, как бы <span class="v">желая</span> опять <span class="v">заснуть</span> <span class="c">надолго</span>, <span class="c">с другой стороны</span> крепко <span class="v">обнял</span> <span class="c">подушку</span> и <span class="v">прижался</span> <span class="c">к ней щекой</span> ; но вдруг <span class="v">вскочил</span>, <span class="v">сел</span> <span class="c">на диван</span> и <span class="v">открыл</span> <span class="c">глаза</span>.
+    </div>
+    <div class="fr">
+      <span class="s">Il</span> <span class="v">retourna</span> <span class="c">son corps plein et soigné</span> <span class="c">sur les ressorts du canapé</span>, comme s'<span class="v">il voulait</span> <span class="v">se rendormir</span> <span class="c">pour longtemps</span>, <span class="v">étreignit</span> fermement <span class="c">l'oreiller</span> <span class="c">de l'autre côté</span> et <span class="v">pressa</span> <span class="c">sa joue contre lui</span> ; mais soudain <span class="v">bondit</span>, <span class="v">s'assit</span> <span class="c">sur le canapé</span> et <span class="v">ouvrit</span> <span class="c">les yeux</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p9">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p9">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p10 ══ -->
+  <div class="pair" id="p10">
+    <div class="ru">
+      «<span class="s">Да, да, как это было?</span> — <span class="v">думал</span> <span class="s">он</span>, <span class="v">вспоминая</span> <span class="c">сон</span>. — Да, как это было? Да! <span class="s">Алабин</span> <span class="v">давал</span> <span class="c">обед в Дармштадте</span> ; нет, не в Дармштадте, а что-то американское. Да, но там <span class="c">Дармштадт</span> <span class="v">был</span> <span class="c">в Америке</span>.»
+    </div>
+    <div class="fr">
+      « <span class="s">Oui, oui, comment c'était ?</span> — <span class="v">pensait</span>-<span class="s">il</span>, <span class="v">se souvenant</span> <span class="c">du rêve</span>. — Oui, comment c'était ? Oui ! <span class="s">Alabine</span> <span class="v">donnait</span> <span class="c">un dîner à Darmstadt</span> ; non, pas à Darmstadt, quelque chose d'américain. Oui, mais là <span class="c">Darmstadt</span> <span class="v">était</span> <span class="c">en Amérique</span>. »
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p10">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p10">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p11 ══ -->
+  <div class="pair" id="p11">
+    <div class="ru">
+      «<span class="s">Да, хорошо было, очень хорошо</span>. Много ещё там было отличного, да не скажешь словами и мыслями даже наяву не выразишь.»
+    </div>
+    <div class="fr">
+      « <span class="s">Oui, c'était bien, très bien</span>. Il y avait encore là-bas beaucoup d'excellent, mais on ne saurait le dire en mots, et même éveillé on ne saurait l'exprimer par la pensée. »
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p11">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p11">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p12 ══ -->
+  <div class="pair" id="p12">
+    <div class="ru">
+      И, <span class="v">заметив</span> <span class="c">полосу света, пробившуюся сбоку одной из суконных стор</span>, <span class="s">он</span> весело <span class="v">скинул</span> <span class="c">ноги с дивана</span>, <span class="v">отыскал</span> <span class="c">ими шитые женой туфли</span> и по старой, девятилетней привычке, не вставая, <span class="v">потянулся</span> <span class="c">рукой к тому месту, где в спальне у него висел халат</span>.
+    </div>
+    <div class="fr">
+      Et, <span class="v">remarquant</span> <span class="c">un rai de lumière filtrant sur le côté de l'un des stores</span>, <span class="s">il</span> <span class="v">glissa</span> joyeusement <span class="c">les jambes hors du canapé</span>, <span class="v">chercha</span> <span class="c">de ses pieds les pantoufles brodées par sa femme</span> et, par une vieille habitude de neuf ans, sans se lever, <span class="v">tendit</span> <span class="c">la main vers l'endroit où sa robe de chambre était accrochée dans la chambre à coucher</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p12">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p12">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p13 ══ -->
+  <div class="pair" id="p13">
+    <div class="ru">
+      И тут <span class="s">он</span> <span class="v">вспомнил</span> вдруг, как и почему <span class="s">он</span> <span class="v">спит</span> не <span class="c">в спальне жены</span>, а <span class="c">в кабинете</span> ; <span class="s">улыбка</span> <span class="v">исчезла</span> <span class="c">с его лица</span>, <span class="s">он</span> <span class="v">сморщил</span> <span class="c">лоб</span>.
+    </div>
+    <div class="fr">
+      Et soudain <span class="s">il</span> <span class="v">se souvint</span> brusquement comment et pourquoi <span class="s">il</span> <span class="v">dormait</span> non <span class="c">dans la chambre de sa femme</span>, mais <span class="c">dans son cabinet</span> ; <span class="s">le sourire</span> <span class="v">disparut</span> <span class="c">de son visage</span>, <span class="s">il</span> <span class="v">fronça</span> <span class="c">les sourcils</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p13">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p13">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p14 ══ -->
+  <div class="pair" id="p14">
+    <div class="ru">
+      «Ах, ах, ах! Ааа!..» — <span class="v">замычал</span> <span class="s">он</span>, <span class="v">вспоминая</span> <span class="c">всё, что было</span>. И <span class="c">его воображению</span> <span class="v">представились</span> опять <span class="c">все подробности ссоры с женою</span>, вся <span class="c">безвыходность его положения</span> и мучительнее всего <span class="c">собственная вина его</span>.
+    </div>
+    <div class="fr">
+      « Ah, ah, ah ! Aaa !.. » — <span class="v">gémit</span>-<span class="s">il</span>, <span class="v">se rappelant</span> <span class="c">tout ce qui s'était passé</span>. Et <span class="c">à son imagination</span> <span class="v">se représentèrent</span> à nouveau <span class="c">tous les détails de la querelle avec sa femme</span>, toute <span class="c">l'impasse de sa situation</span> et, ce qui le torturait le plus, <span class="c">sa propre culpabilité</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p14">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p14">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p15 ══ -->
+  <div class="pair" id="p15">
+    <div class="ru">
+      «Да! <span class="s">она</span> не <span class="v">простит</span> и не <span class="v">может простить</span>. И всего ужаснее то, что <span class="s">виной</span> всему <span class="v">я</span>, виной я, а не виноват. В этом-то вся драма», — <span class="v">думал</span> <span class="s">он</span>. — Ах, ах, ах!» — <span class="v">приговаривал</span> <span class="s">он</span> <span class="c">с отчаянием</span>, <span class="v">вспоминая</span> <span class="c">самые тяжёлые для себя впечатления из этой ссоры</span>.
+    </div>
+    <div class="fr">
+      « Oui ! <span class="s">elle</span> ne <span class="v">pardonnera</span> pas et ne <span class="v">peut pas pardonner</span>. Et le pire de tout, c'est que <span class="s">la faute</span> <span class="v">en est</span> à moi, que c'est ma faute, et pourtant je ne suis pas coupable. Voilà tout le drame », — <span class="v">pensait</span>-<span class="s">il</span>. — Ah, ah, ah ! » — <span class="v">répétait</span>-<span class="s">il</span> <span class="c">avec désespoir</span>, <span class="v">se remémorant</span> <span class="c">les impressions les plus pénibles de cette querelle</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p15">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p15">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p16 ══ -->
+  <div class="pair" id="p16">
+    <div class="ru">
+      <span class="c">Неприятнее всего</span> <span class="v">была</span> <span class="s">та первая минута</span>, когда <span class="s">он</span>, <span class="v">вернувшись</span> <span class="c">из театра</span>, весёлый и довольный, <span class="c">с огромною грушей для жены в руке</span>, не <span class="v">нашёл</span> <span class="s">жены</span> <span class="c">в гостиной</span> ; к удивлению, не <span class="v">нашёл</span> <span class="c">её</span> и <span class="c">в кабинете</span> и, наконец, <span class="v">увидал</span> <span class="c">её в спальне с несчастною, открывшею всё, запиской в руке</span>.
+    </div>
+    <div class="fr">
+      <span class="c">Le pire de tout</span> <span class="v">était</span> <span class="s">ce premier instant</span> où <span class="s">lui</span>, <span class="v">revenu</span> <span class="c">du théâtre</span>, joyeux et satisfait, <span class="c">une énorme poire pour sa femme à la main</span>, ne <span class="v">trouva</span> pas <span class="s">sa femme</span> <span class="c">au salon</span> ; et, à sa grande surprise, ne la <span class="v">trouva</span> pas non plus <span class="c">dans le cabinet</span>, et la <span class="v">vit</span> finalement <span class="c">dans la chambre à coucher, ce malheureux billet qui révélait tout à la main</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p16">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p16">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p17 ══ -->
+  <div class="pair" id="p17">
+    <div class="ru">
+      <span class="s">Она</span>, эта вечно озабоченная, и хлопотливая, и недалёкая, какою <span class="s">он</span> <span class="v">считал</span> <span class="c">её</span>, <span class="s">Долли</span>, неподвижно <span class="v">сидела</span> <span class="c">с запиской в руке</span> и <span class="c">с выражением ужаса, отчаяния и гнева</span> <span class="v">смотрела</span> <span class="c">на него</span>.
+    </div>
+    <div class="fr">
+      <span class="s">Elle</span>, cette Dolly toujours affairée, agitée et bornée comme <span class="s">il</span> la <span class="v">jugeait</span>, <span class="v">était assise</span> <span class="c">immobile, le billet à la main</span>, et <span class="c">avec une expression d'horreur, de désespoir et de colère</span> <span class="v">le regardait</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p17">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p17">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p18 ══ -->
+  <div class="pair" id="p18">
+    <div class="ru">
+      — <span class="s">Что это? это?</span> — <span class="v">спрашивала</span> <span class="s">она</span>, <span class="v">указывая</span> <span class="c">на записку</span>.
+    </div>
+    <div class="fr">
+      — <span class="s">Qu'est-ce que c'est ? cela ?</span> — <span class="v">demandait</span>-<span class="s">elle</span>, <span class="v">montrant</span> <span class="c">le billet</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p18">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p18">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p19 ══ -->
+  <div class="pair" id="p19">
+    <div class="ru">
+      И при этом воспоминании, как это часто бывает, <span class="v">мучала</span> <span class="s">Степана Аркадьича</span> не столько <span class="c">само событие</span>, сколько <span class="c">то, как он ответил на эти слова жены</span>.
+    </div>
+    <div class="fr">
+      Et à ce souvenir, comme cela arrive souvent, <span class="c">ce qui</span> <span class="v">torturait</span> <span class="s">Stépane Arcadiévitch</span> était moins <span class="c">l'événement lui-même</span> que <span class="c">la façon dont il avait répondu à ces mots de sa femme</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p19">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p19">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p20 ══ -->
+  <div class="pair" id="p20">
+    <div class="ru">
+      <span class="c">С ним</span> <span class="v">случилось</span> <span class="c">в эту минуту</span> то, что <span class="v">случается</span> <span class="c">с людьми</span>, когда <span class="s">они</span> неожиданно <span class="v">уличены</span> <span class="c">в чём-нибудь слишком постыдном</span>. <span class="s">Он</span> не <span class="v">сумел</span> <span class="v">приготовить</span> <span class="c">своё лицо</span> <span class="c">к тому положению, в которое он становился перед женой после открытия его вины</span>.
+    </div>
+    <div class="fr">
+      <span class="c">Il lui</span> <span class="v">arriva</span> <span class="c">à ce moment</span> ce qui <span class="v">arrive</span> <span class="c">aux gens</span> quand <span class="s">ils</span> <span class="v">sont surpris</span> <span class="c">en flagrant délit de quelque chose de trop honteux</span>. <span class="s">Il</span> n'<span class="v">avait pas su</span> <span class="v">préparer</span> <span class="c">son visage</span> <span class="c">à la situation où il se trouvait placé devant sa femme après la révélation de sa faute</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p20">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p20">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p21 ══ -->
+  <div class="pair" id="p21">
+    <div class="ru">
+      Вместо того чтоб <span class="v">оскорбиться</span>, <span class="v">отрекаться</span>, <span class="v">оправдываться</span>, <span class="v">просить прощения</span>, <span class="v">оставаться</span> даже равнодушным — всё было бы лучше того, что он сделал ! — <span class="s">его лицо</span> совершенно невольно вдруг <span class="v">улыбнулось</span> <span class="c">привычною, доброю и потому глупою улыбкой</span>.
+    </div>
+    <div class="fr">
+      Au lieu de <span class="v">s'indigner</span>, de <span class="v">nier</span>, de <span class="v">se justifier</span>, de <span class="v">demander pardon</span>, de <span class="v">rester</span> même indifférent — tout eût été préférable à ce qu'il fit ! — <span class="s">son visage</span>, tout à fait involontairement, <span class="v">sourit</span> soudain <span class="c">de son sourire habituel, bienveillant et pour cela stupide</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p21">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p21">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p22 ══ -->
+  <div class="pair" id="p22">
+    <div class="ru">
+      <span class="c">Этот глупый улыбку</span> <span class="s">он</span> не <span class="v">мог</span> <span class="v">простить</span> <span class="c">себе</span>. <span class="v">Увидав</span> <span class="c">эту улыбку</span>, <span class="s">Долли</span> <span class="v">вздрогнула</span>, как от физической боли, <span class="v">разразилась</span>, со свойственною ей горячностью, <span class="c">потоком жестоких слов</span> и <span class="v">выбежала</span> <span class="c">из комнаты</span>. <span class="c">С тех пор</span> <span class="s">она</span> не <span class="v">хотела видеть</span> <span class="c">мужа</span>.
+    </div>
+    <div class="fr">
+      <span class="c">Ce sourire stupide</span>, <span class="s">il</span> ne <span class="v">pouvait</span> pas <span class="v">se le pardonner</span>. <span class="v">Ayant vu</span> <span class="c">ce sourire</span>, <span class="s">Dolly</span> <span class="v">tressaillit</span> comme sous une douleur physique, <span class="v">éclata</span>, avec sa vivacité habituelle, <span class="c">en un flot de paroles cruelles</span> et <span class="v">quitta</span> <span class="c">la chambre en courant</span>. <span class="c">Depuis lors</span> <span class="s">elle</span> ne <span class="v">voulait plus voir</span> <span class="c">son mari</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p22">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p22">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p23 ══ -->
+  <div class="pair" id="p23">
+    <div class="ru">
+      «<span class="c">Всему виной</span> <span class="v">эта</span> <span class="s">глупая улыбка</span>», — <span class="v">думал</span> <span class="s">Степан Аркадьич</span>.
+    </div>
+    <div class="fr">
+      « <span class="c">La cause de tout</span>, <span class="v">c'est</span> <span class="s">ce stupide sourire</span> », — <span class="v">pensait</span> <span class="s">Stépane Arcadiévitch</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p23">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p23">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p24 ══ -->
+  <div class="pair" id="p24">
+    <div class="ru">
+      «Но что же делать? что делать?» — <span class="c">с отчаянием</span> <span class="v">говорил</span> <span class="s">он</span> <span class="c">себе</span> и не <span class="v">находил</span> <span class="c">ответа</span>.
+    </div>
+    <div class="fr">
+      « Mais que faire ? que faire ? » — <span class="v">se disait</span>-<span class="s">il</span> <span class="c">avec désespoir</span> et ne <span class="v">trouvait</span> pas <span class="c">de réponse</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p24">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p24">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p25 ══ -->
+  <div class="pair" id="p25">
+    <div class="ru">
+      <span class="c">Ответа</span> не <span class="v">было</span>, кроме того общего ответа, который <span class="v">даёт</span> <span class="s">жизнь</span> на все самые сложные и неразрешимые вопросы. <span class="s">Ответ этот</span> : надо <span class="v">жить</span> <span class="c">потребностями дня</span>, то есть <span class="v">забыться</span>.
+    </div>
+    <div class="fr">
+      <span class="c">De réponse</span>, il n'y en <span class="v">avait</span> pas, sinon cette réponse générale que <span class="s">la vie</span> <span class="v">donne</span> à toutes les questions les plus complexes et insolubles. <span class="s">Cette réponse</span> : il faut <span class="v">vivre</span> <span class="c">au jour le jour</span>, c'est-à-dire <span class="v">s'oublier</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p25">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p25">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p26 ══ -->
+  <div class="pair" id="p26">
+    <div class="ru">
+      <span class="v">Забыться</span> <span class="c">сном</span> уже <span class="v">нельзя</span>, по крайней мере до ночи, нельзя уже <span class="v">вернуться</span> <span class="c">к той музыке, которую пели графинчики-женщины</span> ; стало быть, надо <span class="v">забыться</span> <span class="c">сном жизни</span>.
+    </div>
+    <div class="fr">
+      <span class="v">S'oublier</span> <span class="c">dans le sommeil</span> n'était plus <span class="v">possible</span>, du moins jusqu'à la nuit ; impossible de <span class="v">retourner</span> <span class="c">à la musique que chantaient les petites carafes-femmes</span> ; il fallait donc <span class="v">s'oublier</span> <span class="c">dans le sommeil de la vie</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p26">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p26">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p27 ══ -->
+  <div class="pair" id="p27">
+    <div class="ru">
+      «<span class="c">Там</span> <span class="v">видно будет</span>», — <span class="v">сказал</span> <span class="c">себе</span> <span class="s">Степан Аркадьич</span> и, <span class="v">встав</span>, <span class="v">надел</span> <span class="c">серый халат на голубой шёлковой подкладке</span>, <span class="v">закинул</span> <span class="c">кисти узлом</span> и, вдоволь <span class="v">забрав</span> <span class="c">воздуха в свой широкий грудной ящик</span>, привычным бодрым шагом вывернутых ног <span class="v">подошёл</span> <span class="c">к окну</span>, <span class="v">поднял</span> <span class="c">стору</span> и громко <span class="v">позвонил</span>.
+    </div>
+    <div class="fr">
+      « <span class="c">On verra bien</span> », — <span class="v">se dit</span> <span class="s">Stépane Arcadiévitch</span> et, <span class="v">se levant</span>, <span class="v">enfila</span> <span class="c">sa robe de chambre grise doublée de soie bleue</span>, <span class="v">noua</span> <span class="c">les cordons</span> et, ayant <span class="v">aspiré</span> <span class="c">à pleins poumons</span>, <span class="v">s'approcha</span> <span class="c">de la fenêtre</span> d'un pas vif et assuré, <span class="v">releva</span> <span class="c">le store</span> et <span class="v">sonna</span> fort.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p27">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p27">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p28 ══ -->
+  <div class="pair" id="p28">
+    <div class="ru">
+      <span class="c">На звонок</span> тотчас же <span class="v">вошёл</span> <span class="s">старый друг, камердинер Матвей</span>, неся <span class="c">платье, сапоги и телеграмму</span>. <span class="c">Вслед за Матвеем</span> <span class="v">вошёл</span> и <span class="s">цирюльник</span> <span class="c">с припасами для бритья</span>.
+    </div>
+    <div class="fr">
+      <span class="c">Au coup de sonnette</span>, <span class="v">entra</span> aussitôt <span class="s">le vieux serviteur Matvéï</span>, portant <span class="c">les vêtements, les bottes et un télégramme</span>. <span class="c">À la suite de Matvéï</span> <span class="v">entra</span> aussi <span class="s">le barbier</span> <span class="c">avec ses instruments à raser</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p28">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p28">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p29 ══ -->
+  <div class="pair" id="p29">
+    <div class="ru">
+      — <span class="c">Из присутствия</span> <span class="v">есть</span> <span class="s">бумаги</span> ? — <span class="v">спросил</span> <span class="s">Степан Аркадьич</span>, <span class="v">взяв</span> <span class="c">телеграмму</span> и <span class="v">садясь</span> <span class="c">к зеркалу</span>.
+    </div>
+    <div class="fr">
+      — <span class="v">Y a-t-il</span> <span class="s">des papiers</span> <span class="c">du bureau</span> ? — <span class="v">demanda</span> <span class="s">Stépane Arcadiévitch</span>, <span class="v">prenant</span> <span class="c">le télégramme</span> et <span class="v">s'asseyant</span> <span class="c">devant le miroir</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p29">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p29">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p30 ══ -->
+  <div class="pair" id="p30">
+    <div class="ru">
+      — <span class="c">На столе</span>, — <span class="v">отвечал</span> <span class="s">Матвей</span>, <span class="v">взглянул</span> <span class="c">вопросительно, с участием</span> <span class="c">на барина</span> и, <span class="v">подождав</span> немного, <span class="v">прибавил</span> <span class="c">с хитрою улыбкой</span> : — <span class="c">От хозяина извозчика</span> <span class="v">приходили</span>.
+    </div>
+    <div class="fr">
+      — <span class="c">Sur la table</span>, — <span class="v">répondit</span> <span class="s">Matvéï</span>, <span class="v">regardant</span> <span class="c">son maître</span> <span class="c">d'un air interrogateur et soucieux</span>, et, <span class="v">attendant</span> un moment, <span class="v">ajouta</span> <span class="c">avec un sourire malicieux</span> : — <span class="c">Le propriétaire du fiacre</span> <span class="v">est passé</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p30">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p30">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p31 ══ -->
+  <div class="pair" id="p31">
+    <div class="ru">
+      <span class="s">Степан Аркадьич</span> <span class="c">ничего</span> не <span class="v">ответил</span> и только <span class="c">в зеркало</span> <span class="v">взглянул</span> <span class="c">на Матвея</span> ; <span class="c">во взгляде, которым они встретились в зеркале</span>, <span class="v">видно было</span>, как <span class="s">они</span> <span class="v">понимают</span> <span class="c">друг друга</span>.
+    </div>
+    <div class="fr">
+      <span class="s">Stépane Arcadiévitch</span> ne <span class="v">répondit</span> <span class="c">rien</span> et <span class="v">regarda</span> seulement <span class="c">Matvéï</span> <span class="c">dans le miroir</span> ; <span class="c">dans le regard qu'ils échangèrent dans le miroir</span>, on <span class="v">voyait</span> combien <span class="s">ils</span> <span class="v">se comprenaient</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p31">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p31">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p32 ══ -->
+  <div class="pair" id="p32">
+    <div class="ru">
+      <span class="s">Матвей</span> <span class="v">положил</span> <span class="c">руки в карманы своей жакетки</span>, <span class="v">отставил</span> <span class="c">ногу</span> и молча, добродушно, чуть-чуть <span class="v">улыбаясь</span>, <span class="v">посмотрел</span> <span class="c">на своего барина</span>.
+    </div>
+    <div class="fr">
+      <span class="s">Matvéï</span> <span class="v">mit</span> <span class="c">les mains dans les poches de sa veste</span>, <span class="v">avança</span> <span class="c">une jambe</span> et, en silence, d'un air bonhomme, <span class="v">sourit</span> légèrement en <span class="v">regardant</span> <span class="c">son maître</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p32">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p32">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p33 ══ -->
+  <div class="pair" id="p33">
+    <div class="ru">
+      — <span class="s">Я</span> <span class="v">приказал</span> <span class="v">прийти</span> <span class="c">в то воскресенье</span>, а до тех пор чтобы не <span class="v">беспокоили</span> <span class="c">вас и себя понапрасну</span>, — <span class="v">сказал</span> <span class="s">он</span>, видимо, приготовленную фразу.
+    </div>
+    <div class="fr">
+      — <span class="s">J'ai</span> <span class="v">dit</span> de <span class="v">revenir</span> <span class="c">dimanche prochain</span>, et d'ici là de ne pas <span class="v">vous déranger</span> <span class="c">ni vous ni lui inutilement</span>, — <span class="v">dit</span>-<span class="s">il</span>, avec une phrase visiblement préparée.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p33">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p33">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p34 ══ -->
+  <div class="pair" id="p34">
+    <div class="ru">
+      <span class="s">Степан Аркадьич</span> <span class="v">понял</span>, что <span class="s">Матвей</span> <span class="v">хотел</span> <span class="v">пошутить</span> и <span class="v">обратить</span> <span class="c">на себя внимание</span>. <span class="v">Разорвав</span> <span class="c">телеграмму</span>, <span class="s">он</span> <span class="v">прочёл</span> <span class="c">её</span>, догадкой <span class="v">поправляя</span> <span class="c">перевранные, как всегда, слова</span>, и <span class="s">лицо его</span> <span class="v">просияло</span>.
+    </div>
+    <div class="fr">
+      <span class="s">Stépane Arcadiévitch</span> <span class="v">comprit</span> que <span class="s">Matvéï</span> <span class="v">voulait</span> <span class="v">plaisanter</span> et <span class="v">attirer</span> <span class="c">l'attention sur lui</span>. <span class="v">Ayant déchiré</span> <span class="c">le télégramme</span>, <span class="s">il</span> le <span class="v">lut</span>, <span class="v">corrigeant</span> par intuition <span class="c">les mots déformés, comme toujours</span>, et <span class="s">son visage</span> <span class="v">s'illumina</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p34">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p34">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p35 ══ -->
+  <div class="pair" id="p35">
+    <div class="ru">
+      — <span class="s">Матвей</span>, <span class="s">сестра Анна Аркадьевна</span> <span class="v">будет</span> <span class="c">завтра</span>, — <span class="v">сказал</span> <span class="s">он</span>, <span class="v">остановив</span> <span class="c">на минуту глянцевитую, пухлую ручку цирюльника</span>, <span class="v">расчищавшего</span> <span class="c">розовую дорогу между длинными кудрявыми бакенбардами</span>.
+    </div>
+    <div class="fr">
+      — <span class="s">Matvéï</span>, <span class="s">ma sœur Anna Arcadiévna</span> <span class="v">arrivera</span> <span class="c">demain</span>, — <span class="v">dit</span>-<span class="s">il</span>, <span class="v">arrêtant</span> <span class="c">un instant la petite main luisante et potelée du barbier</span> qui <span class="v">traçait</span> <span class="c">un chemin rosé entre les longs favoris bouclés</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p35">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p35">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p36 ══ -->
+  <div class="pair" id="p36">
+    <div class="ru">
+      — <span class="c">Слава богу</span>, — <span class="v">сказал</span> <span class="s">Матвей</span>, этим ответом <span class="v">показывая</span>, что <span class="s">он</span> <span class="v">понимает</span> так же, как и барин, значение этого приезда, то есть что <span class="s">Анна Аркадьевна</span>, любимая сестра Степана Аркадьича, <span class="v">может содействовать</span> <span class="c">примирению мужа с женой</span>.
+    </div>
+    <div class="fr">
+      — <span class="c">Dieu soit loué</span>, — <span class="v">dit</span> <span class="s">Matvéï</span>, <span class="v">montrant</span> par cette réponse qu'<span class="s">il</span> <span class="v">comprenait</span> aussi bien que son maître l'importance de cette visite, c'est-à-dire qu'<span class="s">Anna Arcadiévna</span>, la sœur bien-aimée de Stépane Arcadiévitch, <span class="v">pourrait contribuer</span> <span class="c">à la réconciliation du mari et de la femme</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p36">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p36">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p37 ══ -->
+  <div class="pair" id="p37">
+    <div class="ru">
+      — <span class="s">Одни</span> или <span class="c">с супругом</span> ? — <span class="v">спросил</span> <span class="s">Матвей</span>.
+    </div>
+    <div class="fr">
+      — <span class="s">Seule</span> ou <span class="c">avec son mari</span> ? — <span class="v">demanda</span> <span class="s">Matvéï</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p37">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p37">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p38 ══ -->
+  <div class="pair" id="p38">
+    <div class="ru">
+      <span class="s">Степан Аркадьич</span> не <span class="v">мог</span> <span class="v">говорить</span>, так как <span class="s">цирюльник</span> <span class="v">занят был</span> <span class="c">верхнею губой</span>, и <span class="v">поднял</span> <span class="c">один палец</span>. <span class="s">Матвей</span> <span class="c">в зеркало</span> <span class="v">кивнул</span> <span class="c">головой</span>.
+    </div>
+    <div class="fr">
+      <span class="s">Stépane Arcadiévitch</span> ne <span class="v">pouvait</span> pas <span class="v">parler</span>, car <span class="s">le barbier</span> <span class="v">s'occupait</span> <span class="c">de la lèvre supérieure</span>, et <span class="v">leva</span> <span class="c">un doigt</span>. <span class="s">Matvéï</span> <span class="v">hocha</span> <span class="c">la tête</span> <span class="c">dans le miroir</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p38">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p38">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p39 ══ -->
+  <div class="pair" id="p39">
+    <div class="ru">
+      — <span class="c">Одни</span>. <span class="c">Наверху</span> <span class="v">приготовить</span> ?
+    </div>
+    <div class="fr">
+      — <span class="c">Seule</span>. <span class="v">Préparer</span> <span class="c">en haut</span> ?
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p39">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p39">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p40 ══ -->
+  <div class="pair" id="p40">
+    <div class="ru">
+      — <span class="c">Дарье Александровне</span> <span class="v">доложи</span>, где <span class="v">прикажут</span>.
+    </div>
+    <div class="fr">
+      — <span class="v">Informe</span> <span class="c">Daria Alexandrovna</span>, elle <span class="v">dira</span> où.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p40">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p40">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p41 ══ -->
+  <div class="pair" id="p41">
+    <div class="ru">
+      — <span class="s">Дарье Александровне</span> ? — как бы <span class="c">с сомнением</span> <span class="v">повторил</span> <span class="s">Матвей</span>.
+    </div>
+    <div class="fr">
+      — <span class="c">À Daria Alexandrovna</span> ? — <span class="v">répéta</span> <span class="s">Matvéï</span> comme <span class="c">avec doute</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p41">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p41">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p42 ══ -->
+  <div class="pair" id="p42">
+    <div class="ru">
+      — Да, <span class="v">доложи</span>. И вот <span class="v">возьми</span> <span class="c">телеграмму</span>, <span class="v">передай</span>, что <span class="s">они</span> <span class="v">скажут</span>.
+    </div>
+    <div class="fr">
+      — Oui, <span class="v">informe</span>-la. Et <span class="v">prends</span> <span class="c">le télégramme</span>, <span class="v">transmets</span> ce qu'<span class="s">elle</span> <span class="v">dira</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p42">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p42">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p43 ══ -->
+  <div class="pair" id="p43">
+    <div class="ru">
+      «<span class="v">Попробовать</span> <span class="v">хотите</span>», — <span class="v">понял</span> <span class="s">Матвей</span>, но <span class="s">он</span> <span class="v">сказал</span> только : — <span class="c">Слушаю-с</span>.
+    </div>
+    <div class="fr">
+      « <span class="s">Vous</span> <span class="v">voulez</span> <span class="v">tenter</span> quelque chose », — <span class="v">comprit</span> <span class="s">Matvéï</span>, mais <span class="s">il</span> <span class="v">dit</span> seulement : — <span class="c">Bien, monsieur</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p43">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p43">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p44 ══ -->
+  <div class="pair" id="p44">
+    <div class="ru">
+      <span class="s">Степан Аркадьич</span> уже <span class="v">был</span> умыт и расчёсан и <span class="v">сбирался</span> <span class="v">одеваться</span>, когда <span class="s">Матвей</span>, медленно <span class="v">ступая</span> <span class="c">поскрипывающими сапогами</span>, <span class="c">с телеграммой в руке</span>, <span class="v">вернулся</span> <span class="c">в комнату</span>. <span class="s">Цирюльника</span> уже не <span class="v">было</span>.
+    </div>
+    <div class="fr">
+      <span class="s">Stépane Arcadiévitch</span> était déjà <span class="v">lavé</span> et <span class="v">peigné</span> et <span class="v">s'apprêtait</span> à <span class="v">s'habiller</span> quand <span class="s">Matvéï</span>, <span class="v">avançant</span> lentement <span class="c">sur ses bottes qui craquaient</span>, <span class="c">le télégramme à la main</span>, <span class="v">revint</span> <span class="c">dans la chambre</span>. <span class="s">Le barbier</span> n'<span class="v">était</span> déjà plus là.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p44">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p44">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p45 ══ -->
+  <div class="pair" id="p45">
+    <div class="ru">
+      — <span class="s">Дарья Александровна</span> <span class="v">приказали доложить</span>, что <span class="s">они</span> <span class="v">уезжают</span>. <span class="v">Пускай делают</span>, как <span class="c">им, вам то есть, угодно</span>, — <span class="v">сказал</span> <span class="s">он</span>, смеясь только глазами, и, <span class="v">положив</span> <span class="c">руки в карманы</span> и <span class="v">склонив</span> <span class="c">голову набок</span>, <span class="v">уставился</span> <span class="c">на барина</span>.
+    </div>
+    <div class="fr">
+      — <span class="s">Daria Alexandrovna</span> <span class="v">fait dire</span> qu'<span class="s">elle</span> <span class="v">part</span>. <span class="v">Qu'on fasse</span> comme <span class="c">on voudra, vous c'est-à-dire</span>, — <span class="v">dit</span>-<span class="s">il</span>, ne riant que des yeux, et, <span class="v">mettant</span> <span class="c">les mains dans ses poches</span> et <span class="v">penchant</span> <span class="c">la tête de côté</span>, <span class="v">fixa</span> <span class="c">son maître</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p45">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p45">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p46 ══ -->
+  <div class="pair" id="p46">
+    <div class="ru">
+      <span class="s">Степан Аркадьич</span> <span class="v">помолчал</span>. Потом <span class="s">добрая и несколько жалкая улыбка</span> <span class="v">показалась</span> <span class="c">на его красивом лице</span>.
+    </div>
+    <div class="fr">
+      <span class="s">Stépane Arcadiévitch</span> <span class="v">garda le silence</span>. Puis <span class="s">un bon et quelque peu piteux sourire</span> <span class="v">apparut</span> <span class="c">sur son beau visage</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p46">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p46">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p47 ══ -->
+  <div class="pair" id="p47">
+    <div class="ru">
+      — А ? <span class="s">Матвей</span> ? — <span class="v">сказал</span> <span class="s">он</span>, <span class="v">покачивая</span> <span class="c">головой</span>.
+    </div>
+    <div class="fr">
+      — Hein ? <span class="s">Matvéï</span> ? — <span class="v">dit</span>-<span class="s">il</span>, <span class="v">secouant</span> <span class="c">la tête</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p47">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p47">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p48 ══ -->
+  <div class="pair" id="p48">
+    <div class="ru">
+      — <span class="c">Ничего</span>, сударь, <span class="v">образуется</span>, — <span class="v">сказал</span> <span class="s">Матвей</span>.
+    </div>
+    <div class="fr">
+      — <span class="c">Ça</span> <span class="v">s'arrangera</span>, monsieur, — <span class="v">dit</span> <span class="s">Matvéï</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p48">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p48">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p49 ══ -->
+  <div class="pair" id="p49">
+    <div class="ru">
+      — <span class="v">Образуется</span> ?
+    </div>
+    <div class="fr">
+      — <span class="v">Ça s'arrangera</span> ?
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p49">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p49">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p50 ══ -->
+  <div class="pair" id="p50">
+    <div class="ru">
+      — <span class="c">Так точно-с</span>.
+    </div>
+    <div class="fr">
+      — <span class="c">Certainement, monsieur</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p50">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p50">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p51 ══ -->
+  <div class="pair" id="p51">
+    <div class="ru">
+      — <span class="s">Ты</span> <span class="v">думаешь</span> ? <span class="s">Это</span> кто <span class="c">там</span> ? — <span class="v">спросил</span> <span class="s">Степан Аркадьич</span>, <span class="v">услыхав</span> <span class="c">за дверью шум женского платья</span>.
+    </div>
+    <div class="fr">
+      — <span class="s">Tu</span> <span class="v">crois</span> ? <span class="s">Qui</span> <span class="v">est</span> <span class="c">là</span> ? — <span class="v">demanda</span> <span class="s">Stépane Arcadiévitch</span>, <span class="v">entendant</span> <span class="c">derrière la porte un froufrou de robe de femme</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p51">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p51">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p52 ══ -->
+  <div class="pair" id="p52">
+    <div class="ru">
+      — <span class="c">Это я-с</span>, — <span class="v">сказал</span> <span class="s">твёрдый и приятный женский голос</span>, и <span class="c">из-за двери</span> <span class="v">высунулось</span> <span class="s">строгое рябое лицо Матрёны Филимоновны, нянюшки</span>.
+    </div>
+    <div class="fr">
+      — <span class="c">C'est moi, monsieur</span>, — <span class="v">dit</span> <span class="s">une voix de femme ferme et agréable</span>, et <span class="c">derrière la porte</span> <span class="v">apparut</span> <span class="s">le visage sévère et grêlé de Matriona Philimonovna, la nourrice</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p52">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p52">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p53 ══ -->
+  <div class="pair" id="p53">
+    <div class="ru">
+      — <span class="s">Ну что, Матрёша</span> ? — <span class="v">спросил</span> <span class="s">Степан Аркадьич</span>, <span class="v">выходя</span> <span class="c">к ней в дверь</span>.
+    </div>
+    <div class="fr">
+      — <span class="s">Eh bien, Matriocha</span> ? — <span class="v">demanda</span> <span class="s">Stépane Arcadiévitch</span>, <span class="v">allant</span> <span class="c">vers elle à la porte</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p53">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p53">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p54 ══ -->
+  <div class="pair" id="p54">
+    <div class="ru">
+      Несмотря на то, что <span class="s">Степан Аркадьич</span> <span class="v">был</span> кругом <span class="c">виноват</span> перед женой и сам <span class="v">чувствовал</span> это, почти <span class="s">все</span> <span class="c">в доме</span>, даже <span class="s">нянюшка</span>, главный друг Дарьи Александровны, <span class="v">были</span> <span class="c">на его стороне</span>.
+    </div>
+    <div class="fr">
+      Bien que <span class="s">Stépane Arcadiévitch</span> <span class="v">fût</span> entièrement <span class="c">coupable</span> envers sa femme et le <span class="v">sentît</span> lui-même, presque <span class="s">tous</span> <span class="c">dans la maison</span>, même <span class="s">la nourrice</span>, principale amie de Daria Alexandrovna, <span class="v">étaient</span> <span class="c">de son côté</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p54">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p54">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p55 ══ -->
+  <div class="pair" id="p55">
+    <div class="ru">
+      — <span class="s">Ну что</span> ? — <span class="v">сказал</span> <span class="s">он</span> <span class="c">уныло</span>.
+    </div>
+    <div class="fr">
+      — <span class="s">Eh bien quoi</span> ? — <span class="v">dit</span>-<span class="s">il</span> <span class="c">d'un ton morne</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p55">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p55">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p56 ══ -->
+  <div class="pair" id="p56">
+    <div class="ru">
+      — <span class="s">Вы</span> <span class="v">сходите</span>, сударь, <span class="v">повинитесь</span> ещё. <span class="c">Авось</span> <span class="s">бог</span> <span class="v">даст</span>. Очень <span class="v">мучаются</span>, и <span class="v">смотреть</span> <span class="c">жалости</span>, да и всё <span class="c">в доме</span> <span class="v">пошло</span> <span class="c">навыворот</span>. <span class="s">Детей</span>, сударь, <span class="v">пожалеть</span> надо. <span class="v">Повинитесь</span>, сударь.
+    </div>
+    <div class="fr">
+      — <span class="s">Vous</span> devriez <span class="v">aller</span>, monsieur, <span class="v">vous excuser</span> encore. <span class="c">Peut-être</span> <span class="s">Dieu</span> <span class="v">aidera</span>. <span class="s">Elle</span> <span class="v">souffre</span> beaucoup, c'est pénible à voir, et tout <span class="c">dans la maison</span> <span class="v">va</span> <span class="c">de travers</span>. <span class="v">Pensez</span> <span class="c">aux enfants</span>, monsieur. <span class="v">Excusez</span>-vous, monsieur.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p56">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p56">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p57 ══ -->
+  <div class="pair" id="p57">
+    <div class="ru">
+      — <span class="c">Да</span> ведь не <span class="v">примет</span>…
+    </div>
+    <div class="fr">
+      — Mais <span class="s">elle</span> ne <span class="v">voudra</span> pas me <span class="v">recevoir</span>…
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p57">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p57">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p58 ══ -->
+  <div class="pair" id="p58">
+    <div class="ru">
+      — А <span class="s">вы</span> своё <span class="v">сделайте</span>. <span class="s">Бог</span> <span class="v">милостив</span>, <span class="c">богу</span> <span class="v">молитесь</span>, сударь, <span class="c">богу</span> <span class="v">молитесь</span>.
+    </div>
+    <div class="fr">
+      — Mais <span class="s">vous</span>, <span class="v">faites</span> votre part. <span class="s">Dieu</span> <span class="v">est</span> <span class="c">miséricordieux</span>, <span class="v">priez</span> <span class="c">Dieu</span>, monsieur, <span class="v">priez</span> <span class="c">Dieu</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p58">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p58">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p59 ══ -->
+  <div class="pair" id="p59">
+    <div class="ru">
+      — <span class="c">Ну, хорошо, ступай</span>, — <span class="v">сказал</span> <span class="s">Степан Аркадьич</span>, вдруг <span class="v">покраснев</span>. — <span class="c">Ну, так давай одеваться</span>, — <span class="v">обратился</span> <span class="s">он</span> <span class="c">к Матвею</span> и решительно <span class="v">скинул</span> <span class="c">халат</span>.
+    </div>
+    <div class="fr">
+      — <span class="c">Bien, va</span>, — <span class="v">dit</span> <span class="s">Stépane Arcadiévitch</span>, rougissant soudain. — <span class="c">Allons, aide-moi à m'habiller</span>, — <span class="v">se tourna</span>-<span class="s">t-il</span> <span class="c">vers Matvéï</span>, et <span class="v">jeta</span> résolument <span class="c">sa robe de chambre</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p59">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p59">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ p60 ══ -->
+  <div class="pair" id="p60">
+    <div class="ru">
+      <span class="s">Матвей</span> уже <span class="v">держал</span>, <span class="v">сдувая</span> <span class="c">что-то невидимое</span>, <span class="c">хомутом приготовленную рубашку</span> и <span class="c">с очевидным удовольствием</span> <span class="v">облёк</span> <span class="c">в неё</span> <span class="c">холёное тело барина</span>.
+    </div>
+    <div class="fr">
+      <span class="s">Matvéï</span> <span class="v">tenait</span> déjà, <span class="v">soufflant</span> <span class="c">quelque chose d'invisible</span>, <span class="c">la chemise préparée en collier</span> et, <span class="c">avec un plaisir visible</span>, <span class="v">enveloppa</span> <span class="c">dedans</span> <span class="c">le corps soigné de son maître</span>.
+    </div>
+    <div class="pair-btns">
+      <button class="toggle-btn toggle-hl" data-target="p60">👁</button>
+      <button class="toggle-btn toggle-tr" data-target="p60">🇫🇷</button>
+    </div>
+  </div>
+
+  <!-- ══ NEXT CHAPTER ══ -->
+  <div class="next-chapter">
+    <div class="next-chapter-label">Fin du chapitre I</div>
+    <a class="next-chapter-btn" href="chapitre-02.html">
+      Chapitre suivant <span class="arrow">→</span>
+    </a>
+  </div>
+
+</main>
+
+<script>
+  if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js');
+
+  const STORAGE_KEY_CHAPTER = 'ak_last_chapter';
+  const STORAGE_KEY_HL      = 'ak_hl_hidden';
+  const STORAGE_KEY_TR      = 'ak_tr_hidden';
+  const CURRENT_FILE        = 'chapitre-01.html';
+
+  const chapterSelect = document.getElementById('chapterSelect');
+  localStorage.setItem(STORAGE_KEY_CHAPTER, CURRENT_FILE);
+  chapterSelect.value = CURRENT_FILE;
+  chapterSelect.addEventListener('change', () => {
+    const target = chapterSelect.value;
+    localStorage.setItem(STORAGE_KEY_CHAPTER, target);
+    window.location.href = target;
+  });
+
+  const toggleHlBtn = document.getElementById('toggleHl');
+  let hlVisible = false;
+  function applyHlState() {
+    document.querySelectorAll('.pair').forEach(p => p.classList.toggle('show-hl', hlVisible));
+    toggleHlBtn.classList.toggle('active', hlVisible);
+  }
+  applyHlState();
+  toggleHlBtn.addEventListener('click', () => {
+    hlVisible = !hlVisible;
+    applyHlState();
+  });
+  document.querySelectorAll('.toggle-hl').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const pair = document.getElementById(btn.dataset.target);
+      pair.classList.toggle('show-hl');
+      btn.textContent = pair.classList.contains('show-hl') ? '👁' : '🚫';
+    });
+  });
+
+  const toggleTrBtn = document.getElementById('toggleTr');
+  let trVisible = false;
+  function applyTrState() {
+    document.body.classList.toggle('show-translation', trVisible);
+    toggleTrBtn.classList.toggle('active', trVisible);
+  }
+  applyTrState();
+  toggleTrBtn.addEventListener('click', () => {
+    trVisible = !trVisible;
+    applyTrState();
+  });
+  document.querySelectorAll('.toggle-tr').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const pair = document.getElementById(btn.dataset.target);
+      if (trVisible) {
+        // Global ON : on cache individuellement avec hidden-tr
+        pair.classList.toggle('hidden-tr');
+        pair.classList.remove('show-tr');
+        btn.style.opacity = pair.classList.contains('hidden-tr') ? '0.4' : '1';
+      } else {
+        // Global OFF : on affiche individuellement avec show-tr
+        pair.classList.toggle('show-tr');
+        pair.classList.remove('hidden-tr');
+        btn.style.opacity = pair.classList.contains('show-tr') ? '1' : '0.4';
+      }
+    });
+  });
+</script>
+</body>
+</html>
