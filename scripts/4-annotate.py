@@ -130,25 +130,108 @@ def annoter_avec_spacy(texte, nlp):
 
 # ── Annotation Mistral ─────────────────────────────────────────────────────────
 
-PROMPT_ANNOTATION = """\
+PROMPT_BASE = """\
 Split this sentence into grammatical tokens and classify each one.
 
 Return a JSON object: {"tokens": [{"text": "...", "type": "s"|"v"|"c"|null}, ...]}
 
 Types:
 - "s" = subject (noun phrase, pronoun, proper noun acting as grammatical subject)
-- "v" = verb phrase (main verb, auxiliaries, copula — keep contractions together: "don't", "I'm", "he's", "can't")
+- "v" = verb phrase (main verb, auxiliaries, copula — keep contractions together: "don't", "I'm", "he's", "can't", "n'aime pas")
 - "c" = complement (direct/indirect object, adverb, prepositional phrase, adjective complement)
-- null = articles, determiners, conjunctions, punctuation, dialogue dashes (— or -), spaces
+- null = articles, determiners, conjunctions, punctuation, dialogue dashes (— or -), negation words, spaces
 
 CRITICAL RULES:
 1. The concatenation of ALL "text" values MUST equal the input EXACTLY (character for character).
 2. Each space between words must be its own null token: {"text": " ", "type": null}
 3. Dialogue dashes (— or - at start of speech): type null
-4. Verb contractions stay attached to their verb: "don't" → one "v" token, not split
+4. Verb contractions/negations stay with their verb: "don't" → one "v" token, not split
 
-Sentence: \
 """
+
+# Few-shot examples par langue
+EXEMPLES_PAR_LANGUE = {
+    'es': [
+        (
+            "Blanca sonrió.",
+            [{"text":"Blanca","type":"s"},{"text":" ","type":None},{"text":"sonrió","type":"v"},{"text":".","type":None}]
+        ),
+        (
+            "—Yo puedo ser tu amigo.",
+            [{"text":"—","type":None},{"text":"Yo","type":"s"},{"text":" ","type":None},{"text":"puedo ser","type":"v"},{"text":" ","type":None},{"text":"tu amigo","type":"c"},{"text":".","type":None}]
+        ),
+        (
+            "Tragué saliva.",
+            [{"text":"Tragué","type":"v"},{"text":" ","type":None},{"text":"saliva","type":"c"},{"text":".","type":None}]
+        ),
+        (
+            "No tengo amigos aquí.",
+            [{"text":"No ","type":None},{"text":"tengo","type":"v"},{"text":" ","type":None},{"text":"amigos aquí","type":"c"},{"text":".","type":None}]
+        ),
+    ],
+    'en': [
+        (
+            "I don't like this neighborhood.",
+            [{"text":"I","type":"s"},{"text":" ","type":None},{"text":"don't like","type":"v"},{"text":" ","type":None},{"text":"this ","type":None},{"text":"neighborhood","type":"c"},{"text":".","type":None}]
+        ),
+        (
+            "-She warned.",
+            [{"text":"-","type":None},{"text":"She","type":"s"},{"text":" ","type":None},{"text":"warned","type":"v"},{"text":".","type":None}]
+        ),
+        (
+            "Blanca turned and looked at me.",
+            [{"text":"Blanca","type":"s"},{"text":" ","type":None},{"text":"turned","type":"v"},{"text":" ","type":None},{"text":"and ","type":None},{"text":"looked","type":"v"},{"text":" ","type":None},{"text":"at me","type":"c"},{"text":".","type":None}]
+        ),
+        (
+            "My father writes them for me.",
+            [{"text":"My ","type":None},{"text":"father","type":"s"},{"text":" ","type":None},{"text":"writes","type":"v"},{"text":" ","type":None},{"text":"them for me","type":"c"},{"text":".","type":None}]
+        ),
+    ],
+    'fr': [
+        (
+            "Elle sourit.",
+            [{"text":"Elle","type":"s"},{"text":" ","type":None},{"text":"sourit","type":"v"},{"text":".","type":None}]
+        ),
+        (
+            "Il n'aime pas ça.",
+            [{"text":"Il","type":"s"},{"text":" ","type":None},{"text":"n'aime pas","type":"v"},{"text":" ","type":None},{"text":"ça","type":"c"},{"text":".","type":None}]
+        ),
+        (
+            "— Je ne comprends pas.",
+            [{"text":"— ","type":None},{"text":"Je","type":"s"},{"text":" ","type":None},{"text":"ne comprends pas","type":"v"},{"text":".","type":None}]
+        ),
+    ],
+    'ru': [
+        (
+            "Она улыбнулась.",
+            [{"text":"Она","type":"s"},{"text":" ","type":None},{"text":"улыбнулась","type":"v"},{"text":".","type":None}]
+        ),
+        (
+            "— Я не хочу.",
+            [{"text":"— ","type":None},{"text":"Я","type":"s"},{"text":" ","type":None},{"text":"не хочу","type":"v"},{"text":".","type":None}]
+        ),
+    ],
+}
+
+_prompts_cache = {}
+
+def get_prompt(langue):
+    """Construit le prompt avec few-shot examples pour la langue donnée."""
+    if langue in _prompts_cache:
+        return _prompts_cache[langue]
+
+    exemples = EXEMPLES_PAR_LANGUE.get(langue, [])
+    if not exemples:
+        prompt = PROMPT_BASE + "Sentence: "
+    else:
+        exemples_str = "Examples:\n\n"
+        for texte_ex, tokens_ex in exemples:
+            output = json.dumps({"tokens": tokens_ex}, ensure_ascii=False)
+            exemples_str += f"Input: {json.dumps(texte_ex, ensure_ascii=False)}\nOutput: {output}\n\n"
+        prompt = PROMPT_BASE + exemples_str + "Now annotate:\nSentence: "
+
+    _prompts_cache[langue] = prompt
+    return prompt
 
 _mistral_last_call = 0.0
 
@@ -176,7 +259,7 @@ def annoter_avec_mistral(texte, langue):
                 },
                 {
                     "role": "user",
-                    "content": PROMPT_ANNOTATION + texte
+                    "content": get_prompt(langue) + texte
                 }
             ]
         }).encode('utf-8')
