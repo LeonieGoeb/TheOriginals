@@ -64,9 +64,6 @@ jobs:
       - name: Install Node dependencies
         run: npm ci
 
-      - name: Install system tools
-        run: sudo apt-get install -y poppler-utils
-
       - name: Install Python dependencies
         run: |
           pip install spacy
@@ -99,16 +96,10 @@ jobs:
           node scripts/validate-config.js "_source/pending/${{ steps.find-book.outputs.slug }}.json" $FORCE_FLAG
 
       # ── Pipeline ───────────────────────────────────────────────────────────
-      - name: Step 1 - Extract text from PDF
-        run: |
-          bash scripts/1-extract.sh \
-            "_source/pending/${{ steps.find-book.outputs.slug }}.pdf" \
-            "${{ steps.find-book.outputs.slug }}"
-
-      - name: Step 1b - Clean text with Mistral AI
+      - name: Step 1 - Extract text from PDF via Mistral OCR
         env:
           MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
-        run: node scripts/1b-clean.js "${{ steps.find-book.outputs.slug }}"
+        run: node scripts/1-ocr.js "${{ steps.find-book.outputs.slug }}"
 
       - name: Step 2 - Split into sentences
         run: |

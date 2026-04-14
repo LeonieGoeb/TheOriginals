@@ -93,16 +93,8 @@ if [ "$ONLY_MARKERS" = true ]; then
 fi
 
 # ── Étape 1b : nettoyage Mistral ────────────────────────────────────────────
-if [ "$SKIP_CLEAN" = true ]; then
-  # Simuler uniquement la conversion des marqueurs manuels (sans Mistral)
-  echo "⏭  Nettoyage Mistral ignoré — conversion des marqueurs <<>> uniquement"
-  node -e "
-    const fs = require('fs');
-    let t = fs.readFileSync('$TMP/raw.txt', 'utf-8');
-    t = t.replace(/<<([^>]+)>>/g, (_, titre) => '<<<CHAPITRE_' + titre.trim() + '>>>');
-    fs.writeFileSync('$TMP/raw-clean.txt', t);
-    console.log('   ✅ raw-clean.txt généré avec marqueurs convertis');
-  "
+if [ "$SKIP_CLEAN" = true ] && [ -f "$TMP/raw-clean.txt" ]; then
+  echo "⏭  OCR ignoré (raw-clean.txt existant)"
 else
   if [ -z "${MISTRAL_API_KEY:-}" ]; then
     if [ -f ".env" ]; then
@@ -110,16 +102,17 @@ else
     fi
   fi
   if [ -z "${MISTRAL_API_KEY:-}" ]; then
-    echo "⚠️  MISTRAL_API_KEY absente — conversion des marqueurs uniquement, sans nettoyage Mistral"
+    echo "⚠️  MISTRAL_API_KEY absente — simulation locale (pdfminer + conversion marqueurs)"
     node -e "
       const fs = require('fs');
       let t = fs.readFileSync('$TMP/raw.txt', 'utf-8');
       t = t.replace(/<<([^>]+)>>/g, (_, titre) => '<<<CHAPITRE_' + titre.trim() + '>>>');
       fs.writeFileSync('$TMP/raw-clean.txt', t);
+      console.log('   ✅ raw-clean.txt simulé');
     "
   else
-    echo "🧹 Nettoyage Mistral..."
-    node scripts/1b-clean.js "$SLUG"
+    echo "🔍 OCR via Mistral..."
+    node scripts/1-ocr.js "$SLUG"
   fi
 fi
 
