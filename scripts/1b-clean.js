@@ -45,32 +45,43 @@ function protégerChapitres(texte) {
   const résultat = [];
 
   for (let i = 0; i < lignes.length; i++) {
-    const ligne = lignes[i].trim();
-    const avant  = i > 0              ? lignes[i - 1].trim() : '';
-    const après  = i < lignes.length - 1 ? lignes[i + 1].trim() : '';
+    const ligneRaw = lignes[i];
+    const ligne = ligneRaw.trim();
+    const avant  = i > 0              ? lignes[i - 1].replace(/\f/g, '').trim() : '';
+    const après  = i < lignes.length - 1 ? lignes[i + 1].replace(/\f/g, '').trim() : '';
 
-    // Condition : ligne isolée (entourée de lignes vides ou début/fin de texte)
-    const isolée = (avant === '' || avant === '\f') && (après === '' || après === '\f');
+    // Condition : ligne isolée (entourée de lignes vides)
+    const isolée = avant === '' && après === '';
 
     if (isolée && ligne.length > 0) {
-      // Chiffre arabe seul (1–99)
-      if (/^\d{1,2}$/.test(ligne)) {
-        résultat.push(`<<<CHAPITRE_Chapitre ${ligne}>>>`);
-        continue;
-      }
-      // Chiffre romain seul (II à LXXX, I exclu car ambigu avec pronom anglais)
-      if (/^(I{2,3}|IV|VI{0,3}|IX|XI{0,3}|XIV|XV|XVI{0,3}|XIX|XX|XXI{0,3}|XXIV|XXV|XXVI{0,3}|XXIX|XXX|XL|L|LI{0,3}|LX{0,3})$/i.test(ligne)) {
-        résultat.push(`<<<CHAPITRE_Chapitre ${ligne.toUpperCase()}>>>`);
-        continue;
-      }
-      // Mots-clés explicites : "Chapter IV", "Chapitre 3", "Капитул I", etc.
-      if (/^(CHAPTER|CHAPITRE|KAPITTEL|KAPITEL|CAPITOLO|CAP[IÍ]TULO|ГЛАВА|ЧАСТЬ)\s+/i.test(ligne)) {
+      // Exclure les numéros de page : ceux-ci apparaissent dans le raw.txt
+      // à proximité des sauts de page (\f). On vérifie une fenêtre de 5 lignes.
+      const fenêtre = lignes.slice(Math.max(0, i - 5), Math.min(lignes.length, i + 6)).join('');
+      const prèsDePageBreak = fenêtre.includes('\f');
+
+      // Les mots-clés explicites sont toujours des chapitres, même en bas de page
+      const motCléExplicite = /^(CHAPTER|CHAPITRE|KAPITTEL|KAPITEL|CAPITOLO|CAP[IÍ]TULO|ГЛАВА|ЧАСТЬ)\s+/i.test(ligne);
+
+      if (motCléExplicite) {
         résultat.push(`<<<CHAPITRE_${ligne}>>>`);
         continue;
       }
+
+      if (!prèsDePageBreak) {
+        // Chiffre arabe seul (1–99)
+        if (/^\d{1,2}$/.test(ligne)) {
+          résultat.push(`<<<CHAPITRE_Chapitre ${ligne}>>>`);
+          continue;
+        }
+        // Chiffre romain seul (II à LXXX, I exclu car ambigu avec pronom anglais)
+        if (/^(I{2,3}|IV|VI{0,3}|IX|XI{0,3}|XIV|XV|XVI{0,3}|XIX|XX|XXI{0,3}|XXIV|XXV|XXVI{0,3}|XXIX|XXX|XL|L|LI{0,3}|LX{0,3})$/i.test(ligne)) {
+          résultat.push(`<<<CHAPITRE_Chapitre ${ligne.toUpperCase()}>>>`);
+          continue;
+        }
+      }
     }
 
-    résultat.push(lignes[i]);
+    résultat.push(ligneRaw);
   }
 
   return résultat.join('\n');
