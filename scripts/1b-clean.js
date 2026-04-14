@@ -35,6 +35,14 @@ if (!fs.existsSync(inputPath)) {
 
 const texte = fs.readFileSync(inputPath, 'utf-8');
 
+// ── Conversion des marqueurs manuels ──────────────────────────────────────────
+// Si le PDF contient des marqueurs <<Titre>> ajoutés manuellement,
+// on les convertit immédiatement en <<<CHAPITRE_Titre>>> avant tout traitement.
+
+function convertirMarqueursManuels(texte) {
+  return texte.replace(/<<([^>]+)>>/g, (_, titre) => `<<<CHAPITRE_${titre.trim()}>>>`);
+}
+
 // ── Découpage en blocs ─────────────────────────────────────────────────────────
 // On envoie ~1500 caractères par appel pour rester dans les limites du free tier
 // tout en donnant assez de contexte à Mistral.
@@ -122,7 +130,7 @@ async function nettoyerBloc(bloc) {
 // ── Main ───────────────────────────────────────────────────────────────────────
 
 async function main() {
-  const blocs = splitEnBlocs(texte);
+  const blocs = splitEnBlocs(convertirMarqueursManuels(texte));
   console.log(`🧹 Nettoyage du texte via Mistral (${blocs.length} blocs)...`);
 
   const blocsNettoyés = [];
