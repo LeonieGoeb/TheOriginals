@@ -41,6 +41,16 @@ const texte = fs.readFileSync(inputPath, 'utf-8');
 // L'ordre est important : les patterns les plus spécifiques en premier.
 
 const PATTERNS_CHAPITRES = [
+  // Marqueurs explicites (convertis depuis <<Titre>> par 1-ocr.js)
+  {
+    re: /^<<<CHAPITRE_(.+)>>>$/,
+    construireTitre: (m) => m[1],
+  },
+  // Titres markdown produits par Mistral OCR : "# Titre" ou "## Titre"
+  {
+    re: /^#{1,3}\s+(.+)$/,
+    construireTitre: (m) => m[1].trim(),
+  },
   // "CHAPTER IV", "Chapter 4", "CHAPTER IV — The Title", "Chapter 4: Subtitle"
   {
     re: /^(CHAPTER|CHAPITRE|KAPITTEL|KAPITEL|CAPITOLO|CAP[IÍ]TULO)\s+([IVXLCDM]+|\d+)(?:\s*[:.\u2014\u2013\-]\s*(.+))?$/i,
@@ -86,12 +96,20 @@ function detecterChapitres(texte) {
   const marqueurs = [];
   let pos = 0;
 
+  // Si le texte contient des marqueurs <<<CHAPITRE_>>>, on utilise UNIQUEMENT
+  // ce pattern et on ignore les regex génériques (chiffres, romains, etc.)
+  // pour éviter que des numéros de page soient détectés comme chapitres.
+  const aMarqueursExplicites = texte.includes('<<<CHAPITRE_');
+  const patternsActifs = aMarqueursExplicites
+    ? PATTERNS_CHAPITRES.filter(p => p.re.source.includes('<<<CHAPITRE_'))
+    : PATTERNS_CHAPITRES;
+
   for (let i = 0; i < lignes.length; i++) {
     const ligne = lignes[i].trim();
     const longueurLigne = lignes[i].length + 1; // +1 pour \n
 
     if (ligne.length > 0 && ligne.length < 80) { // Les titres sont courts
-      for (const pattern of PATTERNS_CHAPITRES) {
+      for (const pattern of patternsActifs) {
         const m = ligne.match(pattern.re);
         if (m) {
           marqueurs.push({

@@ -3,7 +3,7 @@ name: Add Book Pipeline
 on:
   push:
     paths:
-      - '_source/pending/*.pdf'
+      - '_source/pending/*.docx'
   workflow_dispatch:
     inputs:
       slug:
@@ -64,9 +64,6 @@ jobs:
       - name: Install Node dependencies
         run: npm ci
 
-      - name: Install system tools
-        run: sudo apt-get install -y poppler-utils
-
       - name: Install Python dependencies
         run: |
           pip install spacy
@@ -79,41 +76,32 @@ jobs:
           if [ -n "${{ github.event.inputs.slug }}" ]; then
             SLUG="${{ github.event.inputs.slug }}"
           else
-            # Chercher un PDF ajouté dans ce commit (--diff-filter=A = ajouts seulement)
-            PDF=$(git diff-tree --no-commit-id -r --name-only --diff-filter=A HEAD -- '_source/pending/*.pdf' | head -1)
-            # Fallback : prendre le premier PDF présent dans le dossier pending
-            if [ -z "$PDF" ]; then
-              PDF=$(ls _source/pending/*.pdf 2>/dev/null | head -1)
+            # Chercher un docx ajouté dans ce commit (--diff-filter=A = ajouts seulement)
+            DOCX=$(git diff-tree --no-commit-id -r --name-only --diff-filter=A HEAD -- '_source/pending/*.docx' | head -1)
+            # Fallback : prendre le premier docx présent dans le dossier pending
+            if [ -z "$DOCX" ]; then
+              DOCX=$(ls _source/pending/*.docx 2>/dev/null | head -1)
             fi
-            SLUG=$(basename "$PDF" .pdf)
+            SLUG=$(basename "$DOCX" .docx)
           fi
           echo "slug=$SLUG" >> $GITHUB_OUTPUT
           echo "📚 Livre à traiter: $SLUG"
 
-      - name: Validate config
-        run: |
-          FORCE_FLAG=""
-          if [ "${{ github.event.inputs.force }}" = "true" ]; then
-            FORCE_FLAG="--force"
-          fi
-          node scripts/validate-config.js "_source/pending/${{ steps.find-book.outputs.slug }}.json" $FORCE_FLAG
-
       # ── Pipeline ───────────────────────────────────────────────────────────
-      - name: Step 1 - Extract text from PDF
-        run: |
-          bash scripts/1-extract.sh \
-            "_source/pending/${{ steps.find-book.outputs.slug }}.pdf" \
-            "${{ steps.find-book.outputs.slug }}"
+      - name: Step 1 - Extract chapters from docx (mammoth)
+        run: node scripts/1-extract.js "${{ steps.find-book.outputs.slug }}"
 
-      - name: Step 1b - Clean text with Mistral AI
+      - name: Step 2 - Generate config JSON via Mistral
         env:
           MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
-        run: node scripts/1b-clean.js "${{ steps.find-book.outputs.slug }}"
+        run: node scripts/2-config.js "${{ steps.find-book.outputs.slug }}"
 
-      - name: Step 2 - Split into sentences
+      - name: Step 1b - Semantic segmentation via Mistral
+        env:
+          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
         run: |
           LANGUE_SOURCE=$(node -e "const c=require('./_source/pending/${{ steps.find-book.outputs.slug }}.json'); console.log(c.langueSource)")
-          node scripts/2-split.js "${{ steps.find-book.outputs.slug }}" "$LANGUE_SOURCE"
+          node scripts/1b-segment.js "${{ steps.find-book.outputs.slug }}" "$LANGUE_SOURCE"
 
       - name: Step 3 - Translate (with auto-retry on rate limits)
         env:
@@ -127,6 +115,8 @@ jobs:
             "$LANGUE_CIBLE"
 
       - name: Step 4 - Grammatical annotation
+        env:
+          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
         run: |
           LANGUE_SOURCE=$(node -e "const c=require('./_source/pending/${{ steps.find-book.outputs.slug }}.json'); console.log(c.langueSource)")
           LANGUE_CIBLE=$(node -e "const c=require('./_source/pending/${{ steps.find-book.outputs.slug }}.json'); console.log(c.langueCible)")
@@ -140,11 +130,11 @@ jobs:
           node scripts/5-generate.js \
             "_source/pending/${{ steps.find-book.outputs.slug }}.json"
 
-      # ── Déplacer le PDF dans processed/ ────────────────────────────────────
+      # ── Déplacer les fichiers dans processed/ ──────────────────────────────
       - name: Move files to processed
         run: |
           mkdir -p _source/processed
-          mv "_source/pending/${{ steps.find-book.outputs.slug }}.pdf" _source/processed/
+          mv "_source/pending/${{ steps.find-book.outputs.slug }}.docx" _source/processed/
           mv "_source/pending/${{ steps.find-book.outputs.slug }}.json" _source/processed/
 
       # ── Créer une Pull Request ──────────────────────────────────────────────
@@ -162,18 +152,18 @@ jobs:
           git checkout -b "$PR_BRANCH"
 
           git add "data/${SLUG}/" data/bibliotheque.ts
-          git add "_source/processed/${SLUG}.pdf" "_source/processed/${SLUG}.json" 2>/dev/null || true
-          git rm --cached "_source/pending/${SLUG}.pdf" "_source/pending/${SLUG}.json" 2>/dev/null || true
+          git add "_source/processed/${SLUG}.docx" "_source/processed/${SLUG}.json" 2>/dev/null || true
+          git rm --cached "_source/pending/${SLUG}.docx" "_source/pending/${SLUG}.json" 2>/dev/null || true
 
           git commit -m "feat: add book ${SLUG}"
           git push -f origin "$PR_BRANCH"
 
           gh pr create \
             --title "Nouveau livre : ${SLUG}" \
-            --body "Nouveau livre ${SLUG} ajoute automatiquement. Verifier la traduction et les annotations avant de merger." \
+            --body "Nouveau livre ${SLUG} ajouté automatiquement. Vérifier la traduction et les annotations avant de merger." \
             --base "$BASE_BRANCH" \
             --head "$PR_BRANCH" \
-          || echo "PR existe deja"
+          || echo "PR existe déjà"
 
       # ── Sauvegarde de la progression en cas d'échec ─────────────────────────
       - name: Save progress on failure

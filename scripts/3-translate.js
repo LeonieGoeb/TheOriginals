@@ -52,11 +52,20 @@ if (!fs.existsSync(inputPath)) {
   process.exit(1);
 }
 
-// Charger les données (depuis checkpoint si existant, sinon depuis split.json)
+// Charger les données depuis split.json, puis tenter une reprise depuis translated.json.
+// La reprise n'est valide que si le texte source de chaque paragraphe est identique ;
+// sinon le split.json a changé (nouvelle segmentation) et on repart de zéro.
 let data = JSON.parse(fs.readFileSync(inputPath, 'utf-8'));
 if (fs.existsSync(outputPath)) {
-  data = JSON.parse(fs.readFileSync(outputPath, 'utf-8'));
-  console.log('♻️  Reprise depuis la sauvegarde existante');
+  const cache = JSON.parse(fs.readFileSync(outputPath, 'utf-8'));
+  const extraireTextes = (chapitres) =>
+    chapitres.flatMap(ch => ch.paragraphes.map(p => p[langueSource] ?? '')).join('\x00');
+  if (extraireTextes(data) === extraireTextes(cache)) {
+    data = cache;
+    console.log('♻️  Reprise depuis la sauvegarde existante');
+  } else {
+    console.log('⚠️  Texte source modifié — nouvelle traduction complète');
+  }
 }
 
 // ── Appel DeepL ────────────────────────────────────────────────────────────────
