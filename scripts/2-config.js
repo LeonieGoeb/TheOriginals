@@ -66,12 +66,16 @@ async function appelMistral(prompt) {
   }, { maxTentatives: 3, delaiInitial: 5000 });
 }
 
-// Couleurs de couverture déterministes basées sur le slug
-const COULEURS_COUVERTURE = [
-  '#8B4513', '#2F4F4F', '#4B0082', '#8B0000',
-  '#006400', '#191970', '#800000', '#5C4033',
-  '#1C3A5E', '#3D2B1F',
-];
+// Couleurs de couverture par niveau CECRL — du plus clair (A1) au plus sombre (C2)
+// Le slug sert à départager les livres d'un même niveau (variation d'indice).
+const COULEURS_PAR_NIVEAU = {
+  A1: ['#A8D5A2', '#B5D5C5', '#A8C5B5'],
+  A2: ['#89B4CC', '#7FAEC8', '#9DC4D8'],
+  B1: ['#A599C2', '#9B8FBF', '#B0A8CC'],
+  B2: ['#C9A87C', '#C4A882', '#BFA070'],
+  C1: ['#8B7355', '#7A6548', '#9A8060'],
+  C2: ['#5C4033', '#4A3020', '#6A4A3A'],
+};
 
 async function main() {
   const { titreDoc, chapitres } = JSON.parse(fs.readFileSync(chaptersPath, 'utf-8'));
@@ -127,9 +131,10 @@ Return ONLY valid JSON, no markdown, no extra text.`;
   console.log(`   Langue      : ${langueSource}`);
   console.log(`   Niveau CECRL: ${detected.niveau}`);
 
-  // Couleur déterministe basée sur le slug
-  const idx = slug.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) % COULEURS_COUVERTURE.length;
-  const couvertureCouleur = COULEURS_COUVERTURE[idx];
+  // Couleur basée sur le niveau CECRL, le slug départage les livres d'un même niveau
+  const palette = COULEURS_PAR_NIVEAU[detected.niveau] ?? COULEURS_PAR_NIVEAU['B2'];
+  const idx = slug.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0) % palette.length;
+  const couvertureCouleur = palette[idx];
 
   const livreConfig = {
     slug,
