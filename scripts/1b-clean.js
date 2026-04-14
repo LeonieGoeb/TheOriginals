@@ -59,6 +59,13 @@ function protégerChapitres(texte) {
       const fenêtre = lignes.slice(Math.max(0, i - 5), Math.min(lignes.length, i + 6)).join('');
       const prèsDePageBreak = fenêtre.includes('\f');
 
+      // DEBUG temporaire
+      if (/^\d{1,3}$/.test(ligne)) {
+        const ctx = lignes.slice(Math.max(0, i - 3), Math.min(lignes.length, i + 4))
+          .map(l => JSON.stringify(l)).join(' | ');
+        console.log(`   DEBUG "${ligne}" isolée=${isolée} \f=${prèsDePageBreak} ctx: ${ctx}`);
+      }
+
       // Les mots-clés explicites sont toujours des chapitres, même en bas de page
       const motCléExplicite = /^(CHAPTER|CHAPITRE|KAPITTEL|KAPITEL|CAPITOLO|CAP[IÍ]TULO|ГЛАВА|ЧАСТЬ)\s+/i.test(ligne);
 
