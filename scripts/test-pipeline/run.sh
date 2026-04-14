@@ -16,13 +16,13 @@
 
 set -euo pipefail
 
-SLUG="${1:-}"
+FILENAME="${1:-}"
 SKIP_EXTRACT=false
 SKIP_CONFIG=false
 SKIP_SEGMENT=false
 
-if [ -z "$SLUG" ]; then
-  echo "❌ Usage: bash scripts/test-pipeline/run.sh <slug> [--skip-extract] [--skip-config] [--skip-segment]"
+if [ -z "$FILENAME" ]; then
+  echo "❌ Usage: bash scripts/test-pipeline/run.sh <slug[--lang]> [--skip-extract] [--skip-config] [--skip-segment]"
   exit 1
 fi
 
@@ -34,12 +34,24 @@ for arg in "${@:2}"; do
   esac
 done
 
+# Extraire la langue cible depuis le suffixe --<lang> (ex: my-book--de → de)
+# Le suffixe est normalisé en tiret simple dans le slug (my-book--de → my-book-de)
+# pour garantir l'unicité : my-book (fr) et my-book-de (de) coexistent sans conflit.
+if [[ "$FILENAME" =~ --([a-z]{2})$ ]]; then
+  LANGUE_CIBLE="${BASH_REMATCH[1]}"
+  BASE="${FILENAME%--${LANGUE_CIBLE}}"
+  SLUG="${BASE}-${LANGUE_CIBLE}"
+else
+  LANGUE_CIBLE="fr"
+  SLUG="$FILENAME"
+fi
+
 TMP="scripts/tmp/$SLUG"
 DOCX="_source/pending/$SLUG.docx"
 CONFIG="_source/pending/$SLUG.json"
 mkdir -p "$TMP"
 
-echo "📚 Livre : $SLUG"
+echo "📚 Livre : $SLUG  (langue cible : $LANGUE_CIBLE)"
 echo ""
 
 # ── Charger MISTRAL_API_KEY depuis .env si absent ───────────────────────────
@@ -86,7 +98,7 @@ else
     exit 1
   fi
   echo "🤖 Génération du config JSON via Mistral..."
-  node scripts/2-config.js "$SLUG"
+  node scripts/2-config.js "$SLUG" "$LANGUE_CIBLE"
   LANGUE_SOURCE=$(node -e "console.log(require('./$CONFIG').langueSource)")
   LANGUE_CIBLE=$(node  -e "console.log(require('./$CONFIG').langueCible)")
 fi

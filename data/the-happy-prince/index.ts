@@ -1,19 +1,21 @@
 import { Livre } from '../types';
-import chapitre01 from './chapitre-01';
+import chapitre00 from './chapitre-00';
 
 const theHappyPrince: Livre = {
   id: 'the-happy-prince',
-  titre: 'Le Prince Heureux',
-  titreOriginal: 'The Happy Prince',
-  auteur: 'Oscar Wilde',
-  auteurOriginal: 'Oscar Wilde',
+  titre: "THE HAPPY PRINCE",
+  titreOriginal: "THE HAPPY PRINCE",
+  auteur: "Oscar Wilde",
+  auteurOriginal: "Oscar Wilde",
   langueSource: 'en',
   langueCible: 'fr',
+  niveau: 'B1',
+  niveauNote: "Vocabulaire accessible mais syntaxe parfois complexe avec des phrases subordonnées et des descriptions littéraires.",
   gratuit: true,
-  couvertureCouleur: '#fef0c8',
-  niveau: 'B2',
-  niveauNote: "Anglais victorien littéraire d'Oscar Wilde, métaphores et dialogues élaborés, vocabulaire riche mais accessible",
-  chapitres: [chapitre01],
+  couvertureCouleur: "#1C3A5E",
+  chapitres: [
+    chapitre00,
+  ],
 };
 
 export default theHappyPrince;
