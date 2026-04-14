@@ -10,7 +10,7 @@ const theHappyPrince: Livre = {
   langueSource: 'en',
   langueCible: 'fr',
   niveau: 'B1',
-  niveauNote: "Vocabulaire accessible mais syntaxe parfois complexe avec des phrases subordonnées et des descriptions littéraires.",
+  niveauNote: "Vocabulaire accessible mais syntaxe parfois complexe avec des phrases longues et des subordonnées.",
   gratuit: true,
   couvertureCouleur: "#1C3A5E",
   chapitres: [
