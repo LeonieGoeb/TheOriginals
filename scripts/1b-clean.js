@@ -54,19 +54,7 @@ function protégerChapitres(texte) {
     const isolée = avant === '' && après === '';
 
     if (isolée && ligne.length > 0) {
-      // Exclure les numéros de page : ceux-ci apparaissent dans le raw.txt
-      // à proximité des sauts de page (\f). On vérifie une fenêtre de 5 lignes.
-      const fenêtre = lignes.slice(Math.max(0, i - 5), Math.min(lignes.length, i + 6)).join('');
-      const prèsDePageBreak = fenêtre.includes('\f');
-
-      // DEBUG temporaire
-      if (/^\d{1,3}$/.test(ligne)) {
-        const ctx = lignes.slice(Math.max(0, i - 3), Math.min(lignes.length, i + 4))
-          .map(l => JSON.stringify(l)).join(' | ');
-        console.log(`   DEBUG "${ligne}" isolée=${isolée} \f=${prèsDePageBreak} ctx: ${ctx}`);
-      }
-
-      // Les mots-clés explicites sont toujours des chapitres, même en bas de page
+      // Les mots-clés explicites sont toujours des chapitres
       const motCléExplicite = /^(CHAPTER|CHAPITRE|KAPITTEL|KAPITEL|CAPITOLO|CAP[IÍ]TULO|ГЛАВА|ЧАСТЬ)\s+/i.test(ligne);
 
       if (motCléExplicite) {
@@ -74,7 +62,14 @@ function protégerChapitres(texte) {
         continue;
       }
 
-      if (!prèsDePageBreak) {
+      // Détecter les numéros de page : ils sont suivis 2 lignes plus loin
+      // par une ligne de métadonnées InDesign (*.indd) ou une date d'impression.
+      // Les vrais titres de chapitre sont suivis directement par du texte narratif.
+      const ligne2 = i + 2 < lignes.length ? lignes[i + 2].trim() : '';
+      const ligne3 = i + 3 < lignes.length ? lignes[i + 3].trim() : '';
+      const estNuméroPage = ligne2.includes('.indd') || ligne3.includes('.indd');
+
+      if (!estNuméroPage) {
         // Chiffre arabe seul (1–99)
         if (/^\d{1,2}$/.test(ligne)) {
           résultat.push(`<<<CHAPITRE_Chapitre ${ligne}>>>`);

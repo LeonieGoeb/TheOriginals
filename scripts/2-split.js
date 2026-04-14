@@ -124,10 +124,6 @@ function detecterChapitres(texte) {
     }];
   }
 
-  // Afficher les marqueurs détectés pour débogage
-  console.log(`   📌 ${marqueurs.length} marqueur(s) brut(s) détecté(s) :`);
-  marqueurs.forEach(m => console.log(`      → "${m.titreOriginal}" (pos ${m.posHeader})`));
-
   // Trier par position dans le texte
   marqueurs.sort((a, b) => a.posHeader - b.posHeader);
 
