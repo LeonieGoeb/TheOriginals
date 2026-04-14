@@ -1,4 +1,4 @@
-<<Chapitre 1>>
+<<<CHAPITRE_Chapitre 1>>>
 1
 
 Siempre he envidiado la capacidad de olvidar que tie-
@@ -255,7 +255,7 @@ T-La Ciudad de Vapor.indd   22
  — ¿Cómo de mala?
 
 2
-<<Chapitre 2>>
+<<<CHAPITRE_Chapitre 2>>>
 
 Aquella  mañana  Blanca  se  convirtió  en  mi  primera 
 lectora, mi primera audiencia. Le conté como mejor 
@@ -572,7 +572,7 @@ tiempo.
 Sancti. Y ahora largo de aquí.
 
 3
-<<Chapitre 3>>
+<<<CHAPITRE_Chapitre 3>>>
 
 El padre Sebastián demostró ser un hombre de pala-
 bra. Yo acudía media hora antes y le ayudaba en  la 
