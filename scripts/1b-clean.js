@@ -83,9 +83,6 @@ DIALOGUE:
 REMOVING:
 7. Remove ALL non-story content: page numbers, print markers (e.g. "T-La Ciudad de Vapor.indd 22 5/10/20 11:08"), running headers, publisher info, copyright notices, and any other editorial/technical metadata.
 
-CHAPTERS:
-8. The text may contain chapter markers in the form <<Chapitre 1>>, <<Chapitre 2>>, etc. Convert each one to <<<CHAPITRE_Chapitre 1>>>, <<<CHAPITRE_Chapitre 2>>>, etc. on its own line. Preserve them EXACTLY — do not remove or modify them.
-
 If there is no story text at all in the input, return exactly: [EMPTY]
 
 Return ONLY the cleaned story text, nothing else.
@@ -130,23 +127,41 @@ async function nettoyerBloc(bloc) {
 // ── Main ───────────────────────────────────────────────────────────────────────
 
 async function main() {
-  const blocs = splitEnBlocs(convertirMarqueursManuels(texte));
-  console.log(`🧹 Nettoyage du texte via Mistral (${blocs.length} blocs)...`);
+  const texteConverti = convertirMarqueursManuels(texte);
 
-  const blocsNettoyés = [];
+  // Séparer le texte sur les marqueurs de chapitre.
+  // Les marqueurs ne sont JAMAIS envoyés à Mistral : on les isole, on nettoie
+  // uniquement le contenu entre eux, puis on recolle.
+  const parties = texteConverti.split(/(<<<CHAPITRE_[^>]+>>>)/);
+  // parties = [avant_ch1, "<<<CHAPITRE_...>>>", contenu_ch1, "<<<CHAPITRE_...>>>", ...]
 
-  for (let i = 0; i < blocs.length; i++) {
-    process.stdout.write(`\r   ${i + 1}/${blocs.length} blocs traités`);
+  // Compter le nombre total de blocs de contenu à traiter
+  const contenuParties = parties.filter((_, i) => !parties[i].startsWith('<<<CHAPITRE_'));
+  const totalBlocs = contenuParties.reduce((n, p) => n + splitEnBlocs(p.trim()).length, 0);
+  console.log(`🧹 Nettoyage du texte via Mistral (${totalBlocs} blocs)...`);
 
-    const nettoyé = await nettoyerBloc(blocs[i]);
-    blocsNettoyés.push(nettoyé);
-    // Respecter le rate limit du free tier (~1 req/s)
-    if (i < blocs.length - 1) {
-      await new Promise(r => setTimeout(r, 1200));
+  let blocsTraités = 0;
+  const résultat = [];
+
+  for (const partie of parties) {
+    if (partie.startsWith('<<<CHAPITRE_')) {
+      // Marqueur de chapitre : préservé tel quel, jamais envoyé à Mistral
+      résultat.push(partie);
+      continue;
+    }
+
+    const blocs = splitEnBlocs(partie.trim());
+    for (const bloc of blocs) {
+      process.stdout.write(`\r   ${++blocsTraités}/${totalBlocs} blocs traités`);
+      const nettoyé = await nettoyerBloc(bloc);
+      if (nettoyé) résultat.push(nettoyé);
+      if (blocsTraités < totalBlocs) {
+        await new Promise(r => setTimeout(r, 1200));
+      }
     }
   }
 
-  const texteNettoyé = blocsNettoyés.filter(b => b.length > 0).join('\n\n');
+  const texteNettoyé = résultat.filter(b => b.length > 0).join('\n\n');
   fs.writeFileSync(outputPath, texteNettoyé);
   console.log(`\n✅ Texte nettoyé → ${outputPath}`);
 }
