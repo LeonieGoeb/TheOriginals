@@ -35,6 +35,47 @@ if (!fs.existsSync(inputPath)) {
 
 const texte = fs.readFileSync(inputPath, 'utf-8');
 
+// ── Protection des titres de chapitres ────────────────────────────────────────
+// Transforme les titres potentiels en marqueurs AVANT l'envoi à Mistral,
+// pour éviter que Mistral les confonde avec des numéros de page et les supprime.
+// On se base sur le contexte : une ligne courte entourée de lignes vides.
+
+function protégerChapitres(texte) {
+  const lignes = texte.split('\n');
+  const résultat = [];
+
+  for (let i = 0; i < lignes.length; i++) {
+    const ligne = lignes[i].trim();
+    const avant  = i > 0              ? lignes[i - 1].trim() : '';
+    const après  = i < lignes.length - 1 ? lignes[i + 1].trim() : '';
+
+    // Condition : ligne isolée (entourée de lignes vides ou début/fin de texte)
+    const isolée = (avant === '' || avant === '\f') && (après === '' || après === '\f');
+
+    if (isolée && ligne.length > 0) {
+      // Chiffre arabe seul (1–99)
+      if (/^\d{1,2}$/.test(ligne)) {
+        résultat.push(`<<<CHAPITRE_Chapitre ${ligne}>>>`);
+        continue;
+      }
+      // Chiffre romain seul (II à LXXX, I exclu car ambigu avec pronom anglais)
+      if (/^(I{2,3}|IV|VI{0,3}|IX|XI{0,3}|XIV|XV|XVI{0,3}|XIX|XX|XXI{0,3}|XXIV|XXV|XXVI{0,3}|XXIX|XXX|XL|L|LI{0,3}|LX{0,3})$/i.test(ligne)) {
+        résultat.push(`<<<CHAPITRE_Chapitre ${ligne.toUpperCase()}>>>`);
+        continue;
+      }
+      // Mots-clés explicites : "Chapter IV", "Chapitre 3", "Капитул I", etc.
+      if (/^(CHAPTER|CHAPITRE|KAPITTEL|KAPITEL|CAPITOLO|CAP[IÍ]TULO|ГЛАВА|ЧАСТЬ)\s+/i.test(ligne)) {
+        résultat.push(`<<<CHAPITRE_${ligne}>>>`);
+        continue;
+      }
+    }
+
+    résultat.push(lignes[i]);
+  }
+
+  return résultat.join('\n');
+}
+
 // ── Découpage en blocs ─────────────────────────────────────────────────────────
 // On envoie ~1500 caractères par appel pour rester dans les limites du free tier
 // tout en donnant assez de contexte à Mistral.
@@ -76,7 +117,7 @@ REMOVING:
 7. Remove ALL non-story content: page numbers, print markers (e.g. "T-La Ciudad de Vapor.indd 22 5/10/20 11:08"), running headers, publisher info, copyright notices, and any other editorial/technical metadata.
 
 CHAPTERS:
-8. If the text contains a chapter or section break (a standalone number like "1", "2", a Roman numeral, or a heading like "Chapter IV", "Chapitre 3", "Глава I"), replace it with a marker on its own line: <<<CHAPITRE_titre>>> where titre is the chapter name (e.g. <<<CHAPITRE_Chapitre 1>>>, <<<CHAPITRE_Chapter IV>>>). Do NOT insert markers for page numbers — only for genuine chapter/section headings.
+8. Lines that look like <<<CHAPITRE_...>>> are chapter markers. Preserve them EXACTLY as-is on their own line — do NOT modify, translate, or remove them.
 
 If there is no story text at all in the input, return exactly: [EMPTY]
 
@@ -122,7 +163,8 @@ async function nettoyerBloc(bloc) {
 // ── Main ───────────────────────────────────────────────────────────────────────
 
 async function main() {
-  const blocs = splitEnBlocs(texte);
+  const texteProtégé = protégerChapitres(texte);
+  const blocs = splitEnBlocs(texteProtégé);
   console.log(`🧹 Nettoyage du texte via Mistral (${blocs.length} blocs)...`);
 
   const blocsNettoyés = [];
