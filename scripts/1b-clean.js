@@ -35,51 +35,37 @@ if (!fs.existsSync(inputPath)) {
 
 const texte = fs.readFileSync(inputPath, 'utf-8');
 
-// ── Protection des titres de chapitres ────────────────────────────────────────
-// Transforme les titres potentiels en marqueurs AVANT l'envoi à Mistral,
-// pour éviter que Mistral les confonde avec des numéros de page et les supprime.
-// On se base sur le contexte : une ligne courte entourée de lignes vides.
+// ── Balisage des candidats chapitres ──────────────────────────────────────────
+// Les lignes isolées (entourées de lignes vides) qui ressemblent à des titres
+// sont marquées avec [[NUM_...]] avant l'envoi à Mistral.
+// Mistral décide ensuite, grâce au contexte narratif, si c'est un chapitre
+// (→ <<<CHAPITRE_>>>`) ou un numéro de page (→ supprimé).
 
-function protégerChapitres(texte) {
+function baliserCandidats(texte) {
   const lignes = texte.split('\n');
   const résultat = [];
 
   for (let i = 0; i < lignes.length; i++) {
     const ligneRaw = lignes[i];
     const ligne = ligneRaw.trim();
-    const avant  = i > 0              ? lignes[i - 1].replace(/\f/g, '').trim() : '';
-    const après  = i < lignes.length - 1 ? lignes[i + 1].replace(/\f/g, '').trim() : '';
+    const avant = i > 0              ? lignes[i - 1].replace(/\f/g, '').trim() : '';
+    const après = i < lignes.length - 1 ? lignes[i + 1].replace(/\f/g, '').trim() : '';
 
     // Condition : ligne isolée (entourée de lignes vides)
     const isolée = avant === '' && après === '';
 
     if (isolée && ligne.length > 0) {
-      // Les mots-clés explicites sont toujours des chapitres
-      const motCléExplicite = /^(CHAPTER|CHAPITRE|KAPITTEL|KAPITEL|CAPITOLO|CAP[IÍ]TULO|ГЛАВА|ЧАСТЬ)\s+/i.test(ligne);
-
-      if (motCléExplicite) {
+      // Mots-clés explicites → chapitre certain, marqué directement
+      if (/^(CHAPTER|CHAPITRE|KAPITTEL|KAPITEL|CAPITOLO|CAP[IÍ]TULO|ГЛАВА|ЧАСТЬ)\s+/i.test(ligne)) {
         résultat.push(`<<<CHAPITRE_${ligne}>>>`);
         continue;
       }
 
-      // Détecter les numéros de page : ils sont suivis 2 lignes plus loin
-      // par une ligne de métadonnées InDesign (*.indd) ou une date d'impression.
-      // Les vrais titres de chapitre sont suivis directement par du texte narratif.
-      const ligne2 = i + 2 < lignes.length ? lignes[i + 2].trim() : '';
-      const ligne3 = i + 3 < lignes.length ? lignes[i + 3].trim() : '';
-      const estNuméroPage = ligne2.includes('.indd') || ligne3.includes('.indd');
-
-      if (!estNuméroPage) {
-        // Chiffre arabe seul (1–99)
-        if (/^\d{1,2}$/.test(ligne)) {
-          résultat.push(`<<<CHAPITRE_Chapitre ${ligne}>>>`);
-          continue;
-        }
-        // Chiffre romain seul (II à LXXX, I exclu car ambigu avec pronom anglais)
-        if (/^(I{2,3}|IV|VI{0,3}|IX|XI{0,3}|XIV|XV|XVI{0,3}|XIX|XX|XXI{0,3}|XXIV|XXV|XXVI{0,3}|XXIX|XXX|XL|L|LI{0,3}|LX{0,3})$/i.test(ligne)) {
-          résultat.push(`<<<CHAPITRE_Chapitre ${ligne.toUpperCase()}>>>`);
-          continue;
-        }
+      // Chiffre arabe (1–999) ou romain → tag neutre, Mistral tranche
+      if (/^\d{1,3}$/.test(ligne) ||
+          /^(I{1,3}|IV|VI{0,3}|IX|XI{0,3}|XIV|XV|XVI{0,3}|XIX|XX|XXI{0,3}|XXIV|XXV|XXVI{0,3}|XXIX|XXX|XL|L|LI{0,3}|LX{0,3})$/i.test(ligne)) {
+        résultat.push(`[[NUM_${ligne}]]`);
+        continue;
       }
     }
 
@@ -130,7 +116,10 @@ REMOVING:
 7. Remove ALL non-story content: page numbers, print markers (e.g. "T-La Ciudad de Vapor.indd 22 5/10/20 11:08"), running headers, publisher info, copyright notices, and any other editorial/technical metadata.
 
 CHAPTERS:
-8. Lines that look like <<<CHAPITRE_...>>> are chapter markers. Preserve them EXACTLY as-is on their own line — do NOT modify, translate, or remove them.
+8. Tags like [[NUM_1]], [[NUM_IV]], [[NUM_23]] mark isolated numbers found in the PDF. Use the surrounding story context to decide:
+   - If it introduces a new chapter or section → replace with <<<CHAPITRE_Chapitre N>>> on its own line (e.g. [[NUM_3]] → <<<CHAPITRE_Chapitre 3>>>)
+   - If it is a page number or any non-story content → remove it entirely
+9. Lines that already look like <<<CHAPITRE_...>>> are confirmed chapter markers. Preserve them EXACTLY as-is.
 
 If there is no story text at all in the input, return exactly: [EMPTY]
 
@@ -176,7 +165,7 @@ async function nettoyerBloc(bloc) {
 // ── Main ───────────────────────────────────────────────────────────────────────
 
 async function main() {
-  const texteProtégé = protégerChapitres(texte);
+  const texteProtégé = baliserCandidats(texte);
   const blocs = splitEnBlocs(texteProtégé);
   console.log(`🧹 Nettoyage du texte via Mistral (${blocs.length} blocs)...`);
 
