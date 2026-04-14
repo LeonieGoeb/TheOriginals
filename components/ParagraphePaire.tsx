@@ -53,7 +53,7 @@ export default function ParagraphePaire({
           style={[styles.btn, traductionVisible && styles.btnActive]}
           onPress={onToggleTraduction}
         >
-          <Text style={styles.btnText}>🇫🇷</Text>
+          <Text style={styles.btnText}>💬</Text>
         </TouchableOpacity>
       </View>
     </View>

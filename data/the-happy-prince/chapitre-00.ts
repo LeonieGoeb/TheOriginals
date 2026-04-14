@@ -2,8 +2,8 @@ import { Chapitre } from '../types';
 
 const chapitre00: Chapitre = {
   id: 'chapitre-00',
-  titre: "Préface",
-  titreOriginal: "Préface",
+  titre: "Chapitre 1",
+  titreOriginal: "Chapter 1",
   paragraphes: [
     {
       id: 'p1',

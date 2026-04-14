@@ -12,7 +12,7 @@ const theHappyPrince: Livre = {
   niveau: 'B1',
   niveauNote: "Vocabulaire accessible mais syntaxe parfois complexe avec des phrases subordonnées et des descriptions littéraires.",
   gratuit: true,
-  couvertureCouleur: "#1C3A5E",
+  couvertureCouleur: "#A599C2",
   chapitres: [
     chapitre00,
   ],

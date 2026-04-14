@@ -40,7 +40,7 @@ export default function BarreOutils({
         style={[styles.btn, traductionActive && styles.btnActive]}
         onPress={onToggleTraduction}
       >
-        <Text style={styles.btnText}>🇫🇷 Traduction</Text>
+        <Text style={styles.btnText}>💬 Traduction</Text>
       </TouchableOpacity>
       <View style={styles.sep} />
       <TouchableOpacity style={styles.btn} onPress={() => setShowPicker(true)}>

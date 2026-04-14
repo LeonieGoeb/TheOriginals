@@ -6,8 +6,8 @@ import chapitre03 from './chapitre-03';
 
 const laCiudadDeVapor: Livre = {
   id: 'la-ciudad-de-vapor',
-  titre: "La Cité de Vapeur",
-  titreOriginal: "La Ciudad de Vapor",
+  titre: "Blanca et l'Adieu",
+  titreOriginal: "Blanca y el Adiós",
   auteur: "Carlos Ruiz Zafón",
   auteurOriginal: "Carlos Ruiz Zafón",
   langueSource: 'es',
