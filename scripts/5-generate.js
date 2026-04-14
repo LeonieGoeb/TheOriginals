@@ -45,7 +45,9 @@ function tokenToTs(token, indent) {
 }
 
 function camelCase(str) {
-  return str.replace(/-([a-z0-9])/g, (_, l) => l.toUpperCase());
+  return str
+    .replace(/-+([a-zA-Z0-9])/g, (_, l) => l.toUpperCase())
+    .replace(/[^a-zA-Z0-9]/g, '');
 }
 
 // ── Génération des fichiers chapitres ──────────────────────────────────────────

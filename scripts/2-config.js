@@ -1,6 +1,7 @@
-// Usage: node scripts/2-config.js <slug>
+// Usage: node scripts/2-config.js <slug> [langueCible]
 // Génère automatiquement le fichier de config JSON à partir du chapters.json extrait.
-// Utilise Mistral pour détecter la langue, l'auteur et le niveau CECRL.
+// Utilise Mistral pour détecter la langue source, l'auteur et le niveau CECRL.
+// langueCible : optionnel, défaut "fr" (ex: "de", "en", "es"…)
 // Produit : _source/pending/<slug>.json
 
 require('dotenv').config();
@@ -9,18 +10,13 @@ const path = require('path');
 const config = require('./config');
 const { avecRetry } = require('./lib/retry');
 
-const [,, slug] = process.argv;
+const [,, slug, langueCibleArg] = process.argv;
 if (!slug) {
-  console.error('❌ Usage: node scripts/2-config.js <slug>');
+  console.error('❌ Usage: node scripts/2-config.js <slug> [langueCible]');
   process.exit(1);
 }
 
-const MISTRAL_KEY = process.env.MISTRAL_API_KEY;
-if (!MISTRAL_KEY) {
-  console.error('❌ MISTRAL_API_KEY manquante. Ajoute-la dans .env ou dans les secrets GitHub.');
-  process.exit(1);
-}
-
+const langueCible  = langueCibleArg || 'fr';
 const chaptersPath = path.join(config.tmpDir, slug, 'chapters.json');
 const outputPath   = path.join(config.pendingDir, `${slug}.json`);
 
@@ -30,12 +26,18 @@ if (!fs.existsSync(chaptersPath)) {
   process.exit(1);
 }
 
-// Idempotent : on ne régénère pas si le fichier existe déjà
+// Idempotent : on ne régénère pas si le fichier existe déjà (pas besoin de la clé)
 if (fs.existsSync(outputPath)) {
   console.log(`ℹ️  Config existante conservée : ${outputPath}`);
   const existing = JSON.parse(fs.readFileSync(outputPath, 'utf-8'));
   console.log(`   "${existing.titre}" (${existing.auteur}) · ${existing.langueSource} → ${existing.langueCible} · ${existing.niveau}`);
   process.exit(0);
+}
+
+const MISTRAL_KEY = process.env.MISTRAL_API_KEY;
+if (!MISTRAL_KEY) {
+  console.error('❌ MISTRAL_API_KEY manquante. Ajoute-la dans .env ou dans les secrets GitHub.');
+  process.exit(1);
 }
 
 async function appelMistral(prompt) {
@@ -136,7 +138,7 @@ Return ONLY valid JSON, no markdown, no extra text.`;
     auteur:           auteur,
     auteurOriginal:   detected.auteurOriginal || auteur,
     langueSource,
-    langueCible:      'fr',
+    langueCible,
     niveau:           detected.niveau   || 'B2',
     niveauNote:       detected.niveauNote || '',
     gratuit:          true,

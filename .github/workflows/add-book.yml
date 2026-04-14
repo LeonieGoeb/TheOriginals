@@ -74,7 +74,7 @@ jobs:
         id: find-book
         run: |
           if [ -n "${{ github.event.inputs.slug }}" ]; then
-            SLUG="${{ github.event.inputs.slug }}"
+            FILENAME="${{ github.event.inputs.slug }}"
           else
             # Chercher un docx ajouté dans ce commit (--diff-filter=A = ajouts seulement)
             DOCX=$(git diff-tree --no-commit-id -r --name-only --diff-filter=A HEAD -- '_source/pending/*.docx' | head -1)
@@ -82,10 +82,22 @@ jobs:
             if [ -z "$DOCX" ]; then
               DOCX=$(ls _source/pending/*.docx 2>/dev/null | head -1)
             fi
-            SLUG=$(basename "$DOCX" .docx)
+            FILENAME=$(basename "$DOCX" .docx)
+          fi
+          # Extraire la langue cible depuis le suffixe --<lang> (ex: my-book--de → de)
+          # Le suffixe est normalisé en tiret simple dans le slug (my-book--de → my-book-de)
+          # pour garantir l'unicité : my-book (fr) et my-book-de (de) coexistent sans conflit.
+          if [[ "$FILENAME" =~ --([a-z]{2})$ ]]; then
+            LANGUE_CIBLE="${BASH_REMATCH[1]}"
+            BASE="${FILENAME%--${LANGUE_CIBLE}}"
+            SLUG="${BASE}-${LANGUE_CIBLE}"
+          else
+            LANGUE_CIBLE="fr"
+            SLUG="$FILENAME"
           fi
           echo "slug=$SLUG" >> $GITHUB_OUTPUT
-          echo "📚 Livre à traiter: $SLUG"
+          echo "langue_cible=$LANGUE_CIBLE" >> $GITHUB_OUTPUT
+          echo "📚 Livre : $SLUG  (→ $LANGUE_CIBLE)"
 
       # ── Pipeline ───────────────────────────────────────────────────────────
       - name: Step 1 - Extract chapters from docx (mammoth)
@@ -94,7 +106,7 @@ jobs:
       - name: Step 2 - Generate config JSON via Mistral
         env:
           MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
-        run: node scripts/2-config.js "${{ steps.find-book.outputs.slug }}"
+        run: node scripts/2-config.js "${{ steps.find-book.outputs.slug }}" "${{ steps.find-book.outputs.langue_cible }}"
 
       - name: Step 1b - Semantic segmentation via Mistral
         env:
