@@ -35,37 +35,6 @@ if (!fs.existsSync(inputPath)) {
 
 const texte = fs.readFileSync(inputPath, 'utf-8');
 
-// ── Protection des marqueurs de chapitre ──────────────────────────────────────
-// Avant d'envoyer à Mistral, on détecte les lignes qui sont des titres de
-// chapitres (via les mêmes patterns que 2-split.js) et on les remplace par
-// des placeholders <<<CHAPITRE_titre>>> que Mistral est instruit de conserver.
-// Après nettoyage, 2-split.js reconnaît ces placeholders directement.
-
-const PATTERNS_CHAPITRES = [
-  { re: /^(CHAPTER|CHAPITRE|KAPITTEL|KAPITEL|CAPITOLO|CAP[IÍ]TULO)\s+([IVXLCDM]+|\d+)(?:\s*[:.\u2014\u2013\-]\s*(.+))?$/i,
-    titre: (m) => m[3] ? `${m[1]} ${m[2]} — ${m[3].trim()}` : `${m[1]} ${m[2]}` },
-  { re: /^(PART|PARTIE|PARTE|TEIL)\s+([IVXLCDM]+|\d+|\w+)(?:\s*[:.\u2014\u2013\-]\s*(.+))?$/i,
-    titre: (m) => m[3] ? `${m[1]} ${m[2]} — ${m[3].trim()}` : `${m[1]} ${m[2]}` },
-  { re: /^(ГЛАВА|Глава|ЧАСТЬ|Часть|РАЗДЕЛ|Раздел)\s+(.+?)(?:\s*[\u2014\u2013]\s*(.+))?$/,
-    titre: (m) => m[3] ? `${m[1]} ${m[2]} — ${m[3].trim()}` : `${m[1]} ${m[2]}` },
-  { re: /^(I{2,3}|IV|VI{0,3}|XI{0,3}|XIV|XV|XVI{0,3}|XIX|XX|XXI{0,3}|XXIV|XXV|XXVI{0,3}|XXIX|XXX|XL|L|LI{0,3}|LX{0,3})$/,
-    titre: (m) => `Chapitre ${m[1]}` },
-  { re: /^I$/, titre: () => 'Chapitre I' },
-  { re: /^(\d{1,3})\.?$/, titre: (m) => `Chapitre ${m[1]}` },
-];
-
-function protégerMarqueurs(texte) {
-  return texte.split('\n').map(ligne => {
-    const l = ligne.trim();
-    if (l.length === 0 || l.length >= 80) return ligne;
-    for (const p of PATTERNS_CHAPITRES) {
-      const m = l.match(p.re);
-      if (m) return `<<<CHAPITRE_${p.titre(m)}>>>`;
-    }
-    return ligne;
-  }).join('\n');
-}
-
 // ── Découpage en blocs ─────────────────────────────────────────────────────────
 // On envoie ~1500 caractères par appel pour rester dans les limites du free tier
 // tout en donnant assez de contexte à Mistral.
@@ -104,10 +73,10 @@ DIALOGUE:
 6. Each change of speaker or narrator = new paragraph (blank line between)
 
 REMOVING:
-7. Remove ALL non-story content: page numbers, print markers (e.g. "T-La Ciudad de Vapor.indd 22 5/10/20 11:08"), chapter headers repeated as running headers, publisher info, copyright notices, and any other editorial/technical metadata
+7. Remove ALL non-story content: page numbers, print markers (e.g. "T-La Ciudad de Vapor.indd 22 5/10/20 11:08"), running headers, publisher info, copyright notices, and any other editorial/technical metadata.
 
-PRESERVE:
-8. Keep any <<<CHAPITRE_...>>> markers exactly as they are — do not modify or remove them.
+CHAPTERS:
+8. If the text contains a chapter or section break (a standalone number like "1", "2", a Roman numeral, or a heading like "Chapter IV", "Chapitre 3", "Глава I"), replace it with a marker on its own line: <<<CHAPITRE_titre>>> where titre is the chapter name (e.g. <<<CHAPITRE_Chapitre 1>>>, <<<CHAPITRE_Chapter IV>>>). Do NOT insert markers for page numbers — only for genuine chapter/section headings.
 
 If there is no story text at all in the input, return exactly: [EMPTY]
 
@@ -153,8 +122,7 @@ async function nettoyerBloc(bloc) {
 // ── Main ───────────────────────────────────────────────────────────────────────
 
 async function main() {
-  const texteProtégé = protégerMarqueurs(texte);
-  const blocs = splitEnBlocs(texteProtégé);
+  const blocs = splitEnBlocs(texte);
   console.log(`🧹 Nettoyage du texte via Mistral (${blocs.length} blocs)...`);
 
   const blocsNettoyés = [];
