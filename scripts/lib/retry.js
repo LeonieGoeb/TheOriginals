@@ -40,11 +40,21 @@ async function avecRetry(fn, options = {}) {
         throw new ErreurQuotaMensuel();
       }
 
+      const estErreurRéseau =
+        err.cause?.code === 'ECONNRESET' ||
+        err.cause?.code === 'ETIMEDOUT' ||
+        err.cause?.code === 'ENOTFOUND' ||
+        err.cause?.code === 'UND_ERR_CONNECT_TIMEOUT' ||
+        err.message === 'fetch failed' ||
+        err.message?.includes('network') ||
+        err.message?.includes('timeout');
+
       const estRateLimitTemporaire =
         CODES_RATE_LIMIT_TEMPORAIRE.includes(err.status) ||
         CODES_RATE_LIMIT_TEMPORAIRE.includes(err.statusCode) ||
         err.message?.includes('rate limit') ||
-        err.message?.includes('Too Many Requests');
+        err.message?.includes('Too Many Requests') ||
+        estErreurRéseau;
 
       if (!estRateLimitTemporaire || tentative === maxTentatives) {
         throw err;
