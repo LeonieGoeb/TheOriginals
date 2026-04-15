@@ -1,16 +1,16 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import {
   View, Text, ScrollView, StyleSheet, TouchableOpacity,
-  Modal, Pressable, FlatList,
+  Modal, Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { COLORS } from '@/constants/colors';
-import { BIBLIOTHEQUE } from '@/data/bibliotheque';
 import { LANGUES } from '@/constants/langues';
 import { NIVEAUX } from '@/constants/niveaux';
 import CarteLivre from '@/components/CarteLivre';
+import { useBibliotheque } from '@/hooks/useBibliotheque';
 
 const STORAGE_KEY_LANGUE_CIBLE  = 'app_langue_cible';
 const STORAGE_KEY_LANGUE_SOURCE = 'app_langue_source';
@@ -88,6 +88,7 @@ function Dropdown({ value, options, labelFn, onChange }: DropdownProps) {
 
 export default function BibliothequeScreen() {
   const router = useRouter();
+  const { livres } = useBibliotheque();
   const [langueCible, setLangueCible] = useState<string>('all');
   const [langueSource, setLangueSource] = useState<string>('all');
   const [niveauChoisi, setNiveauChoisi] = useState<string>('all');
@@ -117,7 +118,7 @@ export default function BibliothequeScreen() {
     AsyncStorage.setItem(STORAGE_KEY_NIVEAU, code).catch(() => {});
   }, []);
 
-  const livresFiltres = BIBLIOTHEQUE.filter(l => {
+  const livresFiltres = livres.filter(l => {
     const matchCible  = langueCible  === 'all' || l.langueCible  === langueCible;
     const matchSource = langueSource === 'all' || l.langueSource === langueSource;
     const matchNiveau = niveauChoisi === 'all' || l.niveau       === niveauChoisi;

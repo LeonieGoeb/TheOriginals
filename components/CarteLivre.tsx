@@ -1,12 +1,12 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Livre } from '@/data/types';
+import { LivreInfo } from '@/data/types';
 import { COLORS } from '@/constants/colors';
 import { getLangue } from '@/constants/langues';
 import NiveauBadge from './NiveauBadge';
 
 interface CarteLivreProps {
-  livre: Livre;
+  livre: LivreInfo;
   onPress: () => void;
 }
 

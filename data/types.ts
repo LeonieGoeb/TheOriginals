@@ -20,7 +20,8 @@ export interface Chapitre {
   paragraphes: Paragraphe[];
 }
 
-export interface Livre {
+// Métadonnées seules (sans contenu des chapitres) — utilisées pour le catalogue CDN
+export interface LivreInfo {
   id: string;
   titre: string;
   titreOriginal: string;
@@ -28,9 +29,13 @@ export interface Livre {
   auteurOriginal: string;
   langueSource: string;
   langueCible: string;
-  chapitres: Chapitre[];
   gratuit: boolean;
   couvertureCouleur: string;
   niveau: CodeNiveau;
   niveauNote: string;
+}
+
+// Livre complet avec chapitres — chargé individuellement depuis le CDN
+export interface Livre extends LivreInfo {
+  chapitres: Chapitre[];
 }
