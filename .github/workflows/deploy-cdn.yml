@@ -1,0 +1,25 @@
+name: Deploy CDN (GitHub Pages)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'data/json/**'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy data/json/ to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./data/json
+          keep_files: false
+          commit_message: 'chore: update CDN catalog'
