@@ -14,14 +14,16 @@ const catalog: LivreInfo[] = [];
 
 for (const livre of BIBLIOTHEQUE) {
   const { chapitres: _chapitres, ...info } = livre as Livre;
-  catalog.push(info);
+  // version 1 pour les livres initiaux — le pipeline incrémente via Date.now()
+  const infoAvecVersion: LivreInfo = { ...info, version: info.version ?? 1 };
+  catalog.push(infoAvecVersion);
 
   const slugDir = path.join(JSON_DIR, livre.id);
   fs.mkdirSync(slugDir, { recursive: true });
 
   fs.writeFileSync(
     path.join(slugDir, 'book.json'),
-    JSON.stringify(livre, null, 2),
+    JSON.stringify({ ...livre, version: (livre as Livre).version ?? 1 }, null, 2),
   );
   console.log(`✅ data/json/${livre.id}/book.json`);
 }

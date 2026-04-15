@@ -33,6 +33,8 @@ export interface LivreInfo {
   couvertureCouleur: string;
   niveau: CodeNiveau;
   niveauNote: string;
+  /** Timestamp Unix (ms) de la dernière génération — utilisé pour invalider le cache local */
+  version?: number;
 }
 
 // Livre complet avec chapitres — chargé individuellement depuis le CDN

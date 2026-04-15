@@ -1,11 +1,40 @@
 import { useState, useEffect, useCallback } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system/legacy';
-import { Livre } from '@/data/types';
+import { Livre, LivreInfo } from '@/data/types';
 import { BIBLIOTHEQUE } from '@/data/bibliotheque';
 import { CDN_BASE_URL } from '@/constants/api';
 
+const CATALOG_CACHE_KEY = 'cdn_catalog_v1';
+
+async function getVersionCatalog(livreId: string): Promise<number | null> {
+  try {
+    const brut = await AsyncStorage.getItem(CATALOG_CACHE_KEY);
+    if (!brut) return null;
+    const { data } = JSON.parse(brut) as { ts: number; data: LivreInfo[] };
+    return data.find(l => l.id === livreId)?.version ?? null;
+  } catch {
+    return null;
+  }
+}
+
 function cheminLocal(livreId: string): string {
   return `${FileSystem.documentDirectory}books/${livreId}/book.json`;
+}
+
+async function telechargerDepuisCDN(livreId: string): Promise<Livre> {
+  const chemin = cheminLocal(livreId);
+  const repertoire = chemin.substring(0, chemin.lastIndexOf('/'));
+  await FileSystem.makeDirectoryAsync(repertoire, { intermediates: true });
+
+  const resultat = await FileSystem.downloadAsync(
+    `${CDN_BASE_URL}/${livreId}/book.json`,
+    chemin,
+  );
+  if (resultat.status !== 200) throw new Error(`HTTP ${resultat.status}`);
+
+  const contenu = await FileSystem.readAsStringAsync(chemin);
+  return JSON.parse(contenu) as Livre;
 }
 
 interface EtatLivreTelecharge {
@@ -37,9 +66,25 @@ export function useLivreTelecharge(livreId: string): EtatLivreTelecharge {
         const info = await FileSystem.getInfoAsync(cheminLocal(livreId));
         if (info.exists) {
           const contenu = await FileSystem.readAsStringAsync(cheminLocal(livreId));
-          if (!annule) {
-            setLivre(JSON.parse(contenu) as Livre);
-            setChargement(false);
+          const livreCache = JSON.parse(contenu) as Livre;
+
+          // Vérification de version : si le catalogue a une version plus récente → re-télécharger
+          const versionCatalog = await getVersionCatalog(livreId);
+          const estPerime =
+            versionCatalog !== null &&
+            livreCache.version !== undefined &&
+            versionCatalog > livreCache.version;
+
+          if (estPerime) {
+            try {
+              const livreNeuf = await telechargerDepuisCDN(livreId);
+              if (!annule) { setLivre(livreNeuf); setChargement(false); }
+            } catch {
+              // Échec du re-téléchargement → garder la version en cache
+              if (!annule) { setLivre(livreCache); setChargement(false); }
+            }
+          } else {
+            if (!annule) { setLivre(livreCache); setChargement(false); }
           }
           return;
         }
@@ -50,18 +95,12 @@ export function useLivreTelecharge(livreId: string): EtatLivreTelecharge {
       // 2. Repli sur le bundle TypeScript (livres embarqués)
       const bundle = BIBLIOTHEQUE.find(l => l.id === livreId);
       if (bundle) {
-        if (!annule) {
-          setLivre(bundle);
-          setChargement(false);
-        }
+        if (!annule) { setLivre(bundle); setChargement(false); }
         return;
       }
 
       // 3. Livre non disponible localement — téléchargement requis
-      if (!annule) {
-        setTelechargeNecessaire(true);
-        setChargement(false);
-      }
+      if (!annule) { setTelechargeNecessaire(true); setChargement(false); }
     }
 
     verifier();
@@ -71,23 +110,9 @@ export function useLivreTelecharge(livreId: string): EtatLivreTelecharge {
   const telecharger = useCallback(async () => {
     setChargement(true);
     setErreur(null);
-
     try {
-      const url = `${CDN_BASE_URL}/${livreId}/book.json`;
-      const chemin = cheminLocal(livreId);
-
-      // Créer le répertoire si nécessaire
-      const repertoire = chemin.substring(0, chemin.lastIndexOf('/'));
-      await FileSystem.makeDirectoryAsync(repertoire, { intermediates: true });
-
-      // Télécharger le fichier
-      const resultat = await FileSystem.downloadAsync(url, chemin);
-      if (resultat.status !== 200) {
-        throw new Error(`HTTP ${resultat.status}`);
-      }
-
-      const contenu = await FileSystem.readAsStringAsync(chemin);
-      setLivre(JSON.parse(contenu) as Livre);
+      const livreNeuf = await telechargerDepuisCDN(livreId);
+      setLivre(livreNeuf);
       setTelechargeNecessaire(false);
     } catch (e: unknown) {
       setErreur(e instanceof Error ? e.message : 'Erreur de téléchargement');

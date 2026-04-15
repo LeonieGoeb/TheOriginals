@@ -171,7 +171,7 @@ console.log(`   ✅ data/bibliotheque.ts réécrit (${livresExistants.length} li
 const jsonDir = path.join(config.dataDir, 'json');
 fs.mkdirSync(jsonDir, { recursive: true });
 
-// book.json : livre complet (même structure que le TypeScript, en JSON pur)
+// book.json : livre complet avec version = timestamp de génération
 const livreJson = {
   id: slug,
   titre, titreOriginal, auteur, auteurOriginal,
@@ -179,6 +179,7 @@ const livreJson = {
   niveau, niveauNote,
   gratuit: gratuit ?? true,
   couvertureCouleur: couvertureCouleur ?? '#f5efe3',
+  version: Date.now(),
   chapitres: data.map(ch => ({
     id: ch.id,
     titre: ch.titre,
@@ -205,7 +206,6 @@ if (fs.existsSync(catalogPath)) {
   try { catalog = JSON.parse(fs.readFileSync(catalogPath, 'utf-8')); } catch {}
 }
 
-// Remplacer ou ajouter l'entrée du livre courant
 const { chapitres: _chapitres, ...livreInfo } = livreJson;
 const idx = catalog.findIndex(l => l.id === slug);
 if (idx >= 0) catalog[idx] = livreInfo;
