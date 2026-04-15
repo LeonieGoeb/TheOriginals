@@ -1,0 +1,44 @@
+[
+  {
+    "id": "anna-karenine",
+    "titre": "Anna Karénine",
+    "titreOriginal": "Анна Каренина",
+    "auteur": "Léon Tolstoï",
+    "auteurOriginal": "Лев Николаевич Толстой",
+    "langueSource": "ru",
+    "langueCible": "fr",
+    "gratuit": true,
+    "couvertureCouleur": "#ede0c8",
+    "niveau": "C2",
+    "niveauNote": "Syntaxe russe classique très dense, phrases longues, vocabulaire littéraire du XIXe",
+    "version": 1
+  },
+  {
+    "id": "la-ciudad-de-vapor",
+    "titre": "Blanca et l'Adieu",
+    "titreOriginal": "Blanca y el Adiós",
+    "auteur": "Carlos Ruiz Zafón",
+    "auteurOriginal": "Carlos Ruiz Zafón",
+    "langueSource": "es",
+    "langueCible": "en",
+    "niveau": "B2",
+    "niveauNote": "Espagnol littéraire contemporain de Ruiz Zafón — style vivant, dialogues naturels, quelques tournures idiomatiques.",
+    "gratuit": true,
+    "couvertureCouleur": "#e8f0f8",
+    "version": 1
+  },
+  {
+    "id": "the-happy-prince",
+    "titre": "THE HAPPY PRINCE",
+    "titreOriginal": "THE HAPPY PRINCE",
+    "auteur": "Oscar Wilde",
+    "auteurOriginal": "Oscar Wilde",
+    "langueSource": "en",
+    "langueCible": "fr",
+    "niveau": "B1",
+    "niveauNote": "Vocabulaire accessible mais syntaxe parfois complexe avec des phrases subordonnées et des descriptions littéraires.",
+    "gratuit": true,
+    "couvertureCouleur": "#A599C2",
+    "version": 1
+  }
+]

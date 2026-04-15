@@ -166,4 +166,52 @@ ${bibItems}
 fs.writeFileSync(bibPath, bibContent);
 console.log(`   ✅ data/bibliotheque.ts réécrit (${livresExistants.length} livre(s))`);
 
+// ── Génération des fichiers JSON pour le CDN ───────────────────────────────────
+
+const jsonDir = path.join(config.dataDir, 'json');
+fs.mkdirSync(jsonDir, { recursive: true });
+
+// book.json : livre complet avec version = timestamp de génération
+const livreJson = {
+  id: slug,
+  titre, titreOriginal, auteur, auteurOriginal,
+  langueSource, langueCible,
+  niveau, niveauNote,
+  gratuit: gratuit ?? true,
+  couvertureCouleur: couvertureCouleur ?? '#f5efe3',
+  version: Date.now(),
+  chapitres: data.map(ch => ({
+    id: ch.id,
+    titre: ch.titre,
+    titreOriginal: ch.titreOriginal || ch.titre,
+    paragraphes: ch.paragraphes.map(para => ({
+      id: para.id,
+      textes: {
+        [langueSource]: para[`tokens_${langueSource}`] || [],
+        [langueCible]:  para[`tokens_${langueCible}`]  || [],
+      },
+    })),
+  })),
+};
+
+const slugJsonDir = path.join(jsonDir, slug);
+fs.mkdirSync(slugJsonDir, { recursive: true });
+fs.writeFileSync(path.join(slugJsonDir, 'book.json'), JSON.stringify(livreJson, null, 2));
+console.log(`   ✅ data/json/${slug}/book.json`);
+
+// catalog.json : fusion avec les entrées existantes
+const catalogPath = path.join(jsonDir, 'catalog.json');
+let catalog = [];
+if (fs.existsSync(catalogPath)) {
+  try { catalog = JSON.parse(fs.readFileSync(catalogPath, 'utf-8')); } catch {}
+}
+
+const { chapitres: _chapitres, ...livreInfo } = livreJson;
+const idx = catalog.findIndex(l => l.id === slug);
+if (idx >= 0) catalog[idx] = livreInfo;
+else catalog.push(livreInfo);
+
+fs.writeFileSync(catalogPath, JSON.stringify(catalog, null, 2));
+console.log(`   ✅ data/json/catalog.json (${catalog.length} livre(s))`);
+
 console.log('\n✅ Génération terminée');

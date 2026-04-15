@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
-import { View, ScrollView, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, ScrollView, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter, useNavigation } from 'expo-router';
 import { COLORS } from '@/constants/colors';
-import { BIBLIOTHEQUE } from '@/data/bibliotheque';
+import { useLivreTelecharge } from '@/hooks/useLivreTelecharge';
 import { useLecteur } from '@/hooks/useLecteur';
 import BarreOutils from '@/components/BarreOutils';
 import ParagraphePaire from '@/components/ParagraphePaire';
@@ -13,12 +13,14 @@ export default function LecteurScreen() {
   const router = useRouter();
   const navigation = useNavigation();
 
-  const livre = BIBLIOTHEQUE.find(l => l.id === livreId);
+  const { livre, chargement } = useLivreTelecharge(livreId ?? '');
+
   const chapitreIndex = livre?.chapitres.findIndex(c => c.id === chapitreId) ?? -1;
   const chapitre = chapitreIndex >= 0 ? livre!.chapitres[chapitreIndex] : undefined;
-  const chapitresSuivant = chapitreIndex >= 0 && chapitreIndex < (livre?.chapitres.length ?? 0) - 1
-    ? livre!.chapitres[chapitreIndex + 1]
-    : null;
+  const chapitreSuivant =
+    chapitreIndex >= 0 && chapitreIndex < (livre?.chapitres.length ?? 0) - 1
+      ? livre!.chapitres[chapitreIndex + 1]
+      : null;
 
   const {
     analyseModeGlobal,
@@ -32,10 +34,16 @@ export default function LecteurScreen() {
   } = useLecteur(chapitreId ?? '');
 
   useEffect(() => {
-    if (chapitre) {
-      navigation.setOptions({ title: chapitre.titre });
-    }
+    if (chapitre) navigation.setOptions({ title: chapitre.titre });
   }, [chapitre, navigation]);
+
+  if (chargement) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color={COLORS.accent} />
+      </View>
+    );
+  }
 
   if (!livre || !chapitre) {
     return (
@@ -77,14 +85,14 @@ export default function LecteurScreen() {
           />
         ))}
         <View style={styles.footer}>
-          {chapitresSuivant ? (
+          {chapitreSuivant ? (
             <TouchableOpacity
               style={styles.nextBtn}
-              onPress={() => router.replace(`/livre/${livreId}/${chapitresSuivant.id}`)}
+              onPress={() => router.replace(`/livre/${livreId}/${chapitreSuivant.id}`)}
               activeOpacity={0.75}
             >
               <Text style={styles.nextBtnText}>
-                {chapitresSuivant.titre} →
+                {chapitreSuivant.titre} →
               </Text>
             </TouchableOpacity>
           ) : (

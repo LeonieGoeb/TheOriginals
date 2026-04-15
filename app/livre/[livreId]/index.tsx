@@ -1,25 +1,46 @@
-import React from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter, useNavigation } from 'expo-router';
-import { useEffect } from 'react';
 import { COLORS } from '@/constants/colors';
-import { BIBLIOTHEQUE } from '@/data/bibliotheque';
 import { getLangue } from '@/constants/langues';
 import NiveauBadge from '@/components/NiveauBadge';
+import { useLivreTelecharge } from '@/hooks/useLivreTelecharge';
 
 export default function ChapitresScreen() {
   const { livreId } = useLocalSearchParams<{ livreId: string }>();
   const router = useRouter();
   const navigation = useNavigation();
 
-  const livre = BIBLIOTHEQUE.find(l => l.id === livreId);
+  const { livre, chargement, telechargeNecessaire, erreur, telecharger } =
+    useLivreTelecharge(livreId ?? '');
 
   useEffect(() => {
-    if (livre) {
-      navigation.setOptions({ title: livre.titre });
-    }
+    if (livre) navigation.setOptions({ title: livre.titre });
   }, [livre, navigation]);
+
+  if (chargement) {
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color={COLORS.accent} />
+      </View>
+    );
+  }
+
+  if (telechargeNecessaire) {
+    return (
+      <View style={styles.center}>
+        <Text style={styles.downloadTitle}>Livre non téléchargé</Text>
+        <Text style={styles.downloadSub}>
+          Ce livre n'est pas encore disponible hors-ligne.
+        </Text>
+        {erreur && <Text style={styles.erreurText}>{erreur}</Text>}
+        <TouchableOpacity style={styles.downloadBtn} onPress={telecharger} activeOpacity={0.75}>
+          <Text style={styles.downloadBtnText}>⬇ Télécharger</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   if (!livre) {
     return (
@@ -33,6 +54,7 @@ export default function ChapitresScreen() {
   const drapeauCible  = getLangue(livre.langueCible).drapeau;
   const langueSourceNom = getLangue(livre.langueSource).nom;
   const langueCibleNom  = getLangue(livre.langueCible).nom;
+
   return (
     <SafeAreaView style={styles.safe}>
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
@@ -86,10 +108,40 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: COLORS.bg,
+    padding: 24,
+    gap: 12,
   },
   errorText: {
     color: COLORS.textMid,
     fontSize: 16,
+  },
+  downloadTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: COLORS.textDark,
+    textAlign: 'center',
+  },
+  downloadSub: {
+    fontSize: 14,
+    color: COLORS.textLight,
+    textAlign: 'center',
+  },
+  erreurText: {
+    fontSize: 13,
+    color: '#cc2020',
+    textAlign: 'center',
+  },
+  downloadBtn: {
+    marginTop: 8,
+    backgroundColor: COLORS.accent,
+    paddingHorizontal: 28,
+    paddingVertical: 14,
+    borderRadius: 8,
+  },
+  downloadBtnText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '600',
   },
   titreOriginal: {
     fontSize: 28,
