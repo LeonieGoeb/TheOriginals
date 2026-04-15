@@ -41,8 +41,3 @@ export interface LivreInfo {
 export interface Livre extends LivreInfo {
   chapitres: Chapitre[];
 }
-
-// Livre complet avec chapitres — chargé individuellement depuis le CDN
-export interface Livre extends LivreInfo {
-  chapitres: Chapitre[];
-}
