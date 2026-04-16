@@ -23,8 +23,11 @@ export function useBibliotheque() {
       try {
         const brut = await AsyncStorage.getItem(CACHE_KEY);
         if (brut) {
-          const { ts, data } = JSON.parse(brut) as { ts: number; data: LivreInfo[] };
+          const { ts, data: cached } = JSON.parse(brut) as { ts: number; data: LivreInfo[] };
           if (Date.now() - ts < CACHE_TTL_MS) {
+            // Fusionner le cache avec le bundle pour ne jamais perdre un livre
+            const idsCached = new Set(cached.map((l: LivreInfo) => l.id));
+            const data = [...cached, ...REPLI.filter(l => !idsCached.has(l.id))];
             if (!annule) {
               setLivres(data);
               setChargement(false);
@@ -40,7 +43,10 @@ export function useBibliotheque() {
       try {
         const rep = await fetch(`${CDN_BASE_URL}/catalog.json`);
         if (!rep.ok) throw new Error(`HTTP ${rep.status}`);
-        const data = (await rep.json()) as LivreInfo[];
+        const cdn = (await rep.json()) as LivreInfo[];
+        // Fusionner : garder les livres CDN + ajouter les livres bundle absents du CDN
+        const idsCdn = new Set(cdn.map(l => l.id));
+        const data = [...cdn, ...REPLI.filter(l => !idsCdn.has(l.id))];
         if (!annule) setLivres(data);
         await AsyncStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data }));
       } catch (e: unknown) {
