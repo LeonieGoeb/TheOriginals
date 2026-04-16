@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, ScrollView, Modal, Pressable } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet, Modal, Pressable } from 'react-native';
 import { COLORS } from '@/constants/colors';
 import LegendePills from './LegendePills';
 
@@ -27,27 +27,33 @@ export default function BarreOutils({
 
   return (
     <View style={styles.container}>
-      <LegendePills />
-      <View style={styles.sep} />
-      <TouchableOpacity
-        style={[styles.btn, analyseActive && styles.btnActive]}
-        onPress={onToggleAnalyse}
-      >
-        <Text style={styles.btnText}>🔍 Analyse</Text>
-      </TouchableOpacity>
-      <View style={styles.sep} />
-      <TouchableOpacity
-        style={[styles.btn, traductionActive && styles.btnActive]}
-        onPress={onToggleTraduction}
-      >
-        <Text style={styles.btnText}>💬 Traduction</Text>
-      </TouchableOpacity>
-      <View style={styles.sep} />
-      <TouchableOpacity style={styles.btn} onPress={() => setShowPicker(true)}>
-        <Text style={styles.btnText} numberOfLines={1}>
-          {chapitreActuel?.titre ?? '—'}
-        </Text>
-      </TouchableOpacity>
+      {/* Ligne 1 : légende grammaticale */}
+      <View style={styles.ligne}>
+        <LegendePills />
+      </View>
+
+      {/* Ligne 2 : boutons d'action + sélecteur de chapitre */}
+      <View style={styles.ligne}>
+        <TouchableOpacity
+          style={[styles.btn, analyseActive && styles.btnActive]}
+          onPress={onToggleAnalyse}
+        >
+          <Text style={styles.btnText}>🔍 Analyse</Text>
+        </TouchableOpacity>
+        <View style={styles.sep} />
+        <TouchableOpacity
+          style={[styles.btn, traductionActive && styles.btnActive]}
+          onPress={onToggleTraduction}
+        >
+          <Text style={styles.btnText}>💬 Traduction</Text>
+        </TouchableOpacity>
+        <View style={styles.sep} />
+        <TouchableOpacity style={[styles.btn, styles.btnChapitre]} onPress={() => setShowPicker(true)}>
+          <Text style={styles.btnText} numberOfLines={1}>
+            {chapitreActuel?.titre ?? '—'}
+          </Text>
+        </TouchableOpacity>
+      </View>
 
       <Modal visible={showPicker} transparent animationType="fade">
         <Pressable style={styles.overlay} onPress={() => setShowPicker(false)}>
@@ -75,20 +81,27 @@ export default function BarreOutils({
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flexWrap: 'nowrap',
+    flexDirection: 'column',
     paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingVertical: 6,
     backgroundColor: COLORS.bgBar,
     borderBottomWidth: 1,
     borderBottomColor: COLORS.border,
+    gap: 6,
+  },
+  ligne: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 6,
   },
   sep: {
     width: 1,
     height: 20,
     backgroundColor: COLORS.border,
+  },
+  btnChapitre: {
+    flex: 1,
+    minWidth: 0,
   },
   btn: {
     paddingHorizontal: 8,

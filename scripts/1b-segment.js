@@ -1,6 +1,7 @@
 // Usage: node scripts/1b-segment.js <slug> <langueSource>
-// Segmente les paragraphes Word en blocs de lecture sémantiques (~3-5 phrases)
-// en utilisant Mistral pour regrouper intelligemment les paragraphes.
+// Segmente les paragraphes Word en blocs de lecture courts (1-2 phrases max).
+// - Si un paragraphe est court (≤2 phrases estimées) → gardé tel quel
+// - Si un paragraphe est long → Mistral le découpe en phrases individuelles
 //
 // Lit    : scripts/tmp/<slug>/chapters.json
 // Produit: scripts/tmp/<slug>/split.json
@@ -46,31 +47,28 @@ if (fs.existsSync(outputPath)) {
 
 // ── Appel Mistral ──────────────────────────────────────────────────────────────
 
-async function segmenterChapitre(paragraphesWord) {
-  // Fallback naïf si le chapitre est très court
-  if (paragraphesWord.length <= 3) {
-    return [paragraphesWord.join(' ')];
-  }
+// Estime le nombre de phrases dans un texte (ponctuation de fin de phrase)
+function compterPhrases(texte) {
+  const fins = texte.match(/[.!?…»]+(\s|$)/g);
+  return fins ? fins.length : 1;
+}
 
-  // Numéroter les paragraphes pour que Mistral puisse les référencer
-  const numbered = paragraphesWord.map((p, i) => `[${i}] ${p}`).join('\n');
+// Découpe un paragraphe long en phrases individuelles via Mistral
+async function decouperParagraphe(texte) {
+  const prompt = `You are processing a paragraph from a literary text for a language learning app.
 
-  const prompt = `You are processing a chapter of a literary text for a language learning app.
-The chapter has been split into Word paragraph blocks (labeled [0], [1], [2]...).
-
-Task: group consecutive blocks into semantic reading units of 3-5 sentences each.
+Task: split this paragraph into individual sentences. Each sentence becomes its own reading unit.
 Rules:
-- Never split a sentence across groups.
-- Keep dialogue exchanges (lines starting with — or -) together in one group.
-- Respect natural scene or topic changes as group boundaries.
-- Each group should be a coherent reading unit, not too short (>1 sentence) and not too long.
+- Never merge two sentences into one unit.
+- A dialogue line starting with — or - is one unit.
+- Keep punctuation attached to the sentence it belongs to.
+- Return each sentence exactly as written, do not rephrase or summarize.
 
-Return JSON: {"blocs": ["full text of group 1", "full text of group 2", ...]}
-Each string = the concatenated text of the grouped blocks (joined with a single space).
-Do NOT include the [N] labels in the output. Return ONLY valid JSON.
+Return JSON: {"phrases": ["sentence 1", "sentence 2", ...]}
+Return ONLY valid JSON.
 
-Chapter paragraphs:
-${numbered}`;
+Paragraph:
+${texte}`;
 
   return avecRetry(async () => {
     const response = await fetch('https://api.mistral.ai/v1/chat/completions', {
@@ -98,21 +96,38 @@ ${numbered}`;
     const content = json.choices[0].message.content;
     const parsed  = JSON.parse(content);
 
-    const blocs = parsed.blocs;
-    if (!Array.isArray(blocs) || blocs.length === 0) {
-      throw new Error('Réponse Mistral invalide : "blocs" attendu');
+    const phrases = parsed.phrases;
+    if (!Array.isArray(phrases) || phrases.length === 0) {
+      throw new Error('Réponse Mistral invalide : "phrases" attendu');
     }
-    return blocs.filter(b => b && b.trim().length > 0);
+    return phrases.filter(p => p && p.trim().length > 0);
 
   }, { maxTentatives: 3, delaiInitial: 5000 });
 }
 
-// ── Fallback naïf : regroupe les paragraphes par lots de N ──────────────────
-function segmenterNaif(paragraphes, tailleGroupe = 3) {
+// Traite un chapitre : paragraphes courts → gardés tels quels, longs → découpés par Mistral
+async function segmenterChapitre(paragraphesWord) {
+  const SEUIL_PHRASES = 2; // au-delà de ce nombre de phrases → on découpe
   const blocs = [];
-  for (let i = 0; i < paragraphes.length; i += tailleGroupe) {
-    blocs.push(paragraphes.slice(i, i + tailleGroupe).join(' '));
+
+  for (const para of paragraphesWord) {
+    const nbPhrases = compterPhrases(para);
+    if (nbPhrases <= SEUIL_PHRASES) {
+      // Paragraphe court : on le garde tel quel
+      blocs.push(para);
+    } else {
+      // Paragraphe long : on demande à Mistral de le découper
+      try {
+        const phrases = await decouperParagraphe(para);
+        blocs.push(...phrases);
+      } catch (err) {
+        // Fallback : garder le paragraphe entier plutôt que de perdre du contenu
+        console.warn(`      ⚠️  Découpage échoué (${err.message}) — paragraphe gardé entier`);
+        blocs.push(para);
+      }
+    }
   }
+
   return blocs;
 }
 
@@ -121,8 +136,9 @@ function segmenterNaif(paragraphes, tailleGroupe = 3) {
 async function main() {
   const { titreDoc, chapitres } = JSON.parse(fs.readFileSync(chaptersPath, 'utf-8'));
 
-  console.log(`✂️  Segmentation sémantique via Mistral : "${titreDoc}"`);
-  console.log(`   ${chapitres.length} chapitre(s) à traiter`);
+  console.log(`✂️  Segmentation en phrases : "${titreDoc}"`);
+  console.log(`   ${chapitres.length} chapitre(s) à traiter (paragraphes longs → découpés par Mistral)`);
+
 
   const result = [...resultExistant];
   let numChapitre = 0;
@@ -156,15 +172,8 @@ async function main() {
 
     console.log(`   📖 ${idChapitre} "${titre}" — ${paragraphesWord.length} paragraphes Word...`);
 
-    let blocs;
-    try {
-      blocs = await segmenterChapitre(paragraphesWord);
-      console.log(`      → ${blocs.length} blocs de lecture (via Mistral)`);
-    } catch (err) {
-      console.warn(`      ⚠️  Mistral échoué (${err.message}) — fallback naïf`);
-      blocs = segmenterNaif(paragraphesWord);
-      console.log(`      → ${blocs.length} blocs de lecture (fallback naïf)`);
-    }
+    const blocs = await segmenterChapitre(paragraphesWord);
+    console.log(`      → ${blocs.length} blocs de lecture`);
 
     const paragraphes = blocs.map((bloc, j) => ({
       id: `p${j + 1}`,
