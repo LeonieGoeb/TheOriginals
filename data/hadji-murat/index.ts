@@ -12,7 +12,7 @@ const hadjiMurat: Livre = {
   langueSource: 'ru',
   langueCible: 'fr',
   niveau: 'B2',
-  niveauNote: "Vocabulaire riche et descriptif, phrases complexes avec subordonnées, mais contexte narratif accessible.",
+  niveauNote: "Vocabulaire riche et descriptif, phrases complexes avec subordonnées, style littéraire exigeant.",
   gratuit: true,
   couvertureCouleur: "#C9A87C",
   chapitres: [
