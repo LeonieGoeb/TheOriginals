@@ -55,8 +55,20 @@ async function main() {
 
     const nettoyerHtml = s => s.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").trim();
 
+    // Paragraphe qui ne contient qu'un chiffre romain ou arabe → marqueur de chapitre
+    const estMarqueur = t =>
+      /^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/i.test(t) && t.length > 0
+      || /^\d{1,3}$/.test(t);
+
     if (h1) {
-      titreDoc = nettoyerHtml(h1[1]);
+      const texte = nettoyerHtml(h1[1]);
+      if (estMarqueur(texte)) {
+        // H1 mal stylé qui est en réalité un marqueur de chapitre
+        if (chapCourant && chapCourant.paragraphes.length > 0) chapitres.push(chapCourant);
+        chapCourant = { titre: texte, paragraphes: [] };
+      } else {
+        titreDoc = texte;
+      }
     } else if (h2 || h3) {
       // Nouveau chapitre
       if (chapCourant && chapCourant.paragraphes.length > 0) {
@@ -69,6 +81,13 @@ async function main() {
     } else if (p) {
       const texte = nettoyerHtml(p[1]);
       if (!texte) continue;
+
+      if (estMarqueur(texte)) {
+        // Paragraphe normal qui est en réalité un marqueur de chapitre
+        if (chapCourant && chapCourant.paragraphes.length > 0) chapitres.push(chapCourant);
+        chapCourant = { titre: texte, paragraphes: [] };
+        continue;
+      }
 
       if (!chapCourant) {
         // Texte avant le premier chapitre (sous-titre, dédicace…)

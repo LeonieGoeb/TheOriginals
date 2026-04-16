@@ -58,7 +58,7 @@ jobs:
           path: scripts/tmp
           key: pipeline-${{ steps.find-book.outputs.slug }}-${{ github.run_id }}
           restore-keys: |
-            pipeline-${{ steps.find-book.outputs.slug }}-
+            pipeline-${{ steps.find-book.outputs.slug }}-${{ github.sha }}-
 
       # ── Installation ───────────────────────────────────────────────────────
       - name: Install Node dependencies
@@ -163,7 +163,7 @@ jobs:
 
           git checkout -b "$PR_BRANCH"
 
-          git add "data/${SLUG}/" data/bibliotheque.ts
+          git add "data/${SLUG}/" "data/json/"
           git add "_source/processed/${SLUG}.docx" "_source/processed/${SLUG}.json" 2>/dev/null || true
           git rm --cached "_source/pending/${SLUG}.docx" "_source/pending/${SLUG}.json" 2>/dev/null || true
 
