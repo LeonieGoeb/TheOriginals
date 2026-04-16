@@ -5,7 +5,8 @@ const fs = require('fs');
 // HTTP 429 = trop de requêtes (temporaire) → on retente
 // HTTP 456 = quota mensuel DeepL épuisé → on échoue immédiatement
 // HTTP 503 = service indisponible (temporaire) → on retente
-const CODES_RATE_LIMIT_TEMPORAIRE = [429, 503];
+// HTTP 504 = gateway timeout (temporaire) → on retente
+const CODES_RATE_LIMIT_TEMPORAIRE = [429, 503, 504];
 const CODE_QUOTA_MENSUEL = 456;
 
 class ErreurQuotaMensuel extends Error {
