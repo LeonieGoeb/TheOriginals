@@ -107,12 +107,13 @@ ${texte}`;
 
 // Traite un chapitre : paragraphes courts → gardés tels quels, longs → découpés par Mistral
 async function segmenterChapitre(paragraphesWord) {
-  const SEUIL_PHRASES = 2; // au-delà de ce nombre de phrases → on découpe
+  const SEUIL_PHRASES = 2;   // nb de phrases estimées au-delà duquel on découpe
+  const SEUIL_CHARS = 250;   // nb de caractères minimum pour appeler Mistral (évite les faux positifs)
   const blocs = [];
 
   for (const para of paragraphesWord) {
     const nbPhrases = compterPhrases(para);
-    if (nbPhrases <= SEUIL_PHRASES) {
+    if (nbPhrases <= SEUIL_PHRASES || para.length < SEUIL_CHARS) {
       // Paragraphe court : on le garde tel quel
       blocs.push(para);
     } else {

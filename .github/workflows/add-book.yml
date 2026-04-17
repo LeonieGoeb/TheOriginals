@@ -165,7 +165,7 @@ jobs:
           git push origin --delete "$PR_BRANCH" 2>/dev/null || true
           git checkout -b "$PR_BRANCH"
 
-          git add "data/${SLUG}/" "data/json/"
+          git add "data/json/"
           git add "_source/processed/${SLUG}.docx" "_source/processed/${SLUG}.json" 2>/dev/null || true
           git rm --cached "_source/pending/${SLUG}.docx" "_source/pending/${SLUG}.json" 2>/dev/null || true
 
