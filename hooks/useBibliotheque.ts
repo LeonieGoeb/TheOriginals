@@ -47,8 +47,8 @@ export function useBibliotheque() {
         const idsCdn = new Set(cdn.map(l => l.id));
         const data = [...cdn, ...REPLI.filter(l => !idsCdn.has(l.id))];
         await AsyncStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data }));
-        // Mettre à jour l'affichage uniquement si les données ont changé ou pas de cache
-        if (!annule && !cacheValide) setLivres(data);
+        // Toujours mettre à jour l'affichage avec les données fraîches du CDN
+        if (!annule) setLivres(data);
       } catch (e: unknown) {
         if (!annule && !cacheValide) setErreur(e instanceof Error ? e.message : 'Erreur réseau');
       } finally {
