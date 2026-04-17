@@ -138,7 +138,7 @@ export default function BibliothequeScreen() {
             onPress={() => Linking.openURL('mailto:mytheoriginalsapp@gmail.com')}
             activeOpacity={0.7}
           >
-            <Text style={styles.contact}>✉ Contact</Text>
+            <Text style={styles.contact}><Text style={styles.contactIcon}>✉</Text> Contact</Text>
           </TouchableOpacity>
         </View>
 
@@ -224,6 +224,9 @@ const styles = StyleSheet.create({
   contact: {
     fontSize: 12,
     color: COLORS.textLight,
+  },
+  contactIcon: {
+    fontSize: 16,
   },
   filtresRow: {
     flexDirection: 'row',
