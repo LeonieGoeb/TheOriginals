@@ -9,6 +9,9 @@ const CATALOG_CACHE_KEY = 'cdn_catalog_v1';
 
 const isWeb = Platform.OS === 'web';
 
+// Cache mémoire partagé entre tous les écrans (survit à la navigation, pas au redémarrage)
+const memoireCache = new Map<string, Livre>();
+
 // expo-file-system n'est pas disponible sur web
 let FileSystem: typeof import('expo-file-system/legacy') | null = null;
 if (!isWeb) {
@@ -76,6 +79,12 @@ export function useLivreTelecharge(livreId: string): EtatLivreTelecharge {
       setLivre(null);
       setTelechargeNecessaire(false);
 
+      // 0. Cache mémoire — évite de re-télécharger lors d'une navigation entre écrans
+      if (memoireCache.has(livreId)) {
+        if (!annule) { setLivre(memoireCache.get(livreId)!); setChargement(false); }
+        return;
+      }
+
       // 1. Vérifier le cache local (FileSystem) — mobile uniquement
       try {
         if (isWeb || !FileSystem) throw new Error('web');
@@ -94,12 +103,14 @@ export function useLivreTelecharge(livreId: string): EtatLivreTelecharge {
           if (estPerime) {
             try {
               const livreNeuf = await telechargerDepuisCDN(livreId);
+              memoireCache.set(livreId, livreNeuf);
               if (!annule) { setLivre(livreNeuf); setChargement(false); }
             } catch {
-              // Échec du re-téléchargement → garder la version en cache
+              memoireCache.set(livreId, livreCache);
               if (!annule) { setLivre(livreCache); setChargement(false); }
             }
           } else {
+            memoireCache.set(livreId, livreCache);
             if (!annule) { setLivre(livreCache); setChargement(false); }
           }
           return;
@@ -111,6 +122,7 @@ export function useLivreTelecharge(livreId: string): EtatLivreTelecharge {
       // 2. Repli sur le bundle TypeScript (livres embarqués)
       const bundle = BIBLIOTHEQUE.find(l => l.id === livreId);
       if (bundle) {
+        memoireCache.set(livreId, bundle);
         if (!annule) { setLivre(bundle); setChargement(false); }
         return;
       }
@@ -128,6 +140,7 @@ export function useLivreTelecharge(livreId: string): EtatLivreTelecharge {
     setErreur(null);
     try {
       const livreNeuf = await telechargerDepuisCDN(livreId);
+      memoireCache.set(livreId, livreNeuf);
       setLivre(livreNeuf);
       setTelechargeNecessaire(false);
     } catch (e: unknown) {
