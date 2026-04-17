@@ -19,39 +19,38 @@ export function useBibliotheque() {
     let annule = false;
 
     async function charger() {
-      // 1. Lire le cache AsyncStorage
+      // 1. Afficher le cache AsyncStorage immédiatement s'il existe (stale-while-revalidate)
+      let cacheValide = false;
       try {
         const brut = await AsyncStorage.getItem(CACHE_KEY);
         if (brut) {
           const { ts, data: cached } = JSON.parse(brut) as { ts: number; data: LivreInfo[] };
-          if (Date.now() - ts < CACHE_TTL_MS) {
-            // Fusionner le cache avec le bundle pour ne jamais perdre un livre
-            const idsCached = new Set(cached.map((l: LivreInfo) => l.id));
-            const data = [...cached, ...REPLI.filter(l => !idsCached.has(l.id))];
-            if (!annule) {
-              setLivres(data);
-              setChargement(false);
-            }
-            return;
+          const idsCached = new Set(cached.map((l: LivreInfo) => l.id));
+          const data = [...cached, ...REPLI.filter(l => !idsCached.has(l.id))];
+          if (!annule) {
+            setLivres(data);
+            setChargement(false);
           }
+          // Cache encore frais (< TTL) : pas besoin de rafraîchir l'affichage,
+          // mais on rafraîchit quand même le catalogue en arrière-plan
+          cacheValide = Date.now() - ts < CACHE_TTL_MS;
         }
       } catch {
         // cache illisible, on continue
       }
 
-      // 2. Récupérer le catalogue depuis le CDN
+      // 2. Toujours récupérer le catalogue depuis le CDN (en arrière-plan si cache valide)
       try {
         const rep = await fetch(`${CDN_BASE_URL}/catalog.json`);
         if (!rep.ok) throw new Error(`HTTP ${rep.status}`);
         const cdn = (await rep.json()) as LivreInfo[];
-        // Fusionner : garder les livres CDN + ajouter les livres bundle absents du CDN
         const idsCdn = new Set(cdn.map(l => l.id));
         const data = [...cdn, ...REPLI.filter(l => !idsCdn.has(l.id))];
-        if (!annule) setLivres(data);
         await AsyncStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data }));
+        // Mettre à jour l'affichage uniquement si les données ont changé ou pas de cache
+        if (!annule && !cacheValide) setLivres(data);
       } catch (e: unknown) {
-        if (!annule) setErreur(e instanceof Error ? e.message : 'Erreur réseau');
-        // On garde le repli déjà affiché
+        if (!annule && !cacheValide) setErreur(e instanceof Error ? e.message : 'Erreur réseau');
       } finally {
         if (!annule) setChargement(false);
       }
