@@ -11,6 +11,7 @@ import { LANGUES } from '@/constants/langues';
 import { NIVEAUX } from '@/constants/niveaux';
 import CarteLivre from '@/components/CarteLivre';
 import { useBibliotheque } from '@/hooks/useBibliotheque';
+import { ONBOARDING_KEY } from './_layout';
 
 const STORAGE_KEY_LANGUE_CIBLE  = 'app_langue_cible';
 const STORAGE_KEY_LANGUE_SOURCE = 'app_langue_source';
@@ -94,8 +95,9 @@ export default function BibliothequeScreen() {
   const [niveauChoisi, setNiveauChoisi] = useState<string>('all');
 
   useEffect(() => {
-    AsyncStorage.multiGet([STORAGE_KEY_LANGUE_CIBLE, STORAGE_KEY_LANGUE_SOURCE, STORAGE_KEY_NIVEAU])
-      .then(([cible, source, niveau]) => {
+    AsyncStorage.multiGet([ONBOARDING_KEY, STORAGE_KEY_LANGUE_CIBLE, STORAGE_KEY_LANGUE_SOURCE, STORAGE_KEY_NIVEAU])
+      .then(([onboarding, cible, source, niveau]) => {
+        if (!onboarding[1]) { router.replace('/onboarding'); return; }
         if (cible[1]) setLangueCible(cible[1]);
         if (source[1]) setLangueSource(source[1]);
         if (niveau[1]) setNiveauChoisi(niveau[1]);
