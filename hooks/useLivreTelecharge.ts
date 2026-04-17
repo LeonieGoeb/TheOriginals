@@ -81,8 +81,18 @@ export function useLivreTelecharge(livreId: string): EtatLivreTelecharge {
 
       // 0. Cache mémoire — évite de re-télécharger lors d'une navigation entre écrans
       if (memoireCache.has(livreId)) {
-        if (!annule) { setLivre(memoireCache.get(livreId)!); setChargement(false); }
-        return;
+        const livreMemo = memoireCache.get(livreId)!;
+        const versionCatalog = await getVersionCatalog(livreId);
+        const estPerime =
+          versionCatalog !== null &&
+          livreMemo.version !== undefined &&
+          versionCatalog > livreMemo.version;
+        if (!estPerime) {
+          if (!annule) { setLivre(livreMemo); setChargement(false); }
+          return;
+        }
+        // Version périmée → vider le cache mémoire et continuer
+        memoireCache.delete(livreId);
       }
 
       // 1. Vérifier le cache local (FileSystem) — mobile uniquement
