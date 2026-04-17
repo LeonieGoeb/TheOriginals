@@ -80,8 +80,8 @@ export default function LecteurScreen() {
             langueCible={livre.langueCible}
             analyseActive={isAnalyseActive(para.id)}
             traductionVisible={isTraductionVisible(para.id)}
-            onToggleAnalyse={() => toggleAnalyseParagraphe(para.id)}
-            onToggleTraduction={() => toggleTraductionParagraphe(para.id)}
+            onToggleAnalyse={toggleAnalyseParagraphe}
+            onToggleTraduction={toggleTraductionParagraphe}
           />
         ))}
         <View style={styles.footer}>

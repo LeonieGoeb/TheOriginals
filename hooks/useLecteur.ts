@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 export function useLecteur(chapitreId: string) {
   const [analyseModeGlobal, setAnalyseModeGlobal] = useState(false);
@@ -21,29 +21,29 @@ export function useLecteur(chapitreId: string) {
     return traductionModeGlobal;
   }
 
-  function toggleAnalyseGlobal() {
+  const toggleAnalyseGlobal = useCallback(() => {
     setAnalyseModeGlobal(v => !v);
     setAnalyseParId({});
-  }
+  }, []);
 
-  function toggleTraductionGlobal() {
+  const toggleTraductionGlobal = useCallback(() => {
     setTraductionModeGlobal(v => !v);
     setTraductionParId({});
-  }
+  }, []);
 
-  function toggleAnalyseParagraphe(id: string) {
+  const toggleAnalyseParagraphe = useCallback((id: string) => {
     setAnalyseParId(prev => {
       const actuel = id in prev ? prev[id] : analyseModeGlobal;
       return { ...prev, [id]: !actuel };
     });
-  }
+  }, [analyseModeGlobal]);
 
-  function toggleTraductionParagraphe(id: string) {
+  const toggleTraductionParagraphe = useCallback((id: string) => {
     setTraductionParId(prev => {
       const actuel = id in prev ? prev[id] : traductionModeGlobal;
       return { ...prev, [id]: !actuel };
     });
-  }
+  }, [traductionModeGlobal]);
 
   return {
     analyseModeGlobal,

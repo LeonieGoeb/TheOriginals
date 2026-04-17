@@ -38,7 +38,7 @@ function getTokenStyle(token: Token, analyseActive: boolean): TextStyle {
   }
 }
 
-export default function TokenTexte({ tokens, analyseActive, style }: TokenTexteProps) {
+function TokenTexte({ tokens, analyseActive, style }: TokenTexteProps) {
   return (
     <Text style={style}>
       {tokens.map((token, i) => (
@@ -49,3 +49,5 @@ export default function TokenTexte({ tokens, analyseActive, style }: TokenTexteP
     </Text>
   );
 }
+
+export default React.memo(TokenTexte);

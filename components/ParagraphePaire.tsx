@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { Paragraphe } from '@/data/types';
 import { COLORS } from '@/constants/colors';
@@ -10,11 +10,11 @@ interface ParagraphePaireProps {
   langueCible: string;
   analyseActive: boolean;
   traductionVisible: boolean;
-  onToggleAnalyse: () => void;
-  onToggleTraduction: () => void;
+  onToggleAnalyse: (id: string) => void;
+  onToggleTraduction: (id: string) => void;
 }
 
-export default function ParagraphePaire({
+function ParagraphePaire({
   paragraphe,
   langueSource,
   langueCible,
@@ -23,6 +23,8 @@ export default function ParagraphePaire({
   onToggleAnalyse,
   onToggleTraduction,
 }: ParagraphePaireProps) {
+  const handleToggleAnalyse = useCallback(() => onToggleAnalyse(paragraphe.id), [onToggleAnalyse, paragraphe.id]);
+  const handleToggleTraduction = useCallback(() => onToggleTraduction(paragraphe.id), [onToggleTraduction, paragraphe.id]);
   const tokensSource = paragraphe.textes[langueSource] ?? [];
   const tokensCible = paragraphe.textes[langueCible] ?? [];
 
@@ -45,13 +47,13 @@ export default function ParagraphePaire({
       <View style={styles.buttons}>
         <TouchableOpacity
           style={[styles.btn, analyseActive && styles.btnActive]}
-          onPress={onToggleAnalyse}
+          onPress={handleToggleAnalyse}
         >
           <Text style={styles.btnText}>👁</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.btn, traductionVisible && styles.btnActive]}
-          onPress={onToggleTraduction}
+          onPress={handleToggleTraduction}
         >
           <Text style={styles.btnText}>💬</Text>
         </TouchableOpacity>
@@ -59,6 +61,8 @@ export default function ParagraphePaire({
     </View>
   );
 }
+
+export default React.memo(ParagraphePaire);
 
 const styles = StyleSheet.create({
   container: {
