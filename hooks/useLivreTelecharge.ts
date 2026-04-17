@@ -1,11 +1,19 @@
 import { useState, useEffect, useCallback } from 'react';
+import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as FileSystem from 'expo-file-system/legacy';
 import { Livre, LivreInfo } from '@/data/types';
 import { BIBLIOTHEQUE } from '@/data/bibliotheque';
 import { CDN_BASE_URL } from '@/constants/api';
 
 const CATALOG_CACHE_KEY = 'cdn_catalog_v1';
+
+const isWeb = Platform.OS === 'web';
+
+// expo-file-system n'est pas disponible sur web
+let FileSystem: typeof import('expo-file-system/legacy') | null = null;
+if (!isWeb) {
+  FileSystem = require('expo-file-system/legacy');
+}
 
 async function getVersionCatalog(livreId: string): Promise<number | null> {
   try {
@@ -19,10 +27,17 @@ async function getVersionCatalog(livreId: string): Promise<number | null> {
 }
 
 function cheminLocal(livreId: string): string {
-  return `${FileSystem.documentDirectory}books/${livreId}/book.json`;
+  return `${FileSystem!.documentDirectory}books/${livreId}/book.json`;
 }
 
 async function telechargerDepuisCDN(livreId: string): Promise<Livre> {
+  if (isWeb || !FileSystem) {
+    // Sur web : fetch direct, pas de cache fichier
+    const rep = await fetch(`${CDN_BASE_URL}/${livreId}/book.json`);
+    if (!rep.ok) throw new Error(`HTTP ${rep.status}`);
+    return rep.json() as Promise<Livre>;
+  }
+
   const chemin = cheminLocal(livreId);
   const repertoire = chemin.substring(0, chemin.lastIndexOf('/'));
   await FileSystem.makeDirectoryAsync(repertoire, { intermediates: true });
@@ -61,8 +76,9 @@ export function useLivreTelecharge(livreId: string): EtatLivreTelecharge {
       setLivre(null);
       setTelechargeNecessaire(false);
 
-      // 1. Vérifier le cache local (FileSystem)
+      // 1. Vérifier le cache local (FileSystem) — mobile uniquement
       try {
+        if (isWeb || !FileSystem) throw new Error('web');
         const info = await FileSystem.getInfoAsync(cheminLocal(livreId));
         if (info.exists) {
           const contenu = await FileSystem.readAsStringAsync(cheminLocal(livreId));
