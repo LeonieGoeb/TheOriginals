@@ -31,6 +31,7 @@ export default function LecteurScreen() {
     isTraductionVisible,
     toggleAnalyseParagraphe,
     toggleTraductionParagraphe,
+    isPending,
   } = useLecteur(chapitreId ?? '');
 
   useEffect(() => {
@@ -69,6 +70,7 @@ export default function LecteurScreen() {
         chapitres={chapitresNav}
         chapitreActuelId={chapitreId ?? ''}
         onChangerChapitre={handleChangerChapitre}
+        isPending={isPending}
       />
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
         <Text style={styles.chapitreTitle}>{chapitre.titreOriginal}</Text>

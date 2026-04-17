@@ -1,6 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useTransition } from 'react';
 
 export function useLecteur(chapitreId: string) {
+  const [isPending, startTransition] = useTransition();
   const [analyseModeGlobal, setAnalyseModeGlobal] = useState(false);
   const [traductionModeGlobal, setTraductionModeGlobal] = useState(false);
   const [analyseParId, setAnalyseParId] = useState<Record<string, boolean>>({});
@@ -22,14 +23,18 @@ export function useLecteur(chapitreId: string) {
   }
 
   const toggleAnalyseGlobal = useCallback(() => {
-    setAnalyseModeGlobal(v => !v);
-    setAnalyseParId({});
-  }, []);
+    startTransition(() => {
+      setAnalyseModeGlobal(v => !v);
+      setAnalyseParId({});
+    });
+  }, [startTransition]);
 
   const toggleTraductionGlobal = useCallback(() => {
-    setTraductionModeGlobal(v => !v);
-    setTraductionParId({});
-  }, []);
+    startTransition(() => {
+      setTraductionModeGlobal(v => !v);
+      setTraductionParId({});
+    });
+  }, [startTransition]);
 
   const toggleAnalyseParagraphe = useCallback((id: string) => {
     setAnalyseParId(prev => {
@@ -54,5 +59,6 @@ export function useLecteur(chapitreId: string) {
     isTraductionVisible,
     toggleAnalyseParagraphe,
     toggleTraductionParagraphe,
+    isPending,
   };
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TouchableOpacity, Text, StyleSheet, Modal, Pressable } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet, Modal, Pressable, ActivityIndicator } from 'react-native';
 import { COLORS } from '@/constants/colors';
 import LegendePills from './LegendePills';
 
@@ -11,6 +11,7 @@ interface BarreOutilsProps {
   chapitres: { id: string; titre: string }[];
   chapitreActuelId: string;
   onChangerChapitre: (chapitreId: string) => void;
+  isPending?: boolean;
 }
 
 export default function BarreOutils({
@@ -21,6 +22,7 @@ export default function BarreOutils({
   chapitres,
   chapitreActuelId,
   onChangerChapitre,
+  isPending = false,
 }: BarreOutilsProps) {
   const [showPicker, setShowPicker] = useState(false);
   const chapitreActuel = chapitres.find(c => c.id === chapitreActuelId);
@@ -47,6 +49,7 @@ export default function BarreOutils({
         >
           <Text style={styles.btnText}>💬 Traduction</Text>
         </TouchableOpacity>
+        {isPending && <ActivityIndicator size="small" color={COLORS.accent} style={styles.spinner} />}
         <View style={styles.sep} />
         <TouchableOpacity style={[styles.btn, styles.btnChapitre]} onPress={() => setShowPicker(true)}>
           <Text style={styles.btnText} numberOfLines={1}>
@@ -148,5 +151,8 @@ const styles = StyleSheet.create({
   pickerTextActive: {
     fontWeight: '600',
     color: COLORS.accent,
+  },
+  spinner: {
+    marginLeft: 4,
   },
 });
