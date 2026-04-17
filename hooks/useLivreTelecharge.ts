@@ -91,8 +91,16 @@ export function useLivreTelecharge(livreId: string): EtatLivreTelecharge {
           if (!annule) { setLivre(livreMemo); setChargement(false); }
           return;
         }
-        // Version périmée → vider le cache mémoire et continuer
-        memoireCache.delete(livreId);
+        // Version périmée → re-télécharger silencieusement
+        try {
+          const livreNeuf = await telechargerDepuisCDN(livreId);
+          memoireCache.set(livreId, livreNeuf);
+          if (!annule) { setLivre(livreNeuf); setChargement(false); }
+        } catch {
+          // Échec réseau → garder la version en cache plutôt que de bloquer
+          if (!annule) { setLivre(livreMemo); setChargement(false); }
+        }
+        return;
       }
 
       // 1. Vérifier le cache local (FileSystem) — mobile uniquement

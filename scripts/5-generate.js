@@ -171,7 +171,8 @@ console.log(`   ✅ data/bibliotheque.ts réécrit (${livresExistants.length} li
 const jsonDir = path.join(config.dataDir, 'json');
 fs.mkdirSync(jsonDir, { recursive: true });
 
-// book.json : livre complet avec version = timestamp de génération
+// book.json : livre complet avec version = timestamp de génération (partagé avec catalog.json)
+const VERSION = Date.now();
 const livreJson = {
   id: slug,
   titre, titreOriginal, auteur, auteurOriginal,
@@ -179,7 +180,7 @@ const livreJson = {
   niveau, niveauNote,
   gratuit: gratuit ?? true,
   couvertureCouleur: couvertureCouleur ?? '#f5efe3',
-  version: Date.now(),
+  version: VERSION,
   chapitres: data.map(ch => ({
     id: ch.id,
     titre: ch.titre,
