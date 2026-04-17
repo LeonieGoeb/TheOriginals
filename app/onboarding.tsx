@@ -1,14 +1,20 @@
-import React, { useRef, useState } from 'react';
-import {
-  View, Text, StyleSheet, TouchableOpacity, ScrollView,
-  Dimensions, Animated, Platform,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { router } from 'expo-router';
 import { COLORS } from '@/constants/colors';
 import { LANGUES } from '@/constants/langues';
 import { NIVEAUX } from '@/constants/niveaux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { router } from 'expo-router';
+import React, { useRef, useState } from 'react';
+import {
+  Animated,
+  Dimensions,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { ONBOARDING_KEY } from './_layout';
 
 const { width } = Dimensions.get('window');
@@ -24,16 +30,15 @@ function EcranPresentation() {
   return (
     <View style={ecrans.container}>
       <Text style={ecrans.surtitre}>Bienvenue dans</Text>
-      <Text style={ecrans.titre}>The Originals</Text>
+      <Text style={ecrans.titre}>TheOriginals</Text>
       <Text style={ecrans.accroche}>
-        La littérature mondiale dans sa langue originale.
+        Lisez vos auteurs préférés dans leur langue originale.
       </Text>
       <View style={ecrans.separateur} />
       <Text style={ecrans.corps}>
-        Les grandes œuvres perdent leur saveur dans la traduction. Avec{' '}
-        <Text style={ecrans.gras}>The Originals</Text>, lisez Tolstoï en russe,
-        Cervantes en espagnol, Goethe en allemand — avec la traduction et
-        l'analyse grammaticale à portée de doigt, quand vous en avez besoin.
+        Avec{' '}
+        <Text style={ecrans.gras}>TheOriginals</Text>, apprenez des langues en vous immergeant dans les contes et romans en VO, avec la traduction et
+        l'analyse grammaticale à portée de doigt.
       </Text>
     </View>
   );
@@ -45,17 +50,17 @@ const FEATURES = [
   {
     emoji: '📖',
     titre: 'Texte original',
-    description: "Lisez les classiques tels qu'ils ont été écrits, sans compromis.",
+    description: "Lisez les classiques tels qu'ils ont été écrits, dans leur texte original.",
   },
   {
     emoji: '💬',
     titre: 'Traduction intégrée',
-    description: 'Affichez la traduction phrase par phrase, globalement ou paragraphe par paragraphe.',
+    description: 'Affichez la traduction phrase à phrase dans votre langue maternelle (bouton 💬 Traduction).',
   },
   {
     emoji: '🔍',
     titre: 'Analyse grammaticale',
-    description: 'Colorez sujets, verbes et compléments pour comprendre la structure de la phrase.',
+    description: 'Colorez sujets, verbes et compléments pour comprendre la structure de la phrase (bouton 🔍 Analyse).',
   },
 ];
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import {
   View, Text, ScrollView, StyleSheet, TouchableOpacity,
-  Modal, Pressable,
+  Modal, Pressable, Linking,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -131,44 +131,44 @@ export default function BibliothequeScreen() {
     <SafeAreaView style={styles.safe}>
       {/* Bandeau sticky filtres */}
       <View style={styles.sticky}>
-        <Text style={styles.header}>Ma bibliothèque</Text>
-
-        <View style={styles.filtreSection}>
-          <Text style={styles.filtreLabel}>Je parle le</Text>
-          <Dropdown
-            value={langueCible}
-            options={CIBLES}
-            labelFn={nomLangue}
-            onChange={handleSetCible}
-          />
+        {/* Ligne 1 : titre + contact */}
+        <View style={styles.headerRow}>
+          <Text style={styles.header}>Ma bibliothèque</Text>
+          <TouchableOpacity
+            onPress={() => Linking.openURL('mailto:mytheoriginalsapp@gmail.com')}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.contact}>✉ Contact</Text>
+          </TouchableOpacity>
         </View>
 
-        <View style={styles.filtreSection}>
-          <Text style={styles.filtreLabel}>Et j'apprends le</Text>
-          <Dropdown
-            value={langueSource}
-            options={SOURCES}
-            labelFn={nomLangue}
-            onChange={handleSetSource}
-          />
-        </View>
-
-        <View style={styles.filtreSection}>
-          <Text style={styles.filtreLabel}>Au niveau</Text>
-          <View style={styles.pills}>
-            {NIVEAUX_CODES.map(code => (
-              <TouchableOpacity
-                key={code}
-                style={[styles.pill, niveauChoisi === code && styles.pillActive]}
-                onPress={() => handleSetNiveau(code)}
-                activeOpacity={0.7}
-              >
-                <Text style={[styles.pillText, niveauChoisi === code && styles.pillTextActive]}>
-                  {nomNiveau(code)}
-                </Text>
-              </TouchableOpacity>
-            ))}
+        {/* Ligne 2 : deux dropdowns côte à côte */}
+        <View style={styles.filtresRow}>
+          <View style={styles.filtreItem}>
+            <Text style={styles.filtreLabel}>Je parle</Text>
+            <Dropdown value={langueCible} options={CIBLES} labelFn={nomLangue} onChange={handleSetCible} />
           </View>
+          <View style={styles.filtreSep} />
+          <View style={styles.filtreItem}>
+            <Text style={styles.filtreLabel}>J'apprends</Text>
+            <Dropdown value={langueSource} options={SOURCES} labelFn={nomLangue} onChange={handleSetSource} />
+          </View>
+        </View>
+
+        {/* Ligne 3 : pills niveau */}
+        <View style={styles.pillsRow}>
+          {NIVEAUX_CODES.map(code => (
+            <TouchableOpacity
+              key={code}
+              style={[styles.pill, niveauChoisi === code && styles.pillActive]}
+              onPress={() => handleSetNiveau(code)}
+              activeOpacity={0.7}
+            >
+              <Text style={[styles.pillText, niveauChoisi === code && styles.pillTextActive]}>
+                {nomNiveau(code)}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </View>
 
         <View style={styles.divider} />
@@ -208,12 +208,40 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: COLORS.border,
   },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    marginBottom: 10,
+  },
   header: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: '700',
     color: COLORS.textDark,
-    marginBottom: 14,
+  },
+  contact: {
+    fontSize: 12,
+    color: COLORS.textLight,
+  },
+  filtresRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     paddingHorizontal: 16,
+    marginBottom: 8,
+    gap: 0,
+  },
+  filtreItem: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  filtreSep: {
+    width: 1,
+    height: 20,
+    backgroundColor: COLORS.border,
+    marginHorizontal: 8,
   },
   filtreSection: {
     flexDirection: 'row',
@@ -223,9 +251,15 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   filtreLabel: {
-    fontSize: 14,
+    fontSize: 12,
     color: COLORS.textLight,
-    width: 120,
+  },
+  pillsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    paddingHorizontal: 16,
+    gap: 6,
+    marginBottom: 8,
   },
   // Dropdown
   dropdownBtn: {
@@ -293,8 +327,8 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   pill: {
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
     borderRadius: 20,
     borderWidth: 1,
     borderColor: COLORS.border,
@@ -305,7 +339,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.accent,
   },
   pillText: {
-    fontSize: 12,
+    fontSize: 11,
     color: COLORS.textMid,
     fontWeight: '500',
   },
