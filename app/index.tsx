@@ -19,7 +19,7 @@ const STORAGE_KEY_NIVEAU        = 'app_niveau_choisi';
 
 const CIBLES  = ['all', 'fr', 'de', 'en'] as const;
 const SOURCES = ['all', 'ru', 'en', 'es'] as const;
-const NIVEAUX_CODES = ['all', 'A1', 'A2', 'B1', 'B2', 'C1', 'C2'] as const;
+const NIVEAUX_CODES = ['all', 'B1', 'B2', 'C1', 'C2'] as const;
 
 function nomLangue(code: string): string {
   if (code === 'all') return 'Toutes';
@@ -157,6 +157,7 @@ export default function BibliothequeScreen() {
 
         {/* Ligne 3 : pills niveau */}
         <View style={styles.pillsRow}>
+          <Text style={styles.filtreLabel}>Niveau</Text>
           {NIVEAUX_CODES.map(code => (
             <TouchableOpacity
               key={code}
