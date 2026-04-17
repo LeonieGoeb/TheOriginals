@@ -186,8 +186,10 @@ const livreJson = {
     titreOriginal: ch.titreOriginal || ch.titre,
     paragraphes: ch.paragraphes.map(para => ({
       id: para.id,
-      [langueSource]: para[`tokens_${langueSource}`] || [],
-      [langueCible]:  para[`tokens_${langueCible}`]  || [],
+      textes: {
+        [langueSource]: para[`tokens_${langueSource}`] || [],
+        [langueCible]:  para[`tokens_${langueCible}`]  || [],
+      },
     })),
   })),
 };
