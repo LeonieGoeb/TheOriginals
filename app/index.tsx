@@ -1,16 +1,20 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import {
-  View, Text, ScrollView, StyleSheet, TouchableOpacity,
-  Modal, Pressable, Linking,
-} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useRouter } from 'expo-router';
+import CarteLivre from '@/components/CarteLivre';
 import { COLORS } from '@/constants/colors';
 import { LANGUES } from '@/constants/langues';
 import { NIVEAUX } from '@/constants/niveaux';
-import CarteLivre from '@/components/CarteLivre';
 import { useBibliotheque } from '@/hooks/useBibliotheque';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
+import React, { useCallback, useEffect, useState } from 'react';
+import {
+  Linking,
+  Modal, Pressable,
+  ScrollView, StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { ONBOARDING_KEY } from './_layout';
 
 const STORAGE_KEY_LANGUE_CIBLE  = 'app_langue_cible';
@@ -226,7 +230,7 @@ const styles = StyleSheet.create({
     color: COLORS.textLight,
   },
   contactIcon: {
-    fontSize: 16,
+    fontSize: 18,
   },
   filtresRow: {
     flexDirection: 'row',
