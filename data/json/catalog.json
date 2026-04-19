@@ -10,8 +10,8 @@
         "gratuit": true,
         "couvertureCouleur": "#ede0c8",
         "niveau": "C2",
-        "niveauNote": "Syntaxe russe classique très dense, phrases longues, vocabulaire littéraire du XIXe",
-        "version": 1
+        "niveauNote": "Dense 19th-century Russian prose — long sentences, literary vocabulary, complex syntax.",
+        "version": 1776607356431
     },
     {
         "id": "hadji-murat",
@@ -22,10 +22,10 @@
         "langueSource": "ru",
         "langueCible": "fr",
         "niveau": "B2",
-        "niveauNote": "Vocabulaire riche et descriptif, phrases complexes avec subordonnées, style littéraire exigeant.",
+        "niveauNote": "Rich descriptive vocabulary, complex sentences with subordinate clauses, demanding literary style.",
         "gratuit": true,
         "couvertureCouleur": "#C9A87C",
-        "version": 1776606586569
+        "version": 1776607356431
     },
     {
         "id": "la-ciudad-de-vapor",
@@ -50,10 +50,10 @@
         "langueSource": "en",
         "langueCible": "fr",
         "niveau": "B1",
-        "niveauNote": "Vocabulaire accessible mais syntaxe parfois complexe avec des phrases subordonnées et des descriptions littéraires.",
+        "niveauNote": "Accessible vocabulary but occasionally complex syntax with subordinate clauses and literary descriptions.",
         "gratuit": true,
         "couvertureCouleur": "#A599C2",
-        "version": 1776606586569
+        "version": 1776607356431
     },
     {
         "id": "hansel-und-gretel",
@@ -64,10 +64,10 @@
         "langueSource": "de",
         "langueCible": "fr",
         "niveau": "B1",
-        "niveauNote": "Vocabulaire accessible mais syntaxe parfois complexe avec des phrases longues et des subordonnées.",
+        "niveauNote": "Accessible vocabulary but occasionally complex syntax with long sentences and subordinate clauses.",
         "gratuit": true,
         "couvertureCouleur": "#A599C2",
-        "version": 1776606586569
+        "version": 1776607356431
     },
     {
         "id": "maitre-et-serviteur",
@@ -78,9 +78,9 @@
         "langueSource": "ru",
         "langueCible": "fr",
         "niveau": "B2",
-        "niveauNote": "Vocabulaire riche et syntaxe complexe avec des tournures littéraires et des descriptions détaillées.",
+        "niveauNote": "Rich vocabulary and complex syntax with literary turns of phrase and detailed descriptions.",
         "gratuit": true,
         "couvertureCouleur": "#C9A87C",
-        "version": 1776560081659
+        "version": 1776607356431
     }
 ]

@@ -114,7 +114,7 @@ Return a JSON object with these fields:
 - "auteurOriginal": the author's name in the original language/script (e.g., "Лев Николаевич Толстой")
 - "langueSource": ISO 639-1 code of the TEXT language (e.g., "es", "ru", "en", "de", "fr", "it", "pt")
 - "niveau": CEFR level of this text for a language learner (A1, A2, B1, B2, C1, or C2)
-- "niveauNote": one short sentence IN ${langueCibleNom.toUpperCase()} explaining the level choice (vocabulary, syntax complexity)
+- "niveauNote": one short sentence IN ENGLISH explaining the level choice (vocabulary, syntax complexity)
 
 Return ONLY valid JSON, no markdown, no extra text.`;
 

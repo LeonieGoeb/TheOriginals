@@ -7,10 +7,10 @@
     "langueSource": "de",
     "langueCible": "fr",
     "niveau": "B1",
-    "niveauNote": "Vocabulaire accessible mais syntaxe parfois complexe avec des phrases longues et des subordonnées.",
+    "niveauNote": "Accessible vocabulary but occasionally complex syntax with long sentences and subordinate clauses.",
     "gratuit": true,
     "couvertureCouleur": "#A599C2",
-    "version": 1776606586569,
+    "version": 1776607356431,
     "chapitres": [
         {
             "id": "chapitre-00",

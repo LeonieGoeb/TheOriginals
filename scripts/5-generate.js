@@ -57,11 +57,11 @@ const TITRES_STRUCTURELS = {
   'vorwort':   { fr: 'Préface',   en: 'Preface',   es: 'Prefacio',  ru: 'Предисловие' },
 };
 
-function traduireTitreChapitre(titre, langueCible) {
+function traduireTitreChapitre(titre) {
   if (!titre) return titre;
   const key = titre.trim().toLowerCase();
   const traductions = TITRES_STRUCTURELS[key];
-  if (traductions && traductions[langueCible]) return traductions[langueCible];
+  if (traductions?.en) return traductions.en;
   return titre;
 }
 
@@ -106,7 +106,7 @@ ${tokensCible},
 
 const ${varName}: Chapitre = {
   id: '${chapitre.id}',
-  titre: ${JSON.stringify(traduireTitreChapitre(chapitre.titre, langueCible))},
+  titre: ${JSON.stringify(traduireTitreChapitre(chapitre.titre))},
   titreOriginal: ${JSON.stringify(chapitre.titreOriginal || chapitre.titre)},
   paragraphes: [
 ${paragraphesTs},
@@ -211,7 +211,7 @@ const livreJson = {
   version: VERSION,
   chapitres: data.map(ch => ({
     id: ch.id,
-    titre: traduireTitreChapitre(ch.titre, langueCible),
+    titre: traduireTitreChapitre(ch.titre),
     titreOriginal: ch.titreOriginal || ch.titre,
     paragraphes: ch.paragraphes.map(para => ({
       id: para.id,
