@@ -14,7 +14,7 @@ const annaKarenine: Livre = {
   gratuit: true,
   couvertureCouleur: '#ede0c8',
   niveau: 'C2',
-  niveauNote: 'Syntaxe russe classique très dense, phrases longues, vocabulaire littéraire du XIXe',
+  niveauNote: 'Dense 19th-century Russian prose — long sentences, literary vocabulary, complex syntax.',
   chapitres: [chapitre01, chapitre02, chapitre03],
 };
 

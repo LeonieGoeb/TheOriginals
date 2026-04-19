@@ -3,14 +3,14 @@ import chapitre00 from './chapitre-00';
 
 const theHappyPrince: Livre = {
   id: 'the-happy-prince',
-  titre: "THE HAPPY PRINCE",
-  titreOriginal: "THE HAPPY PRINCE",
+  titre: "The Happy Prince",
+  titreOriginal: "The Happy Prince",
   auteur: "Oscar Wilde",
   auteurOriginal: "Oscar Wilde",
   langueSource: 'en',
   langueCible: 'fr',
   niveau: 'B1',
-  niveauNote: "Vocabulaire accessible mais syntaxe parfois complexe avec des phrases subordonnées et des descriptions littéraires.",
+  niveauNote: "Accessible vocabulary but occasionally complex syntax with subordinate clauses and literary descriptions.",
   gratuit: true,
   couvertureCouleur: "#A599C2",
   chapitres: [

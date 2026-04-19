@@ -5,14 +5,14 @@ import chapitre02 from './chapitre-02';
 
 const hadjiMurat: Livre = {
   id: 'hadji-murat',
-  titre: "Хаджи-Мурат",
+  titre: "Hadji-Mourad",
   titreOriginal: "Хаджи-Мурат",
   auteur: "Léon Tolstoï",
   auteurOriginal: "Лев Толстой",
   langueSource: 'ru',
   langueCible: 'fr',
   niveau: 'B2',
-  niveauNote: "Vocabulaire riche et descriptif, phrases complexes avec subordonnées, style littéraire exigeant.",
+  niveauNote: "Rich descriptive vocabulary, complex sentences with subordinate clauses, demanding literary style.",
   gratuit: true,
   couvertureCouleur: "#C9A87C",
   chapitres: [
