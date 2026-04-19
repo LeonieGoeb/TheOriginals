@@ -37,6 +37,34 @@ fs.mkdirSync(outputDir, { recursive: true });
 
 console.log(`📦 Génération des fichiers TypeScript pour "${titre}"...`);
 
+// ── Traduction des titres de chapitres structurels ────────────────────────────
+
+const TITRES_STRUCTURELS = {
+  // Français → cibles
+  'préface':   { en: 'Preface',   de: 'Vorwort',   es: 'Prefacio',  ru: 'Предисловие' },
+  'prologue':  { en: 'Prologue',  de: 'Prolog',     es: 'Prólogo',   ru: 'Пролог'      },
+  'épilogue':  { en: 'Epilogue',  de: 'Epilog',     es: 'Epílogo',   ru: 'Эпилог'      },
+  'introduction': { en: 'Introduction', de: 'Einleitung', es: 'Introducción', ru: 'Введение' },
+  'conclusion': { en: 'Conclusion', de: 'Schluss',  es: 'Conclusión', ru: 'Заключение' },
+  // Anglais → cibles
+  'preface':   { fr: 'Préface',   de: 'Vorwort',   es: 'Prefacio',  ru: 'Предисловие' },
+  'epilogue':  { fr: 'Épilogue',  de: 'Epilog',    es: 'Epílogo',   ru: 'Эпилог'      },
+  // Espagnol → cibles
+  'prefacio':  { fr: 'Préface',   en: 'Preface',   de: 'Vorwort',   ru: 'Предисловие' },
+  'prólogo':   { fr: 'Prologue',  en: 'Prologue',  de: 'Prolog',    ru: 'Пролог'      },
+  'epílogo':   { fr: 'Épilogue',  en: 'Epilogue',  de: 'Epilog',    ru: 'Эпилог'      },
+  // Allemand → cibles
+  'vorwort':   { fr: 'Préface',   en: 'Preface',   es: 'Prefacio',  ru: 'Предисловие' },
+};
+
+function traduireTitreChapitre(titre, langueCible) {
+  if (!titre) return titre;
+  const key = titre.trim().toLowerCase();
+  const traductions = TITRES_STRUCTURELS[key];
+  if (traductions && traductions[langueCible]) return traductions[langueCible];
+  return titre;
+}
+
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
 function tokenToTs(token, indent) {
@@ -78,7 +106,7 @@ ${tokensCible},
 
 const ${varName}: Chapitre = {
   id: '${chapitre.id}',
-  titre: ${JSON.stringify(chapitre.titre)},
+  titre: ${JSON.stringify(traduireTitreChapitre(chapitre.titre, langueCible))},
   titreOriginal: ${JSON.stringify(chapitre.titreOriginal || chapitre.titre)},
   paragraphes: [
 ${paragraphesTs},
@@ -183,7 +211,7 @@ const livreJson = {
   version: VERSION,
   chapitres: data.map(ch => ({
     id: ch.id,
-    titre: ch.titre,
+    titre: traduireTitreChapitre(ch.titre, langueCible),
     titreOriginal: ch.titreOriginal || ch.titre,
     paragraphes: ch.paragraphes.map(para => ({
       id: para.id,
