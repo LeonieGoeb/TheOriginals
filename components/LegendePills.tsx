@@ -9,13 +9,13 @@ export default function LegendePills() {
         <View style={[styles.pill, styles.pillS]}>
           <Text style={[styles.pillText, { color: COLORS.subjectText }]}>S</Text>
         </View>
-        <Text style={styles.label}>Sujet</Text>
+        <Text style={styles.label}>Subject</Text>
       </View>
       <View style={styles.item}>
         <View style={[styles.pill, styles.pillV]}>
           <Text style={[styles.pillText, { color: COLORS.verbText }]}>V</Text>
         </View>
-        <Text style={styles.label}>Verbe</Text>
+        <Text style={styles.label}>Verb</Text>
       </View>
       <View style={styles.item}>
         <View style={[styles.pill, styles.pillC]}>
