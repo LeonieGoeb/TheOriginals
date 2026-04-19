@@ -102,6 +102,16 @@ async function main() {
     chapitres.push(chapCourant);
   }
 
+  // Supprimer le premier chapitre s'il est une préface ou n'a pas de titre
+  const TITRES_PREFACE = /^(pr[eé]face|prefacio|pr[oó]logo|prologue|prolog|introduction|avant-propos|foreword|avertissement|note de l['']auteur|note d['']introduction)$/i;
+  if (chapitres.length > 0) {
+    const premierTitre = chapitres[0].titre;
+    if (premierTitre === null || TITRES_PREFACE.test(premierTitre.trim())) {
+      chapitres.shift();
+      console.log(`   ⚠ Premier chapitre ignoré (préface/intro/null)`);
+    }
+  }
+
   console.log(`   Titre du document : "${titreDoc}"`);
   console.log(`   ${chapitres.length} chapitre(s) extrait(s) :`);
   chapitres.forEach((ch, i) => {

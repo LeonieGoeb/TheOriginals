@@ -19,6 +19,22 @@ if (!isWeb) {
 }
 
 async function getVersionCatalog(livreId: string): Promise<number | null> {
+  // Essayer d'abord de récupérer la version directement depuis le CDN
+  // pour éviter la course avec useBibliotheque qui met à jour AsyncStorage en arrière-plan
+  try {
+    const rep = await fetch(`${CDN_BASE_URL}/catalog.json`);
+    if (rep.ok) {
+      const data = await rep.json() as LivreInfo[];
+      const version = data.find(l => l.id === livreId)?.version ?? null;
+      // Mettre à jour AsyncStorage en même temps pour que les autres hooks soient à jour
+      if (data.length > 0) {
+        AsyncStorage.setItem(CATALOG_CACHE_KEY, JSON.stringify({ ts: Date.now(), data })).catch(() => {});
+      }
+      return version;
+    }
+  } catch {
+    // réseau indisponible → repli sur AsyncStorage
+  }
   try {
     const brut = await AsyncStorage.getItem(CATALOG_CACHE_KEY);
     if (!brut) return null;

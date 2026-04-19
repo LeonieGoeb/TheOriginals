@@ -3,6 +3,16 @@ import { View, TouchableOpacity, Text, StyleSheet, Modal, Pressable, ActivityInd
 import { COLORS } from '@/constants/colors';
 import LegendePills from './LegendePills';
 
+function toRoman(n: number): string {
+  const vals = [1000,900,500,400,100,90,50,40,10,9,5,4,1];
+  const syms = ['M','CM','D','CD','C','XC','L','XL','X','IX','V','IV','I'];
+  let result = '';
+  for (let i = 0; i < vals.length; i++) {
+    while (n >= vals[i]) { result += syms[i]; n -= vals[i]; }
+  }
+  return result;
+}
+
 interface BarreOutilsProps {
   analyseActive: boolean;
   traductionActive: boolean;
@@ -25,7 +35,7 @@ export default function BarreOutils({
   isPending = false,
 }: BarreOutilsProps) {
   const [showPicker, setShowPicker] = useState(false);
-  const chapitreActuel = chapitres.find(c => c.id === chapitreActuelId);
+  const chapitreActuelIndex = chapitres.findIndex(c => c.id === chapitreActuelId);
 
   return (
     <View style={styles.container}>
@@ -53,7 +63,7 @@ export default function BarreOutils({
         <View style={styles.sep} />
         <TouchableOpacity style={[styles.btn, styles.btnChapitre]} onPress={() => setShowPicker(true)}>
           <Text style={styles.btnText} numberOfLines={1}>
-            <Text style={styles.btnChapitreLabel}>Chapter: </Text>{chapitreActuel?.titre ?? '—'}
+            <Text style={styles.btnChapitreLabel}>Chapter: </Text>{chapitreActuelIndex >= 0 ? toRoman(chapitreActuelIndex + 1) : '—'}
           </Text>
         </TouchableOpacity>
       </View>
@@ -61,7 +71,7 @@ export default function BarreOutils({
       <Modal visible={showPicker} transparent animationType="fade">
         <Pressable style={styles.overlay} onPress={() => setShowPicker(false)}>
           <View style={styles.picker}>
-            {chapitres.map(ch => (
+            {chapitres.map((ch, index) => (
               <TouchableOpacity
                 key={ch.id}
                 style={[styles.pickerItem, ch.id === chapitreActuelId && styles.pickerItemActive]}
@@ -71,7 +81,7 @@ export default function BarreOutils({
                 }}
               >
                 <Text style={[styles.pickerText, ch.id === chapitreActuelId && styles.pickerTextActive]}>
-                  {ch.titre}
+                  {toRoman(index + 1)}
                 </Text>
               </TouchableOpacity>
             ))}

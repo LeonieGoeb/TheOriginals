@@ -5,6 +5,7 @@ export const STRINGS = {
     // Bibliothèque
     maLibrairie: 'Ma bibliothèque',
     contact: 'Contact',
+    preferences: 'Préférences',
     jeParle: 'Je parle',
     jApprends: "J'apprends",
     niveau: 'Niveau',
@@ -45,7 +46,8 @@ export const STRINGS = {
     ],
     vosPreferences: 'Vos préférences',
     preferencesModif: 'Modifiables à tout moment depuis la bibliothèque.',
-    langueASouhaiter: 'Langue que vous souhaitez lire',
+    langueQueVousParlez: 'Langues que vous parlez',
+    langueASouhaiter: 'Langues que vous souhaitez lire',
     votreNiveau: 'Votre niveau',
     passer: 'Passer',
     suivant: 'Suivant',
@@ -56,6 +58,7 @@ export const STRINGS = {
     // Library
     maLibrairie: 'My library',
     contact: 'Contact',
+    preferences: 'Preferences',
     jeParle: 'I speak',
     jApprends: "I'm learning",
     niveau: 'Level',
@@ -75,7 +78,7 @@ export const STRINGS = {
     bienvenueIn: 'Welcome to',
     accroche: 'Read your favorite authors in their original language.',
     corpsAvec: 'With ',
-    corpsTexte: ', learn languages by immersing yourself in short stories and novels in the original, with translation and grammatical analysis at your fingertips.',
+    corpsTexte: ', learn languages by immersing yourself in short stories in their original language, with translation and grammatical analysis at your fingertips.',
     commentCaMarche: 'How it works',
     features: [
       {
@@ -96,7 +99,8 @@ export const STRINGS = {
     ],
     vosPreferences: 'Your preferences',
     preferencesModif: 'Can be changed at any time from the library.',
-    langueASouhaiter: 'Language you want to read',
+    langueQueVousParlez: 'Languages you speak',
+    langueASouhaiter: 'Languages you want to read',
     votreNiveau: 'Your level',
     passer: 'Skip',
     suivant: 'Next',

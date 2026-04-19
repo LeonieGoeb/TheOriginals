@@ -23,26 +23,49 @@ const STORAGE_KEY_LANGUE_CIBLE  = 'app_langue_cible';
 const STORAGE_KEY_LANGUE_SOURCE = 'app_langue_source';
 const STORAGE_KEY_NIVEAU        = 'app_niveau_choisi';
 
-const CIBLES  = ['all', 'fr', 'de', 'en'] as const;
-const SOURCES = ['all', 'ru', 'en', 'es'] as const;
+const CIBLES  = ['fr', 'de', 'en'] as const;
+const SOURCES = ['ru', 'en', 'es', 'de'] as const;
 const NIVEAUX_CODES = ['all', 'B1', 'B2', 'C1', 'C2'] as const;
 
-
-// ─── Composant dropdown ───────────────────────────────────────────────────────
-
-interface DropdownOption { code: string; label: string; }
-
-interface DropdownProps {
-  value: string;
-  options: readonly string[];
-  labelFn: (code: string) => string;
-  onChange: (code: string) => void;
+// Parse a stored value: handles JSON array, legacy plain string, or null.
+// "all" is a legacy sentinel meaning "no filter" → treated as empty array.
+function parseStoredLangues(val: string | null): string[] {
+  if (!val || val === 'all') return [];
+  try {
+    const parsed = JSON.parse(val);
+    if (Array.isArray(parsed)) return (parsed as string[]).filter(c => c !== 'all');
+    if (parsed === 'all') return [];
+    return [String(parsed)];
+  } catch {
+    return [val];
+  }
 }
 
-function Dropdown({ value, options, labelFn, onChange }: DropdownProps) {
+// ─── Multi-select dropdown ────────────────────────────────────────────────────
+
+interface MultiDropdownProps {
+  values: string[];
+  options: readonly string[];
+  labelFn: (code: string) => string;
+  allLabel: string;
+  onChange: (values: string[]) => void;
+}
+
+function MultiDropdown({ values, options, labelFn, allLabel, onChange }: MultiDropdownProps) {
   const [open, setOpen] = useState(false);
 
-  const items: DropdownOption[] = options.map(c => ({ code: c, label: labelFn(c) }));
+  const safe = Array.isArray(values) ? values : [];
+
+  const summaryLabel =
+    safe.length === 0
+      ? allLabel
+      : safe.length === 1
+        ? labelFn(safe[0])
+        : safe.map(labelFn).join(', ');
+
+  function toggle(code: string) {
+    onChange(safe.includes(code) ? safe.filter(c => c !== code) : [...safe, code]);
+  }
 
   return (
     <>
@@ -51,7 +74,7 @@ function Dropdown({ value, options, labelFn, onChange }: DropdownProps) {
         onPress={() => setOpen(true)}
         activeOpacity={0.7}
       >
-        <Text style={styles.dropdownBtnText}>{labelFn(value)}</Text>
+        <Text style={styles.dropdownBtnText} numberOfLines={1}>{summaryLabel}</Text>
         <Text style={styles.dropdownArrow}>▾</Text>
       </TouchableOpacity>
 
@@ -63,18 +86,21 @@ function Dropdown({ value, options, labelFn, onChange }: DropdownProps) {
       >
         <Pressable style={styles.modalOverlay} onPress={() => setOpen(false)}>
           <View style={styles.modalMenu}>
-            {items.map(item => (
-              <TouchableOpacity
-                key={item.code}
-                style={[styles.modalItem, item.code === value && styles.modalItemActive]}
-                onPress={() => { onChange(item.code); setOpen(false); }}
-                activeOpacity={0.7}
-              >
-                <Text style={[styles.modalItemText, item.code === value && styles.modalItemTextActive]}>
-                  {item.code === value ? '✓  ' : '    '}{item.label}
-                </Text>
-              </TouchableOpacity>
-            ))}
+            {options.map(code => {
+              const selected = safe.includes(code);
+              return (
+                <TouchableOpacity
+                  key={code}
+                  style={[styles.modalItem, selected && styles.modalItemActive]}
+                  onPress={() => toggle(code)}
+                  activeOpacity={0.7}
+                >
+                  <Text style={[styles.modalItemText, selected && styles.modalItemTextActive]}>
+                    {selected ? '✓  ' : '    '}{labelFn(code)}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
           </View>
         </Pressable>
       </Modal>
@@ -90,33 +116,33 @@ export default function BibliothequeScreen() {
   const s = STRINGS[locale];
   const { livres } = useBibliotheque();
 
-  const labelLangue = (code: string) =>
-    code === 'all' ? s.toutesLangues : nomLangue(code, locale);
+  const labelLangue = (code: string) => nomLangue(code, locale);
   const labelNiveau = (code: string) =>
     code === 'all' ? s.tousNiveaux : (NIVEAUX.find(n => n.code === code)?.code ?? code);
-  const [langueCible, setLangueCible] = useState<string>('all');
-  const [langueSource, setLangueSource] = useState<string>('all');
+
+  const [languesCibles, setLanguesCibles] = useState<string[]>([]);
+  const [languesSources, setLanguesSources] = useState<string[]>([]);
   const [niveauChoisi, setNiveauChoisi] = useState<string>('all');
 
   useEffect(() => {
     AsyncStorage.multiGet([ONBOARDING_KEY, STORAGE_KEY_LANGUE_CIBLE, STORAGE_KEY_LANGUE_SOURCE, STORAGE_KEY_NIVEAU])
       .then(([onboarding, cible, source, niveau]) => {
         if (!onboarding[1]) { router.replace('/onboarding'); return; }
-        if (cible[1]) setLangueCible(cible[1]);
-        if (source[1]) setLangueSource(source[1]);
+        setLanguesCibles(parseStoredLangues(cible[1]));
+        setLanguesSources(parseStoredLangues(source[1]));
         if (niveau[1]) setNiveauChoisi(niveau[1]);
       })
       .catch(() => {});
   }, []);
 
-  const handleSetCible = useCallback((code: string) => {
-    setLangueCible(code);
-    AsyncStorage.setItem(STORAGE_KEY_LANGUE_CIBLE, code).catch(() => {});
+  const handleSetCibles = useCallback((codes: string[]) => {
+    setLanguesCibles(codes);
+    AsyncStorage.setItem(STORAGE_KEY_LANGUE_CIBLE, JSON.stringify(codes)).catch(() => {});
   }, []);
 
-  const handleSetSource = useCallback((code: string) => {
-    setLangueSource(code);
-    AsyncStorage.setItem(STORAGE_KEY_LANGUE_SOURCE, code).catch(() => {});
+  const handleSetSources = useCallback((codes: string[]) => {
+    setLanguesSources(codes);
+    AsyncStorage.setItem(STORAGE_KEY_LANGUE_SOURCE, JSON.stringify(codes)).catch(() => {});
   }, []);
 
   const handleSetNiveau = useCallback((code: string) => {
@@ -125,9 +151,9 @@ export default function BibliothequeScreen() {
   }, []);
 
   const livresFiltres = livres.filter(l => {
-    const matchCible  = langueCible  === 'all' || l.langueCible  === langueCible;
-    const matchSource = langueSource === 'all' || l.langueSource === langueSource;
-    const matchNiveau = niveauChoisi === 'all' || l.niveau       === niveauChoisi;
+    const matchCible  = languesCibles.length  === 0 || languesCibles.includes(l.langueCible);
+    const matchSource = languesSources.length === 0 || languesSources.includes(l.langueSource);
+    const matchNiveau = niveauChoisi === 'all' || l.niveau === niveauChoisi;
     return matchCible && matchSource && matchNiveau;
   });
 
@@ -135,27 +161,45 @@ export default function BibliothequeScreen() {
     <SafeAreaView style={styles.safe}>
       {/* Bandeau sticky filtres */}
       <View style={styles.sticky}>
-        {/* Ligne 1 : titre + contact */}
+        {/* Ligne 1 : titre + contact + préférences */}
         <View style={styles.headerRow}>
           <Text style={styles.header}>{s.maLibrairie}</Text>
-          <TouchableOpacity
-            onPress={() => Linking.openURL('mailto:mytheoriginalsapp@gmail.com')}
-            activeOpacity={0.7}
-          >
-            <Text style={styles.contact}><Text style={styles.contactIcon}>✉</Text> {s.contact}</Text>
-          </TouchableOpacity>
+          <View style={styles.headerActions}>
+            <TouchableOpacity onPress={() => router.push('/onboarding')} activeOpacity={0.7}>
+              <Text style={styles.contact}>⚙ {s.preferences}</Text>
+            </TouchableOpacity>
+            <Text style={styles.headerSep}>·</Text>
+            <TouchableOpacity
+              onPress={() => Linking.openURL('mailto:mytheoriginalsapp@gmail.com')}
+              activeOpacity={0.7}
+            >
+              <Text style={styles.contact}><Text style={styles.contactIcon}>✉</Text> {s.contact}</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Ligne 2 : deux dropdowns côte à côte */}
         <View style={styles.filtresRow}>
           <View style={styles.filtreItem}>
             <Text style={styles.filtreLabel}>{s.jeParle}</Text>
-            <Dropdown value={langueCible} options={CIBLES} labelFn={labelLangue} onChange={handleSetCible} />
+            <MultiDropdown
+              values={languesCibles}
+              options={CIBLES}
+              labelFn={labelLangue}
+              allLabel={s.toutesLangues}
+              onChange={handleSetCibles}
+            />
           </View>
           <View style={styles.filtreSep} />
           <View style={styles.filtreItem}>
             <Text style={styles.filtreLabel}>{s.jApprends}</Text>
-            <Dropdown value={langueSource} options={SOURCES} labelFn={labelLangue} onChange={handleSetSource} />
+            <MultiDropdown
+              values={languesSources}
+              options={SOURCES}
+              labelFn={labelLangue}
+              allLabel={s.toutesLangues}
+              onChange={handleSetSources}
+            />
           </View>
         </View>
 
@@ -223,6 +267,15 @@ const styles = StyleSheet.create({
     fontWeight: '700',
     color: COLORS.textDark,
   },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  headerSep: {
+    fontSize: 12,
+    color: COLORS.border,
+  },
   contact: {
     fontSize: 12,
     color: COLORS.textLight,
@@ -242,19 +295,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
+    minWidth: 0,
   },
   filtreSep: {
     width: 1,
     height: 20,
     backgroundColor: COLORS.border,
     marginHorizontal: 8,
-  },
-  filtreSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    marginBottom: 10,
-    gap: 10,
   },
   filtreLabel: {
     fontSize: 12,
@@ -269,6 +316,7 @@ const styles = StyleSheet.create({
   },
   // Dropdown
   dropdownBtn: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
@@ -278,8 +326,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.border,
     backgroundColor: COLORS.bg,
+    minWidth: 0,
   },
   dropdownBtnText: {
+    flex: 1,
     fontSize: 13,
     color: COLORS.textMid,
     fontWeight: '500',
@@ -326,12 +376,6 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   // Pills niveau
-  pills: {
-    flex: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 6,
-  },
   pill: {
     paddingHorizontal: 8,
     paddingVertical: 4,

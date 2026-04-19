@@ -32,8 +32,8 @@ export const NIVEAUX: DefinitionNiveau[] = [
     nom:         { fr: 'B1 · Intermédiaire', en: 'B1 · Intermediate'      },
     description: { fr: 'Textes courants, sujets familiers',
                    en: 'Everyday texts, familiar topics'                    },
-    couleur: '#fff8e1',
-    couleurTexte: '#e65100',
+    couleur: '#dceefb',
+    couleurTexte: '#1a4f7a',
   },
   {
     code: 'B2',

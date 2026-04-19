@@ -8,6 +8,16 @@ import { useLecteur } from '@/hooks/useLecteur';
 import BarreOutils from '@/components/BarreOutils';
 import ParagraphePaire from '@/components/ParagraphePaire';
 
+function toRoman(n: number): string {
+  const vals = [1000,900,500,400,100,90,50,40,10,9,5,4,1];
+  const syms = ['M','CM','D','CD','C','XC','L','XL','X','IX','V','IV','I'];
+  let result = '';
+  for (let i = 0; i < vals.length; i++) {
+    while (n >= vals[i]) { result += syms[i]; n -= vals[i]; }
+  }
+  return result;
+}
+
 export default function LecteurScreen() {
   const { livreId, chapitreId } = useLocalSearchParams<{ livreId: string; chapitreId: string }>();
   const router = useRouter();
@@ -35,8 +45,8 @@ export default function LecteurScreen() {
   } = useLecteur(chapitreId ?? '');
 
   useEffect(() => {
-    if (chapitre) navigation.setOptions({ title: chapitre.titre });
-  }, [chapitre, navigation]);
+    if (chapitreIndex >= 0) navigation.setOptions({ title: toRoman(chapitreIndex + 1) });
+  }, [chapitreIndex, navigation]);
 
   if (chargement) {
     return (
@@ -73,7 +83,7 @@ export default function LecteurScreen() {
         isPending={isPending}
       />
       <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
-        <Text style={styles.chapitreTitle}>{chapitre.titreOriginal}</Text>
+        <Text style={styles.chapitreTitle}>{toRoman(chapitreIndex + 1)}</Text>
         {chapitre.paragraphes.map(para => (
           <ParagraphePaire
             key={para.id}
@@ -94,7 +104,7 @@ export default function LecteurScreen() {
               activeOpacity={0.75}
             >
               <Text style={styles.nextBtnText}>
-                {chapitreSuivant.titre} →
+                {toRoman(chapitreIndex + 2)} →
               </Text>
             </TouchableOpacity>
           ) : (

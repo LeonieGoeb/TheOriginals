@@ -22,9 +22,8 @@ import { ONBOARDING_KEY } from './_layout';
 const { width } = Dimensions.get('window');
 
 const STORAGE_KEY_LANGUE_SOURCE = 'app_langue_source';
+const STORAGE_KEY_LANGUE_CIBLE  = 'app_langue_cible';
 const STORAGE_KEY_NIVEAU        = 'app_niveau_choisi';
-
-const LANGUES_SOURCE = LANGUES.filter(l => l.code !== 'fr');
 
 // ── Écran 1 — Présentation ─────────────────────────────────────────────────
 
@@ -72,35 +71,59 @@ function EcranFonctionnalites() {
 // ── Écran 3 — Préférences ──────────────────────────────────────────────────
 
 interface EcranPreferencesProps {
-  langueSource: string;
+  languesCibles: string[];
+  languesSources: string[];
   niveau: string;
-  onChangerLangue: (code: string) => void;
+  onToggleLangueCible: (code: string) => void;
+  onToggleLangueSource: (code: string) => void;
   onChangerNiveau: (code: string) => void;
 }
 
 function EcranPreferences({
-  langueSource, niveau, onChangerLangue, onChangerNiveau,
+  languesCibles, languesSources, niveau,
+  onToggleLangueCible, onToggleLangueSource, onChangerNiveau,
 }: EcranPreferencesProps) {
   const locale = useLocale();
   const s = STRINGS[locale];
   return (
-    <View style={ecrans.container}>
+    <ScrollView style={ecrans.scroll} contentContainerStyle={ecrans.container}>
       <Text style={ecrans.titre}>{s.vosPreferences}</Text>
       <Text style={ecrans.sousTitre}>{s.preferencesModif}</Text>
 
-      <Text style={ecrans.label}>{s.langueASouhaiter}</Text>
+      <Text style={ecrans.label}>{s.langueQueVousParlez}</Text>
       <View style={ecrans.chips}>
-        {LANGUES_SOURCE.map(l => (
-          <TouchableOpacity
-            key={l.code}
-            style={[ecrans.chip, langueSource === l.code && ecrans.chipActif]}
-            onPress={() => onChangerLangue(l.code)}
-          >
-            <Text style={[ecrans.chipTexte, langueSource === l.code && ecrans.chipTexteActif]}>
-              {l.drapeau} {l.nom[locale]}
-            </Text>
-          </TouchableOpacity>
-        ))}
+        {LANGUES.map(l => {
+          const actif = languesCibles.includes(l.code);
+          return (
+            <TouchableOpacity
+              key={l.code}
+              style={[ecrans.chip, actif && ecrans.chipActif]}
+              onPress={() => onToggleLangueCible(l.code)}
+            >
+              <Text style={[ecrans.chipTexte, actif && ecrans.chipTexteActif]}>
+                {l.drapeau} {l.nom[locale]}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
+      </View>
+
+      <Text style={[ecrans.label, { marginTop: 24 }]}>{s.langueASouhaiter}</Text>
+      <View style={ecrans.chips}>
+        {LANGUES.map(l => {
+          const actif = languesSources.includes(l.code);
+          return (
+            <TouchableOpacity
+              key={l.code}
+              style={[ecrans.chip, actif && ecrans.chipActif]}
+              onPress={() => onToggleLangueSource(l.code)}
+            >
+              <Text style={[ecrans.chipTexte, actif && ecrans.chipTexteActif]}>
+                {l.drapeau} {l.nom[locale]}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
       </View>
 
       <Text style={[ecrans.label, { marginTop: 24 }]}>{s.votreNiveau}</Text>
@@ -117,11 +140,15 @@ function EcranPreferences({
           </TouchableOpacity>
         ))}
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
 // ── Composant principal ────────────────────────────────────────────────────
+
+function toggle(arr: string[], code: string): string[] {
+  return arr.includes(code) ? arr.filter(c => c !== code) : [...arr, code];
+}
 
 const NB_ECRANS = 3;
 
@@ -129,7 +156,8 @@ export default function OnboardingScreen() {
   const locale = useLocale();
   const s = STRINGS[locale];
   const [ecranActuel, setEcranActuel] = useState(0);
-  const [langueSource, setLangueSource] = useState('ru');
+  const [languesCibles, setLanguesCibles] = useState<string[]>([]);
+  const [languesSources, setLanguesSources] = useState<string[]>([]);
   const [niveau, setNiveau] = useState('B1');
   const scrollRef = useRef<ScrollView>(null);
   const fadeAnim = useRef(new Animated.Value(1)).current;
@@ -146,7 +174,8 @@ export default function OnboardingScreen() {
   async function terminer() {
     await AsyncStorage.multiSet([
       [ONBOARDING_KEY, '1'],
-      [STORAGE_KEY_LANGUE_SOURCE, langueSource],
+      [STORAGE_KEY_LANGUE_CIBLE,  JSON.stringify(languesCibles)],
+      [STORAGE_KEY_LANGUE_SOURCE, JSON.stringify(languesSources)],
       [STORAGE_KEY_NIVEAU, niveau],
     ]);
     router.replace('/');
@@ -173,9 +202,11 @@ export default function OnboardingScreen() {
         {ecranActuel === 1 && <EcranFonctionnalites />}
         {ecranActuel === 2 && (
           <EcranPreferences
-            langueSource={langueSource}
+            languesCibles={languesCibles}
+            languesSources={languesSources}
             niveau={niveau}
-            onChangerLangue={setLangueSource}
+            onToggleLangueCible={code => setLanguesCibles(prev => toggle(prev, code))}
+            onToggleLangueSource={code => setLanguesSources(prev => toggle(prev, code))}
             onChangerNiveau={setNiveau}
           />
         )}
@@ -208,10 +239,13 @@ export default function OnboardingScreen() {
 // ── Styles écrans ──────────────────────────────────────────────────────────
 
 const ecrans = StyleSheet.create({
-  container: {
+  scroll: {
     flex: 1,
+  },
+  container: {
     paddingHorizontal: 28,
     paddingTop: 24,
+    paddingBottom: 32,
   },
   surtitre: {
     fontSize: 15,

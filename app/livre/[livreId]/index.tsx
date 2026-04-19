@@ -9,6 +9,16 @@ import { useLocale } from '@/contexts/LocaleContext';
 import NiveauBadge from '@/components/NiveauBadge';
 import { useLivreTelecharge } from '@/hooks/useLivreTelecharge';
 
+function toRoman(n: number): string {
+  const vals = [1000,900,500,400,100,90,50,40,10,9,5,4,1];
+  const syms = ['M','CM','D','CD','C','XC','L','XL','X','IX','V','IV','I'];
+  let result = '';
+  for (let i = 0; i < vals.length; i++) {
+    while (n >= vals[i]) { result += syms[i]; n -= vals[i]; }
+  }
+  return result;
+}
+
 export default function ChapitresScreen() {
   const { livreId } = useLocalSearchParams<{ livreId: string }>();
   const router = useRouter();
@@ -78,11 +88,8 @@ export default function ChapitresScreen() {
             onPress={() => router.push(`/livre/${livreId}/${ch.id}`)}
             activeOpacity={0.7}
           >
-            <Text style={styles.chapitreNum}>{index + 1}</Text>
-            <View style={styles.chapitreInfo}>
-              <Text style={styles.chapitreTitre}>{ch.titre}</Text>
-              <Text style={styles.chapitreCyril}>{ch.titreOriginal}</Text>
-            </View>
+            <Text style={styles.chapitreNum}>{toRoman(index + 1)}</Text>
+            <View style={styles.chapitreInfo} />
             <Text style={styles.arrow}>›</Text>
           </TouchableOpacity>
         ))}

@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { LivreInfo } from '@/data/types';
 import { COLORS } from '@/constants/colors';
 import { getLangue } from '@/constants/langues';
+import { getNiveau, CodeNiveau } from '@/constants/niveaux';
 import { useLocale } from '@/contexts/LocaleContext';
 import { STRINGS } from '@/constants/strings';
 import NiveauBadge from './NiveauBadge';
@@ -17,10 +18,11 @@ export default function CarteLivre({ livre, onPress }: CarteLivreProps) {
   const s = STRINGS[locale];
   const drapeauSource = getLangue(livre.langueSource).drapeau;
   const drapeauCible = getLangue(livre.langueCible).drapeau;
+  const niveauCouleur = getNiveau(livre.niveau as CodeNiveau).couleur;
 
   return (
     <TouchableOpacity
-      style={[styles.card, { backgroundColor: livre.couvertureCouleur }]}
+      style={[styles.card, { backgroundColor: niveauCouleur }]}
       onPress={onPress}
       activeOpacity={0.75}
     >
