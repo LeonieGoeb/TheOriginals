@@ -90,6 +90,13 @@ async function main() {
   console.log(`🤖 Analyse du document via Mistral...`);
   console.log(`   Titre détecté dans le docx : "${titreDoc}"`);
 
+  const languesNoms = {
+    fr: 'French', en: 'English', de: 'German', es: 'Spanish',
+    ru: 'Russian', it: 'Italian', pt: 'Portuguese', nl: 'Dutch',
+    zh: 'Chinese', ja: 'Japanese',
+  };
+  const langueCibleNom = languesNoms[langueCible] ?? langueCible;
+
   const prompt = `You are analyzing a literary text to extract metadata for a language learning app.
 
 Document title (may be empty or unreliable): "${titreDoc}"
@@ -98,14 +105,16 @@ Text sample (~1200 characters):
 ${echantillon}
 """
 
+The translation language (langueCible) is: ${langueCibleNom} (${langueCible})
+
 Return a JSON object with these fields:
-- "titre": the book title in French (translated if necessary, e.g., "Maître et Serviteur", "Le Portrait de Dorian Gray")
+- "titre": the book title translated into ${langueCibleNom} (e.g., if langueCible is French: "Maître et Serviteur"; if English: "Master and Man")
 - "titreOriginal": the book title in the original language (e.g., "Хозяин и работник", "The Picture of Dorian Gray")
-- "auteur": the author's name in French display form (e.g., "Carlos Ruiz Zafón", "Léon Tolstoï", "Oscar Wilde")
-- "auteurOriginal": the author's name in the original language/form (same as auteur if no transliteration needed)
+- "auteur": the author's name in standard display form (e.g., "Carlos Ruiz Zafón", "Leo Tolstoy", "Oscar Wilde")
+- "auteurOriginal": the author's name in the original language/script (e.g., "Лев Николаевич Толстой")
 - "langueSource": ISO 639-1 code of the TEXT language (e.g., "es", "ru", "en", "de", "fr", "it", "pt")
 - "niveau": CEFR level of this text for a language learner (A1, A2, B1, B2, C1, or C2)
-- "niveauNote": one short sentence in French explaining the level choice (vocabulary, syntax complexity)
+- "niveauNote": one short sentence IN ${langueCibleNom.toUpperCase()} explaining the level choice (vocabulary, syntax complexity)
 
 Return ONLY valid JSON, no markdown, no extra text.`;
 
