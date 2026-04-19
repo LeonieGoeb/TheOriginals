@@ -10,48 +10,8 @@
     "niveauNote": "Rich descriptive vocabulary, complex sentences with subordinate clauses, demanding literary style.",
     "gratuit": true,
     "couvertureCouleur": "#C9A87C",
-    "version": 1776607356431,
+    "version": 1776607782831,
     "chapitres": [
-        {
-            "id": "chapitre-00",
-            "titre": "Préface",
-            "titreOriginal": "Préface",
-            "paragraphes": [
-                {
-                    "id": "p1",
-                    "textes": {
-                        "ru": [
-                            {
-                                "text": "Лев",
-                                "type": "s"
-                            },
-                            {
-                                "text": " ",
-                                "type": null
-                            },
-                            {
-                                "text": "Толстой",
-                                "type": "s"
-                            }
-                        ],
-                        "fr": [
-                            {
-                                "text": "Léon",
-                                "type": "s"
-                            },
-                            {
-                                "text": " ",
-                                "type": null
-                            },
-                            {
-                                "text": "Tolstoï",
-                                "type": "s"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
         {
             "id": "chapitre-01",
             "titre": "I",
