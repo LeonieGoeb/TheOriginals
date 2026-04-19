@@ -53,7 +53,7 @@ export default function BarreOutils({
         <View style={styles.sep} />
         <TouchableOpacity style={[styles.btn, styles.btnChapitre]} onPress={() => setShowPicker(true)}>
           <Text style={styles.btnText} numberOfLines={1}>
-            {chapitreActuel?.titre ?? '—'}
+            <Text style={styles.btnChapitreLabel}>Chapter: </Text>{chapitreActuel?.titre ?? '—'}
           </Text>
         </TouchableOpacity>
       </View>
@@ -120,6 +120,9 @@ const styles = StyleSheet.create({
   btnText: {
     fontSize: 12,
     color: COLORS.textDark,
+  },
+  btnChapitreLabel: {
+    color: COLORS.textLight,
   },
   overlay: {
     flex: 1,
