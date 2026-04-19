@@ -92,13 +92,15 @@ async function main() {
 
   const prompt = `You are analyzing a literary text to extract metadata for a language learning app.
 
-Document title: "${titreDoc}"
+Document title (may be empty or unreliable): "${titreDoc}"
 Text sample (~1200 characters):
 """
 ${echantillon}
 """
 
 Return a JSON object with these fields:
+- "titre": the book title in French (translated if necessary, e.g., "Maître et Serviteur", "Le Portrait de Dorian Gray")
+- "titreOriginal": the book title in the original language (e.g., "Хозяин и работник", "The Picture of Dorian Gray")
 - "auteur": the author's name in French display form (e.g., "Carlos Ruiz Zafón", "Léon Tolstoï", "Oscar Wilde")
 - "auteurOriginal": the author's name in the original language/form (same as auteur if no transliteration needed)
 - "langueSource": ISO 639-1 code of the TEXT language (e.g., "es", "ru", "en", "de", "fr", "it", "pt")
@@ -118,6 +120,8 @@ Return ONLY valid JSON, no markdown, no extra text.`;
 
   const langueSource = detected.langueSource || 'en';
   const auteur       = detected.auteur || '';
+  const titre        = detected.titre || titreDoc || slug;
+  const titreOriginal = detected.titreOriginal || titreDoc || slug;
 
   // Validation langue source
   const languesDispos = require('./config/langues');
@@ -127,6 +131,8 @@ Return ONLY valid JSON, no markdown, no extra text.`;
     process.exit(1);
   }
 
+  console.log(`   Titre       : ${titre}`);
+  console.log(`   Titre orig. : ${titreOriginal}`);
   console.log(`   Auteur      : ${auteur}`);
   console.log(`   Langue      : ${langueSource}`);
   console.log(`   Niveau CECRL: ${detected.niveau}`);
@@ -138,8 +144,8 @@ Return ONLY valid JSON, no markdown, no extra text.`;
 
   const livreConfig = {
     slug,
-    titre:            titreDoc,
-    titreOriginal:    titreDoc,
+    titre,
+    titreOriginal,
     auteur:           auteur,
     auteurOriginal:   detected.auteurOriginal || auteur,
     langueSource,
