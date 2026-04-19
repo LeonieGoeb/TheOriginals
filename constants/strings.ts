@@ -16,6 +16,8 @@ export const STRINGS = {
     verrouille: 'Verrouillé 🔒',
 
     // CarteLivre / Chapitres
+    continuerLecture: 'Reprendre la lecture',
+    chapitre: 'Chapitre',
     livreNonTelecharge: 'Livre non téléchargé',
     livreNonTelchargeSub: "Ce livre n'est pas encore disponible hors-ligne.",
     telecharger: '⬇ Télécharger',
@@ -69,6 +71,8 @@ export const STRINGS = {
     verrouille: 'Locked 🔒',
 
     // CarteLivre / Chapters
+    continuerLecture: 'Continue reading',
+    chapitre: 'Chapter',
     livreNonTelecharge: 'Book not downloaded',
     livreNonTelchargeSub: 'This book is not yet available offline.',
     telecharger: '⬇ Download',

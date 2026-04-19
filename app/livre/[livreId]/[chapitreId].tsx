@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useCallback } from 'react';
 import { View, ScrollView, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams, useRouter, useNavigation } from 'expo-router';
+import { useLocalSearchParams, useRouter, useNavigation, useFocusEffect } from 'expo-router';
 import { COLORS } from '@/constants/colors';
 import { useLivreTelecharge } from '@/hooks/useLivreTelecharge';
 import { useLecteur } from '@/hooks/useLecteur';
+import { useProgressLecture } from '@/hooks/useProgressLecture';
 import BarreOutils from '@/components/BarreOutils';
 import ParagraphePaire from '@/components/ParagraphePaire';
 
@@ -22,8 +23,13 @@ export default function LecteurScreen() {
   const { livreId, chapitreId } = useLocalSearchParams<{ livreId: string; chapitreId: string }>();
   const router = useRouter();
   const navigation = useNavigation();
+  const scrollRef = useRef<ScrollView>(null);
+  const scrollY = useRef(0);
+  const contentReady = useRef(false);
+  const savedScrollY = useRef<number | null>(null);
 
   const { livre, chargement } = useLivreTelecharge(livreId ?? '');
+  const { sauvegarder, charger } = useProgressLecture(livreId ?? '');
 
   const chapitreIndex = livre?.chapitres.findIndex(c => c.id === chapitreId) ?? -1;
   const chapitre = chapitreIndex >= 0 ? livre!.chapitres[chapitreIndex] : undefined;
@@ -44,9 +50,51 @@ export default function LecteurScreen() {
     isPending,
   } = useLecteur(chapitreId ?? '');
 
+  // Load saved scroll position for this chapter
+  useEffect(() => {
+    charger().then(p => {
+      if (p && p.chapitreId === chapitreId && p.scrollY > 0) {
+        savedScrollY.current = p.scrollY;
+        // If content already rendered, scroll immediately
+        if (contentReady.current) {
+          scrollRef.current?.scrollTo({ y: p.scrollY, animated: false });
+        }
+      }
+    }).catch(() => {});
+  }, [chapitreId]);
+
   useEffect(() => {
     if (chapitreIndex >= 0) navigation.setOptions({ title: toRoman(chapitreIndex + 1) });
   }, [chapitreIndex, navigation]);
+
+  const handleScroll = useCallback((e: { nativeEvent: { contentOffset: { y: number } } }) => {
+    scrollY.current = e.nativeEvent.contentOffset.y;
+  }, []);
+
+  const handleScrollEnd = useCallback(() => {
+    if (chapitreId) {
+      sauvegarder(chapitreId, scrollY.current);
+    }
+  }, [chapitreId, sauvegarder]);
+
+  const handleContentSizeChange = useCallback(() => {
+    contentReady.current = true;
+    if (savedScrollY.current !== null) {
+      scrollRef.current?.scrollTo({ y: savedScrollY.current, animated: false });
+      savedScrollY.current = null;
+    }
+  }, []);
+
+  // Save progress when leaving the screen (back navigation, tab switch, etc.)
+  useFocusEffect(
+    useCallback(() => {
+      return () => {
+        if (chapitreId && scrollY.current > 0) {
+          sauvegarder(chapitreId, scrollY.current);
+        }
+      };
+    }, [chapitreId, sauvegarder])
+  );
 
   if (chargement) {
     return (
@@ -82,7 +130,16 @@ export default function LecteurScreen() {
         onChangerChapitre={handleChangerChapitre}
         isPending={isPending}
       />
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.content}>
+      <ScrollView
+        ref={scrollRef}
+        style={styles.scroll}
+        contentContainerStyle={styles.content}
+        scrollEventThrottle={200}
+        onScroll={handleScroll}
+        onMomentumScrollEnd={handleScrollEnd}
+        onScrollEndDrag={handleScrollEnd}
+        onContentSizeChange={handleContentSizeChange}
+      >
         <Text style={styles.chapitreTitle}>{toRoman(chapitreIndex + 1)}</Text>
         {chapitre.paragraphes.map(para => (
           <ParagraphePaire

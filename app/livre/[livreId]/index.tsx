@@ -1,13 +1,15 @@
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useLocalSearchParams, useRouter, useNavigation } from 'expo-router';
+import { useLocalSearchParams, useRouter, useNavigation, useFocusEffect } from 'expo-router';
 import { COLORS } from '@/constants/colors';
 import { getLangue } from '@/constants/langues';
 import { STRINGS } from '@/constants/strings';
 import { useLocale } from '@/contexts/LocaleContext';
 import NiveauBadge from '@/components/NiveauBadge';
 import { useLivreTelecharge } from '@/hooks/useLivreTelecharge';
+import { useProgressLecture } from '@/hooks/useProgressLecture';
+import type { ProgressLecture } from '@/hooks/useProgressLecture';
 
 function toRoman(n: number): string {
   const vals = [1000,900,500,400,100,90,50,40,10,9,5,4,1];
@@ -28,10 +30,18 @@ export default function ChapitresScreen() {
 
   const { livre, chargement, telechargeNecessaire, erreur, telecharger } =
     useLivreTelecharge(livreId ?? '');
+  const { charger } = useProgressLecture(livreId ?? '');
+  const [progress, setProgress] = useState<ProgressLecture | null>(null);
 
   useEffect(() => {
     if (livre) navigation.setOptions({ title: livre.titre });
   }, [livre, navigation]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      charger().then(setProgress).catch(() => {});
+    }, [livreId])
+  );
 
   if (chargement) {
     return (
@@ -81,6 +91,21 @@ export default function ChapitresScreen() {
         </View>
         <Text style={styles.niveauNote}>{livre.niveauNote}</Text>
         <View style={styles.divider} />
+        {progress && (() => {
+          const idx = livre.chapitres.findIndex(c => c.id === progress.chapitreId);
+          if (idx < 0) return null;
+          return (
+            <TouchableOpacity
+              style={styles.resumeBtn}
+              onPress={() => router.push(`/livre/${livreId}/${progress.chapitreId}`)}
+              activeOpacity={0.8}
+            >
+              <Text style={styles.resumeBtnText}>
+                ▶ {s.continuerLecture} — {s.chapitre} {toRoman(idx + 1)}
+              </Text>
+            </TouchableOpacity>
+          );
+        })()}
         {livre.chapitres.map((ch, index) => (
           <TouchableOpacity
             key={ch.id}
@@ -220,5 +245,18 @@ const styles = StyleSheet.create({
   arrow: {
     fontSize: 22,
     color: COLORS.textLight,
+  },
+  resumeBtn: {
+    backgroundColor: COLORS.accent,
+    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    marginBottom: 16,
+    alignItems: 'center',
+  },
+  resumeBtnText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
   },
 });
