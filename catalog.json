@@ -15,7 +15,7 @@
     },
     {
         "id": "hadji-murat",
-        "titre": "Хаджи-Мурат",
+        "titre": "Hadji-Mourad",
         "titreOriginal": "Хаджи-Мурат",
         "auteur": "Léon Tolstoï",
         "auteurOriginal": "Лев Толстой",
@@ -25,25 +25,25 @@
         "niveauNote": "Vocabulaire riche et descriptif, phrases complexes avec subordonnées, style littéraire exigeant.",
         "gratuit": true,
         "couvertureCouleur": "#C9A87C",
-        "version": 1776413494206
+        "version": 1776606586569
     },
     {
         "id": "la-ciudad-de-vapor",
-        "titre": "Blanca et l'Adieu",
+        "titre": "Blanca and Farewell",
         "titreOriginal": "Blanca y el Adiós",
         "auteur": "Carlos Ruiz Zafón",
         "auteurOriginal": "Carlos Ruiz Zafón",
         "langueSource": "es",
         "langueCible": "en",
         "niveau": "B2",
-        "niveauNote": "Espagnol littéraire contemporain de Ruiz Zafón — style vivant, dialogues naturels, quelques tournures idiomatiques.",
+        "niveauNote": "Contemporary literary Spanish by Ruiz Zafón — lively style, natural dialogues, a few idiomatic turns of phrase.",
         "gratuit": true,
         "couvertureCouleur": "#e8f0f8",
-        "version": 1
+        "version": 1776606586569
     },
     {
         "id": "the-happy-prince",
-        "titre": "THE HAPPY PRINCE",
+        "titre": "Le Prince Heureux",
         "titreOriginal": "THE HAPPY PRINCE",
         "auteur": "Oscar Wilde",
         "auteurOriginal": "Oscar Wilde",
@@ -53,11 +53,11 @@
         "niveauNote": "Vocabulaire accessible mais syntaxe parfois complexe avec des phrases subordonnées et des descriptions littéraires.",
         "gratuit": true,
         "couvertureCouleur": "#A599C2",
-        "version": 1
+        "version": 1776606586569
     },
     {
         "id": "hansel-und-gretel",
-        "titre": "Hänsel und Gretel",
+        "titre": "Hansel et Gretel",
         "titreOriginal": "Hänsel und Gretel",
         "auteur": "Jacob et Wilhelm Grimm",
         "auteurOriginal": "Jacob und Wilhelm Grimm",
@@ -67,7 +67,7 @@
         "niveauNote": "Vocabulaire accessible mais syntaxe parfois complexe avec des phrases longues et des subordonnées.",
         "gratuit": true,
         "couvertureCouleur": "#A599C2",
-        "version": 1776553615545
+        "version": 1776606586569
     },
     {
         "id": "maitre-et-serviteur",
