@@ -1,7 +1,9 @@
 import CarteLivre from '@/components/CarteLivre';
 import { COLORS } from '@/constants/colors';
-import { LANGUES } from '@/constants/langues';
+import { nomLangue } from '@/constants/langues';
 import { NIVEAUX } from '@/constants/niveaux';
+import { STRINGS } from '@/constants/strings';
+import { useLocale } from '@/contexts/LocaleContext';
 import { useBibliotheque } from '@/hooks/useBibliotheque';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
@@ -25,15 +27,6 @@ const CIBLES  = ['all', 'fr', 'de', 'en'] as const;
 const SOURCES = ['all', 'ru', 'en', 'es'] as const;
 const NIVEAUX_CODES = ['all', 'B1', 'B2', 'C1', 'C2'] as const;
 
-function nomLangue(code: string): string {
-  if (code === 'all') return 'Toutes';
-  return LANGUES.find(l => l.code === code)?.nom ?? code;
-}
-
-function nomNiveau(code: string): string {
-  if (code === 'all') return 'Tous';
-  return NIVEAUX.find(n => n.code === code)?.code ?? code;
-}
 
 // ─── Composant dropdown ───────────────────────────────────────────────────────
 
@@ -93,7 +86,14 @@ function Dropdown({ value, options, labelFn, onChange }: DropdownProps) {
 
 export default function BibliothequeScreen() {
   const router = useRouter();
+  const locale = useLocale();
+  const s = STRINGS[locale];
   const { livres } = useBibliotheque();
+
+  const labelLangue = (code: string) =>
+    code === 'all' ? s.toutesLangues : nomLangue(code, locale);
+  const labelNiveau = (code: string) =>
+    code === 'all' ? s.tousNiveaux : (NIVEAUX.find(n => n.code === code)?.code ?? code);
   const [langueCible, setLangueCible] = useState<string>('all');
   const [langueSource, setLangueSource] = useState<string>('all');
   const [niveauChoisi, setNiveauChoisi] = useState<string>('all');
@@ -137,31 +137,31 @@ export default function BibliothequeScreen() {
       <View style={styles.sticky}>
         {/* Ligne 1 : titre + contact */}
         <View style={styles.headerRow}>
-          <Text style={styles.header}>Ma bibliothèque</Text>
+          <Text style={styles.header}>{s.maLibrairie}</Text>
           <TouchableOpacity
             onPress={() => Linking.openURL('mailto:mytheoriginalsapp@gmail.com')}
             activeOpacity={0.7}
           >
-            <Text style={styles.contact}><Text style={styles.contactIcon}>✉</Text> Contact</Text>
+            <Text style={styles.contact}><Text style={styles.contactIcon}>✉</Text> {s.contact}</Text>
           </TouchableOpacity>
         </View>
 
         {/* Ligne 2 : deux dropdowns côte à côte */}
         <View style={styles.filtresRow}>
           <View style={styles.filtreItem}>
-            <Text style={styles.filtreLabel}>Je parle</Text>
-            <Dropdown value={langueCible} options={CIBLES} labelFn={nomLangue} onChange={handleSetCible} />
+            <Text style={styles.filtreLabel}>{s.jeParle}</Text>
+            <Dropdown value={langueCible} options={CIBLES} labelFn={labelLangue} onChange={handleSetCible} />
           </View>
           <View style={styles.filtreSep} />
           <View style={styles.filtreItem}>
-            <Text style={styles.filtreLabel}>J'apprends</Text>
-            <Dropdown value={langueSource} options={SOURCES} labelFn={nomLangue} onChange={handleSetSource} />
+            <Text style={styles.filtreLabel}>{s.jApprends}</Text>
+            <Dropdown value={langueSource} options={SOURCES} labelFn={labelLangue} onChange={handleSetSource} />
           </View>
         </View>
 
         {/* Ligne 3 : pills niveau */}
         <View style={styles.pillsRow}>
-          <Text style={styles.filtreLabel}>Niveau</Text>
+          <Text style={styles.filtreLabel}>{s.niveau}</Text>
           {NIVEAUX_CODES.map(code => (
             <TouchableOpacity
               key={code}
@@ -170,7 +170,7 @@ export default function BibliothequeScreen() {
               activeOpacity={0.7}
             >
               <Text style={[styles.pillText, niveauChoisi === code && styles.pillTextActive]}>
-                {nomNiveau(code)}
+                {labelNiveau(code)}
               </Text>
             </TouchableOpacity>
           ))}
@@ -190,9 +190,7 @@ export default function BibliothequeScreen() {
             />
           ))
         ) : (
-          <Text style={styles.empty}>
-            Aucun livre disponible pour cette combinaison. Essayez d'élargir vos filtres.
-          </Text>
+          <Text style={styles.empty}>{s.aucunLivre}</Text>
         )}
       </ScrollView>
     </SafeAreaView>

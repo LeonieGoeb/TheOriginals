@@ -1,6 +1,8 @@
 import { COLORS } from '@/constants/colors';
 import { LANGUES } from '@/constants/langues';
 import { NIVEAUX } from '@/constants/niveaux';
+import { STRINGS } from '@/constants/strings';
+import { useLocale } from '@/contexts/LocaleContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import React, { useRef, useState } from 'react';
@@ -27,18 +29,18 @@ const LANGUES_SOURCE = LANGUES.filter(l => l.code !== 'fr');
 // ── Écran 1 — Présentation ─────────────────────────────────────────────────
 
 function EcranPresentation() {
+  const locale = useLocale();
+  const s = STRINGS[locale];
   return (
     <View style={ecrans.container}>
-      <Text style={ecrans.surtitre}>Bienvenue dans</Text>
+      <Text style={ecrans.surtitre}>{s.bienvenueIn}</Text>
       <Text style={ecrans.titre}>TheOriginals</Text>
-      <Text style={ecrans.accroche}>
-        Lisez vos auteurs préférés dans leur langue originale.
-      </Text>
+      <Text style={ecrans.accroche}>{s.accroche}</Text>
       <View style={ecrans.separateur} />
       <Text style={ecrans.corps}>
-        Avec{' '}
-        <Text style={ecrans.gras}>TheOriginals</Text>, apprenez des langues en vous immergeant dans les contes et romans en VO, avec la traduction et
-        l'analyse grammaticale à portée de doigt.
+        {s.corpsAvec}
+        <Text style={ecrans.gras}>TheOriginals</Text>
+        {s.corpsTexte}
       </Text>
     </View>
   );
@@ -46,30 +48,14 @@ function EcranPresentation() {
 
 // ── Écran 2 — Fonctionnalités ──────────────────────────────────────────────
 
-const FEATURES = [
-  {
-    emoji: '📖',
-    titre: 'Texte original',
-    description: "Lisez les classiques tels qu'ils ont été écrits, dans leur texte original.",
-  },
-  {
-    emoji: '💬',
-    titre: 'Traduction intégrée',
-    description: 'Affichez la traduction phrase à phrase dans votre langue maternelle (bouton 💬 Traduction).',
-  },
-  {
-    emoji: '🔍',
-    titre: 'Analyse grammaticale',
-    description: 'Colorez sujets, verbes et compléments pour comprendre la structure de la phrase (bouton 🔍 Analyse).',
-  },
-];
-
 function EcranFonctionnalites() {
+  const locale = useLocale();
+  const s = STRINGS[locale];
   return (
     <View style={ecrans.container}>
-      <Text style={ecrans.titre}>Comment ça marche</Text>
+      <Text style={ecrans.titre}>{s.commentCaMarche}</Text>
       <View style={ecrans.features}>
-        {FEATURES.map(f => (
+        {s.features.map(f => (
           <View key={f.titre} style={ecrans.featureRow}>
             <Text style={ecrans.featureEmoji}>{f.emoji}</Text>
             <View style={ecrans.featureTexte}>
@@ -95,12 +81,14 @@ interface EcranPreferencesProps {
 function EcranPreferences({
   langueSource, niveau, onChangerLangue, onChangerNiveau,
 }: EcranPreferencesProps) {
+  const locale = useLocale();
+  const s = STRINGS[locale];
   return (
     <View style={ecrans.container}>
-      <Text style={ecrans.titre}>Vos préférences</Text>
-      <Text style={ecrans.sousTitre}>Modifiables à tout moment depuis la bibliothèque.</Text>
+      <Text style={ecrans.titre}>{s.vosPreferences}</Text>
+      <Text style={ecrans.sousTitre}>{s.preferencesModif}</Text>
 
-      <Text style={ecrans.label}>Langue que vous souhaitez lire</Text>
+      <Text style={ecrans.label}>{s.langueASouhaiter}</Text>
       <View style={ecrans.chips}>
         {LANGUES_SOURCE.map(l => (
           <TouchableOpacity
@@ -109,13 +97,13 @@ function EcranPreferences({
             onPress={() => onChangerLangue(l.code)}
           >
             <Text style={[ecrans.chipTexte, langueSource === l.code && ecrans.chipTexteActif]}>
-              {l.drapeau} {l.nom}
+              {l.drapeau} {l.nom[locale]}
             </Text>
           </TouchableOpacity>
         ))}
       </View>
 
-      <Text style={[ecrans.label, { marginTop: 24 }]}>Votre niveau</Text>
+      <Text style={[ecrans.label, { marginTop: 24 }]}>{s.votreNiveau}</Text>
       <View style={ecrans.chips}>
         {NIVEAUX.map(n => (
           <TouchableOpacity
@@ -138,6 +126,8 @@ function EcranPreferences({
 const NB_ECRANS = 3;
 
 export default function OnboardingScreen() {
+  const locale = useLocale();
+  const s = STRINGS[locale];
   const [ecranActuel, setEcranActuel] = useState(0);
   const [langueSource, setLangueSource] = useState('ru');
   const [niveau, setNiveau] = useState('B1');
@@ -173,7 +163,7 @@ export default function OnboardingScreen() {
       {/* Bouton Passer */}
       {!dernier && (
         <TouchableOpacity style={styles.passer} onPress={passer}>
-          <Text style={styles.passerTexte}>Passer</Text>
+          <Text style={styles.passerTexte}>{s.passer}</Text>
         </TouchableOpacity>
       )}
 
@@ -207,7 +197,7 @@ export default function OnboardingScreen() {
           activeOpacity={0.8}
         >
           <Text style={styles.btnSuivantTexte}>
-            {dernier ? 'Commencer' : 'Suivant'}
+            {dernier ? s.commencer : s.suivant}
           </Text>
         </TouchableOpacity>
       </View>

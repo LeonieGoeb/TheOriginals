@@ -3,6 +3,8 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { LivreInfo } from '@/data/types';
 import { COLORS } from '@/constants/colors';
 import { getLangue } from '@/constants/langues';
+import { useLocale } from '@/contexts/LocaleContext';
+import { STRINGS } from '@/constants/strings';
 import NiveauBadge from './NiveauBadge';
 
 interface CarteLivreProps {
@@ -11,6 +13,8 @@ interface CarteLivreProps {
 }
 
 export default function CarteLivre({ livre, onPress }: CarteLivreProps) {
+  const locale = useLocale();
+  const s = STRINGS[locale];
   const drapeauSource = getLangue(livre.langueSource).drapeau;
   const drapeauCible = getLangue(livre.langueCible).drapeau;
 
@@ -30,7 +34,7 @@ export default function CarteLivre({ livre, onPress }: CarteLivreProps) {
           </Text>
           <View style={[styles.badgeAccess, livre.gratuit ? styles.badgeFree : styles.badgeLocked]}>
             <Text style={[styles.badgeText, livre.gratuit ? styles.badgeFreeText : styles.badgeLockedText]}>
-              {livre.gratuit ? 'Gratuit' : 'Verrouillé 🔒'}
+              {livre.gratuit ? s.gratuit : s.verrouille}
             </Text>
           </View>
         </View>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ViewStyle } from 'react-native';
 import { CodeNiveau, getNiveau } from '@/constants/niveaux';
+import { useLocale } from '@/contexts/LocaleContext';
 
 interface NiveauBadgeProps {
   code: CodeNiveau;
@@ -8,11 +9,12 @@ interface NiveauBadgeProps {
 }
 
 export default function NiveauBadge({ code, style }: NiveauBadgeProps) {
+  const locale = useLocale();
   const niveau = getNiveau(code);
   return (
     <View style={[styles.badge, { backgroundColor: niveau.couleur }, style]}>
       <Text style={[styles.text, { color: niveau.couleurTexte }]}>
-        {niveau.nom}
+        {niveau.nom[locale]}
       </Text>
     </View>
   );

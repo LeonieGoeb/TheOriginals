@@ -4,6 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter, useNavigation } from 'expo-router';
 import { COLORS } from '@/constants/colors';
 import { getLangue } from '@/constants/langues';
+import { STRINGS } from '@/constants/strings';
+import { useLocale } from '@/contexts/LocaleContext';
 import NiveauBadge from '@/components/NiveauBadge';
 import { useLivreTelecharge } from '@/hooks/useLivreTelecharge';
 
@@ -11,6 +13,8 @@ export default function ChapitresScreen() {
   const { livreId } = useLocalSearchParams<{ livreId: string }>();
   const router = useRouter();
   const navigation = useNavigation();
+  const locale = useLocale();
+  const s = STRINGS[locale];
 
   const { livre, chargement, telechargeNecessaire, erreur, telecharger } =
     useLivreTelecharge(livreId ?? '');
@@ -30,13 +34,11 @@ export default function ChapitresScreen() {
   if (telechargeNecessaire) {
     return (
       <View style={styles.center}>
-        <Text style={styles.downloadTitle}>Livre non téléchargé</Text>
-        <Text style={styles.downloadSub}>
-          Ce livre n'est pas encore disponible hors-ligne.
-        </Text>
+        <Text style={styles.downloadTitle}>{s.livreNonTelecharge}</Text>
+        <Text style={styles.downloadSub}>{s.livreNonTelchargeSub}</Text>
         {erreur && <Text style={styles.erreurText}>{erreur}</Text>}
         <TouchableOpacity style={styles.downloadBtn} onPress={telecharger} activeOpacity={0.75}>
-          <Text style={styles.downloadBtnText}>⬇ Télécharger</Text>
+          <Text style={styles.downloadBtnText}>{s.telecharger}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -45,15 +47,15 @@ export default function ChapitresScreen() {
   if (!livre) {
     return (
       <View style={styles.center}>
-        <Text style={styles.errorText}>Livre introuvable</Text>
+        <Text style={styles.errorText}>{s.livreIntrouvable}</Text>
       </View>
     );
   }
 
   const drapeauSource = getLangue(livre.langueSource).drapeau;
   const drapeauCible  = getLangue(livre.langueCible).drapeau;
-  const langueSourceNom = getLangue(livre.langueSource).nom;
-  const langueCibleNom  = getLangue(livre.langueCible).nom;
+  const langueSourceNom = getLangue(livre.langueSource).nom[locale];
+  const langueCibleNom  = getLangue(livre.langueCible).nom[locale];
 
   return (
     <SafeAreaView style={styles.safe}>
