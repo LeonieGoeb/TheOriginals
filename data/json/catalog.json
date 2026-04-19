@@ -68,5 +68,19 @@
     "gratuit": true,
     "couvertureCouleur": "#A599C2",
     "version": 1776553615545
+  },
+  {
+    "id": "maitre-et-serviteur",
+    "titre": "",
+    "titreOriginal": "",
+    "auteur": "Léon Tolstoï",
+    "auteurOriginal": "Лев Николаевич Толстой",
+    "langueSource": "ru",
+    "langueCible": "fr",
+    "niveau": "B2",
+    "niveauNote": "Vocabulaire riche et syntaxe complexe avec des tournures littéraires et des descriptions détaillées.",
+    "gratuit": true,
+    "couvertureCouleur": "#C9A87C",
+    "version": 1776559463887
   }
 ]
