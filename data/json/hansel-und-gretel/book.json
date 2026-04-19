@@ -10,80 +10,8 @@
     "niveauNote": "Accessible vocabulary but occasionally complex syntax with long sentences and subordinate clauses.",
     "gratuit": true,
     "couvertureCouleur": "#A599C2",
-    "version": 1776607356431,
+    "version": 1776607782831,
     "chapitres": [
-        {
-            "id": "chapitre-00",
-            "titre": "Préface",
-            "titreOriginal": "Préface",
-            "paragraphes": [
-                {
-                    "id": "p1",
-                    "textes": {
-                        "de": [
-                            {
-                                "text": "Jacob",
-                                "type": "s"
-                            },
-                            {
-                                "text": " ",
-                                "type": null
-                            },
-                            {
-                                "text": "und",
-                                "type": null
-                            },
-                            {
-                                "text": " ",
-                                "type": null
-                            },
-                            {
-                                "text": "Wilhelm",
-                                "type": "s"
-                            },
-                            {
-                                "text": " ",
-                                "type": null
-                            },
-                            {
-                                "text": "Grimm",
-                                "type": "s"
-                            }
-                        ],
-                        "fr": [
-                            {
-                                "text": "Jacob",
-                                "type": "s"
-                            },
-                            {
-                                "text": " ",
-                                "type": null
-                            },
-                            {
-                                "text": "et",
-                                "type": null
-                            },
-                            {
-                                "text": " ",
-                                "type": null
-                            },
-                            {
-                                "text": "Wilhelm",
-                                "type": "s"
-                            },
-                            {
-                                "text": " ",
-                                "type": null
-                            },
-                            {
-                                "text": "Grimm",
-                                "type": "s"
-                            }
-                        ]
-                    }
-                }
-            ]
-        },
         {
             "id": "chapitre-01",
             "titre": "1",

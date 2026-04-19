@@ -1,5 +1,4 @@
 import { Livre } from '../types';
-import chapitre00 from './chapitre-00';
 import chapitre01 from './chapitre-01';
 import chapitre02 from './chapitre-02';
 import chapitre03 from './chapitre-03';
@@ -17,7 +16,6 @@ const laCiudadDeVapor: Livre = {
   gratuit: true,
   couvertureCouleur: "#e8f0f8",
   chapitres: [
-    chapitre00,
     chapitre01,
     chapitre02,
     chapitre03,

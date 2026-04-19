@@ -1,5 +1,4 @@
 import { Livre } from '../types';
-import chapitre00 from './chapitre-00';
 import chapitre01 from './chapitre-01';
 import chapitre02 from './chapitre-02';
 
@@ -16,7 +15,6 @@ const hadjiMurat: Livre = {
   gratuit: true,
   couvertureCouleur: "#C9A87C",
   chapitres: [
-    chapitre00,
     chapitre01,
     chapitre02,
   ],
