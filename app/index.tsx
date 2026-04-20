@@ -7,7 +7,8 @@ import { useLocale } from '@/contexts/LocaleContext';
 import { useBibliotheque } from '@/hooks/useBibliotheque';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
-import React, { useCallback, useEffect, useState } from 'react';
+import { syncTopics } from '@/hooks/useNotifications';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Linking,
   Modal, Pressable,
@@ -123,14 +124,21 @@ export default function BibliothequeScreen() {
   const [languesCibles, setLanguesCibles] = useState<string[]>([]);
   const [languesSources, setLanguesSources] = useState<string[]>([]);
   const [niveauChoisi, setNiveauChoisi] = useState<string>('all');
+  const activeTopics = useRef<string[]>([]);
 
   useEffect(() => {
     AsyncStorage.multiGet([ONBOARDING_KEY, STORAGE_KEY_LANGUE_CIBLE, STORAGE_KEY_LANGUE_SOURCE, STORAGE_KEY_NIVEAU])
       .then(([onboarding, cible, source, niveau]) => {
         if (!onboarding[1]) { router.replace('/onboarding'); return; }
-        setLanguesCibles(parseStoredLangues(cible[1]));
-        setLanguesSources(parseStoredLangues(source[1]));
+        const cibles  = parseStoredLangues(cible[1]);
+        const sources = parseStoredLangues(source[1]);
+        setLanguesCibles(cibles);
+        setLanguesSources(sources);
         if (niveau[1]) setNiveauChoisi(niveau[1]);
+        // Synchroniser les topics FCM au démarrage
+        syncTopics(sources, cibles, activeTopics.current)
+          .then(t => { activeTopics.current = t; })
+          .catch(() => {});
       })
       .catch(() => {});
   }, []);
@@ -138,12 +146,18 @@ export default function BibliothequeScreen() {
   const handleSetCibles = useCallback((codes: string[]) => {
     setLanguesCibles(codes);
     AsyncStorage.setItem(STORAGE_KEY_LANGUE_CIBLE, JSON.stringify(codes)).catch(() => {});
-  }, []);
+    syncTopics(languesSources, codes, activeTopics.current)
+      .then(t => { activeTopics.current = t; })
+      .catch(() => {});
+  }, [languesSources]);
 
   const handleSetSources = useCallback((codes: string[]) => {
     setLanguesSources(codes);
     AsyncStorage.setItem(STORAGE_KEY_LANGUE_SOURCE, JSON.stringify(codes)).catch(() => {});
-  }, []);
+    syncTopics(codes, languesCibles, activeTopics.current)
+      .then(t => { activeTopics.current = t; })
+      .catch(() => {});
+  }, [languesCibles]);
 
   const handleSetNiveau = useCallback((code: string) => {
     setNiveauChoisi(code);

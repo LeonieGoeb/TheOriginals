@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "548560468054",
+    "project_id": "theoriginals-b36d2",
+    "storage_bucket": "theoriginals-b36d2.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:548560468054:android:8f97699c8d36c283d823f7",
+        "android_client_info": {
+          "package_name": "com.theoriginals.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC1ILuYWF6CxI8beKzeRmRCmEoNgaS0Llo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
