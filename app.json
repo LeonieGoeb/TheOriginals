@@ -14,6 +14,7 @@
     },
     "android": {
       "package": "com.theoriginals.app",
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#f5efe3"
