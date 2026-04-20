@@ -179,6 +179,14 @@ jobs:
             --head "$PR_BRANCH" \
           || echo "PR existe déjà"
 
+          # Branche de preview locale (TypeScript embarqué) — NE PAS merger dans main
+          DEV_BRANCH="dev-preview/${SLUG}"
+          git push origin --delete "$DEV_BRANCH" 2>/dev/null || true
+          git checkout -b "$DEV_BRANCH"
+          git add "data/${SLUG}/" "data/bibliotheque.ts" 2>/dev/null || true
+          git commit -m "dev-only: TypeScript bundle for local testing — DO NOT MERGE"
+          git push -f origin "$DEV_BRANCH"
+
       # ── Sauvegarde de la progression en cas d'échec ─────────────────────────
       - name: Save progress on failure
         if: failure()
