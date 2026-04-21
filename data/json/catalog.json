@@ -96,5 +96,19 @@
     "gratuit": true,
     "couvertureCouleur": "#9A8060",
     "version": 1776666442298
+  },
+  {
+    "id": "roman-v-pismakh",
+    "titre": "IX.",
+    "titreOriginal": "IX.",
+    "auteur": "Leo Tolstoy",
+    "auteurOriginal": "Лев Николаевич Толстой",
+    "langueSource": "ru",
+    "langueCible": "fr",
+    "niveau": "C1",
+    "niveauNote": "Complex syntax, advanced vocabulary, and literary style suitable for advanced learners.",
+    "gratuit": true,
+    "couvertureCouleur": "#7A6548",
+    "version": 1776799344779
   }
 ]
