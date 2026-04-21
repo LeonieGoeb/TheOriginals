@@ -9,6 +9,7 @@ import React, { useRef, useState } from 'react';
 import {
   Animated,
   Dimensions,
+  Linking,
   Platform,
   ScrollView,
   StyleSheet,
@@ -144,13 +145,43 @@ function EcranPreferences({
   );
 }
 
+// ── Écran 4 — Suggestions ─────────────────────────────────────────────────
+
+function EcranSuggestions() {
+  const locale = useLocale();
+  const s = STRINGS[locale];
+  return (
+    <View style={ecrans.container}>
+      <Text style={ecrans.titre}>{s.suggestionsTitle}</Text>
+      <Text style={ecrans.accroche}>{s.suggestionsIntro}</Text>
+      <View style={ecrans.separateur} />
+
+      <View style={ecrans.suggestionBloc}>
+        <Text style={ecrans.suggestionTitre}>{s.suggestionsLivreTitle}</Text>
+        <Text style={ecrans.suggestionDesc}>{s.suggestionsLivreDesc}</Text>
+      </View>
+
+      <View style={ecrans.suggestionBloc}>
+        <Text style={ecrans.suggestionTitre}>{s.suggestionsFonctionTitle}</Text>
+        <Text style={ecrans.suggestionDesc}>{s.suggestionsFonctionDesc}</Text>
+      </View>
+
+      <View style={ecrans.separateur} />
+      <Text style={ecrans.suggestionContact}>{s.suggestionsContact}</Text>
+      <TouchableOpacity onPress={() => Linking.openURL('mailto:mytheoriginalsapp@gmail.com')}>
+        <Text style={ecrans.suggestionEmail}>{s.suggestionsEmail}</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
 // ── Composant principal ────────────────────────────────────────────────────
 
 function toggle(arr: string[], code: string): string[] {
   return arr.includes(code) ? arr.filter(c => c !== code) : [...arr, code];
 }
 
-const NB_ECRANS = 3;
+const NB_ECRANS = 4;
 
 export default function OnboardingScreen() {
   const locale = useLocale();
@@ -210,6 +241,7 @@ export default function OnboardingScreen() {
             onChangerNiveau={setNiveau}
           />
         )}
+        {ecranActuel === 3 && <EcranSuggestions />}
       </Animated.View>
 
       {/* Bas : points + bouton */}
@@ -346,6 +378,31 @@ const ecrans = StyleSheet.create({
   chipTexteActif: {
     color: '#fff',
     fontWeight: '600',
+  },
+  suggestionBloc: {
+    marginBottom: 24,
+  },
+  suggestionTitre: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: COLORS.textDark,
+    marginBottom: 6,
+  },
+  suggestionDesc: {
+    fontSize: 14,
+    color: COLORS.textMid,
+    lineHeight: 22,
+  },
+  suggestionContact: {
+    fontSize: 13,
+    color: COLORS.textLight,
+    marginBottom: 6,
+  },
+  suggestionEmail: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: COLORS.accent,
+    textDecorationLine: 'underline',
   },
 });
 

@@ -54,6 +54,16 @@ export const STRINGS = {
     passer: 'Passer',
     suivant: 'Suivant',
     commencer: 'Commencer',
+
+    // Onboarding — Contact
+    suggestionsTitle: 'Suggestions',
+    suggestionsIntro: 'TheOriginals grandit grâce à vos retours.',
+    suggestionsLivreTitle: 'Proposer une nouvelle ou un roman',
+    suggestionsLivreDesc: 'Vous avez une nouvelle ou un roman en tête que vous aimeriez lire en VO ? Écrivez-nous et nous ferons de notre mieux pour l\'ajouter.',
+    suggestionsFonctionTitle: 'Proposer une fonctionnalité',
+    suggestionsFonctionDesc: 'Une idée pour améliorer l\'expérience de lecture ? Partagez-la avec nous.',
+    suggestionsContact: 'Contactez-nous à :',
+    suggestionsEmail: 'mytheoriginalsapp@gmail.com',
   },
 
   en: {
@@ -109,6 +119,16 @@ export const STRINGS = {
     passer: 'Skip',
     suivant: 'Next',
     commencer: 'Get started',
+
+    // Onboarding — Contact
+    suggestionsTitle: 'Suggestions',
+    suggestionsIntro: 'TheOriginals grows thanks to your feedback.',
+    suggestionsLivreTitle: 'Suggest a short story',
+    suggestionsLivreDesc: 'Have a short story or novel in mind you\'d like to read in its original language? Write to us and we\'ll do our best to add it.',
+    suggestionsFonctionTitle: 'Suggest a feature',
+    suggestionsFonctionDesc: 'An idea to improve the reading experience? Share it with us.',
+    suggestionsContact: 'Contact us at:',
+    suggestionsEmail: 'mytheoriginalsapp@gmail.com',
   },
 } as const;
 
