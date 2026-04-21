@@ -56,9 +56,12 @@ async function main() {
     const nettoyerHtml = s => s.replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").trim();
 
     // Paragraphe qui ne contient qu'un chiffre romain ou arabe → marqueur de chapitre
-    const estMarqueur = t =>
-      /^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/i.test(t) && t.length > 0
-      || /^\d{1,3}$/.test(t);
+    // Accepte aussi les formes avec ponctuation finale : "IX.", "3.", "II ."
+    const estMarqueur = t => {
+      const clean = t.replace(/[.\s]+$/, '').trim();
+      return (clean.length > 0 && /^M{0,4}(CM|CD|D?C{0,3})(XC|XL|L?X{0,3})(IX|IV|V?I{0,3})$/i.test(clean))
+        || /^\d{1,3}$/.test(clean);
+    };
 
     if (h1) {
       const texte = nettoyerHtml(h1[1]);
@@ -102,9 +105,10 @@ async function main() {
     chapitres.push(chapCourant);
   }
 
-  // Supprimer le premier chapitre s'il est une préface ou n'a pas de titre
+  // Supprimer le premier chapitre s'il est une préface ou n'a pas de titre,
+  // uniquement s'il reste d'autres chapitres après (évite de tout supprimer)
   const TITRES_PREFACE = /^(pr[eé]face|prefacio|pr[oó]logo|prologue|prolog|introduction|avant-propos|foreword|avertissement|note de l['']auteur|note d['']introduction)$/i;
-  if (chapitres.length > 0) {
+  if (chapitres.length > 1) {
     const premierTitre = chapitres[0].titre;
     if (premierTitre === null || TITRES_PREFACE.test(premierTitre.trim())) {
       chapitres.shift();
