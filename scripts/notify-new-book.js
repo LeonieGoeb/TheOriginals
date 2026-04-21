@@ -75,7 +75,7 @@ async function main() {
         livreId: livre.id,
       },
       android: {
-        notification: { click_action: 'FLUTTER_NOTIFICATION_CLICK' },
+        notification: { channel_id: 'default' },
       },
     },
   };
