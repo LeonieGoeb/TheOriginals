@@ -96,5 +96,19 @@
     "gratuit": true,
     "couvertureCouleur": "#9A8060",
     "version": 1776666442298
+  },
+  {
+    "id": "roman-v-pismakh",
+    "titre": "Un roman en neuf lettres",
+    "titreOriginal": "Роман в девяти письмах",
+    "auteur": "Fiodor Dostoïevski",
+    "auteurOriginal": "Фёдор Михайлович Достоевский",
+    "langueSource": "ru",
+    "langueCible": "fr",
+    "niveau": "B2",
+    "niveauNote": "Text contains archaic vocabulary, complex sentence structures, and historical register, suitable for advanced learners.",
+    "gratuit": true,
+    "couvertureCouleur": "#C4A882",
+    "version": 1776801368904
   }
 ]
