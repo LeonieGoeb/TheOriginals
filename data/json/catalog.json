@@ -96,5 +96,19 @@
     "gratuit": true,
     "couvertureCouleur": "#9A8060",
     "version": 1776666442298
+  },
+  {
+    "id": "roman-v-pismakh",
+    "titre": "De Pierre Ivanovitch à Ivan Petrovitch",
+    "titreOriginal": "roman-v-pismakh",
+    "auteur": "Nikolaï Gogol",
+    "auteurOriginal": "Николай Васильевич Гоголь",
+    "langueSource": "ru",
+    "langueCible": "fr",
+    "niveau": "B2",
+    "niveauNote": "Text contains archaic vocabulary, complex sentence structures, and historical register, suitable for advanced learners.",
+    "gratuit": true,
+    "couvertureCouleur": "#C4A882",
+    "version": 1776801368904
   }
 ]
