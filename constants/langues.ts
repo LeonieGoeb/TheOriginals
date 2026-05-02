@@ -12,6 +12,7 @@ export const LANGUES: DefinitionLangue[] = [
   { code: 'en', nom: { fr: 'Anglais',   en: 'English'  }, drapeau: '🇬🇧' },
   { code: 'ru', nom: { fr: 'Russe',     en: 'Russian'  }, drapeau: '🇷🇺' },
   { code: 'es', nom: { fr: 'Espagnol',  en: 'Spanish'  }, drapeau: '🇪🇸' },
+  { code: 'ar', nom: { fr: 'Arabe',     en: 'Arabic'   }, drapeau: '🇸🇦' },
 ];
 
 export function getLangue(code: string): DefinitionLangue {

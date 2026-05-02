@@ -24,48 +24,39 @@ const STORAGE_KEY_LANGUE_CIBLE  = 'app_langue_cible';
 const STORAGE_KEY_LANGUE_SOURCE = 'app_langue_source';
 const STORAGE_KEY_NIVEAU        = 'app_niveau_choisi';
 
-const CIBLES  = ['fr', 'de', 'en'] as const;
-const SOURCES = ['ru', 'en', 'es', 'de'] as const;
+const CIBLES  = ['fr', 'de', 'en', 'es', 'ar'] as const;
+const SOURCES = ['ru', 'en', 'es', 'de', 'ar'] as const;
 const NIVEAUX_CODES = ['all', 'B1', 'B2', 'C1', 'C2'] as const;
 
-// Parse a stored value: handles JSON array, legacy plain string, or null.
-// "all" is a legacy sentinel meaning "no filter" → treated as empty array.
-function parseStoredLangues(val: string | null): string[] {
-  if (!val || val === 'all') return [];
+// Parse a stored value (plain string, JSON array, or null) → single string ('' = all).
+function parseStoredLangue(val: string | null): string {
+  if (!val || val === 'all') return '';
   try {
     const parsed = JSON.parse(val);
-    if (Array.isArray(parsed)) return (parsed as string[]).filter(c => c !== 'all');
-    if (parsed === 'all') return [];
-    return [String(parsed)];
+    if (Array.isArray(parsed)) return parsed.filter((c: string) => c !== 'all')[0] ?? '';
+    if (parsed === 'all') return '';
+    return String(parsed);
   } catch {
-    return [val];
+    return val;
   }
 }
 
-// ─── Multi-select dropdown ────────────────────────────────────────────────────
+// ─── Single-select dropdown ───────────────────────────────────────────────────
 
-interface MultiDropdownProps {
-  values: string[];
+interface DropdownProps {
+  value: string;
   options: readonly string[];
   labelFn: (code: string) => string;
   allLabel: string;
-  onChange: (values: string[]) => void;
+  onChange: (value: string) => void;
 }
 
-function MultiDropdown({ values, options, labelFn, allLabel, onChange }: MultiDropdownProps) {
+function Dropdown({ value, options, labelFn, allLabel, onChange }: DropdownProps) {
   const [open, setOpen] = useState(false);
 
-  const safe = Array.isArray(values) ? values : [];
-
-  const summaryLabel =
-    safe.length === 0
-      ? allLabel
-      : safe.length === 1
-        ? labelFn(safe[0])
-        : safe.map(labelFn).join(', ');
-
-  function toggle(code: string) {
-    onChange(safe.includes(code) ? safe.filter(c => c !== code) : [...safe, code]);
+  function select(code: string) {
+    onChange(code === value ? '' : code);
+    setOpen(false);
   }
 
   return (
@@ -75,7 +66,9 @@ function MultiDropdown({ values, options, labelFn, allLabel, onChange }: MultiDr
         onPress={() => setOpen(true)}
         activeOpacity={0.7}
       >
-        <Text style={styles.dropdownBtnText} numberOfLines={1}>{summaryLabel}</Text>
+        <Text style={styles.dropdownBtnText} numberOfLines={1}>
+          {value ? labelFn(value) : allLabel}
+        </Text>
         <Text style={styles.dropdownArrow}>▾</Text>
       </TouchableOpacity>
 
@@ -87,13 +80,22 @@ function MultiDropdown({ values, options, labelFn, allLabel, onChange }: MultiDr
       >
         <Pressable style={styles.modalOverlay} onPress={() => setOpen(false)}>
           <View style={styles.modalMenu}>
+            <TouchableOpacity
+              style={[styles.modalItem, !value && styles.modalItemActive]}
+              onPress={() => { onChange(''); setOpen(false); }}
+              activeOpacity={0.7}
+            >
+              <Text style={[styles.modalItemText, !value && styles.modalItemTextActive]}>
+                {!value ? '✓  ' : '    '}{allLabel}
+              </Text>
+            </TouchableOpacity>
             {options.map(code => {
-              const selected = safe.includes(code);
+              const selected = value === code;
               return (
                 <TouchableOpacity
                   key={code}
                   style={[styles.modalItem, selected && styles.modalItemActive]}
-                  onPress={() => toggle(code)}
+                  onPress={() => select(code)}
                   activeOpacity={0.7}
                 >
                   <Text style={[styles.modalItemText, selected && styles.modalItemTextActive]}>
@@ -121,8 +123,8 @@ export default function BibliothequeScreen() {
   const labelNiveau = (code: string) =>
     code === 'all' ? s.tousNiveaux : (NIVEAUX.find(n => n.code === code)?.code ?? code);
 
-  const [languesCibles, setLanguesCibles] = useState<string[]>([]);
-  const [languesSources, setLanguesSources] = useState<string[]>([]);
+  const [langueCible, setLangueCible]   = useState<string>('');
+  const [langueSource, setLangueSource] = useState<string>('');
   const [niveauChoisi, setNiveauChoisi] = useState<string>('all');
   const activeTopics = useRef<string[]>([]);
 
@@ -130,34 +132,33 @@ export default function BibliothequeScreen() {
     AsyncStorage.multiGet([ONBOARDING_KEY, STORAGE_KEY_LANGUE_CIBLE, STORAGE_KEY_LANGUE_SOURCE, STORAGE_KEY_NIVEAU])
       .then(([onboarding, cible, source, niveau]) => {
         if (!onboarding[1]) { router.replace('/onboarding'); return; }
-        const cibles  = parseStoredLangues(cible[1]);
-        const sources = parseStoredLangues(source[1]);
-        setLanguesCibles(cibles);
-        setLanguesSources(sources);
+        const cible1  = parseStoredLangue(cible[1]);
+        const source1 = parseStoredLangue(source[1]);
+        setLangueCible(cible1);
+        setLangueSource(source1);
         if (niveau[1]) setNiveauChoisi(niveau[1]);
-        // Synchroniser les topics FCM au démarrage
-        syncTopics(sources, cibles, activeTopics.current)
+        syncTopics(source1 ? [source1] : [], cible1 ? [cible1] : [], activeTopics.current)
           .then(t => { activeTopics.current = t; })
           .catch(() => {});
       })
       .catch(() => {});
   }, []);
 
-  const handleSetCibles = useCallback((codes: string[]) => {
-    setLanguesCibles(codes);
-    AsyncStorage.setItem(STORAGE_KEY_LANGUE_CIBLE, JSON.stringify(codes)).catch(() => {});
-    syncTopics(languesSources, codes, activeTopics.current)
+  const handleSetCible = useCallback((code: string) => {
+    setLangueCible(code);
+    AsyncStorage.setItem(STORAGE_KEY_LANGUE_CIBLE, code).catch(() => {});
+    syncTopics(langueSource ? [langueSource] : [], code ? [code] : [], activeTopics.current)
       .then(t => { activeTopics.current = t; })
       .catch(() => {});
-  }, [languesSources]);
+  }, [langueSource]);
 
-  const handleSetSources = useCallback((codes: string[]) => {
-    setLanguesSources(codes);
-    AsyncStorage.setItem(STORAGE_KEY_LANGUE_SOURCE, JSON.stringify(codes)).catch(() => {});
-    syncTopics(codes, languesCibles, activeTopics.current)
+  const handleSetSource = useCallback((code: string) => {
+    setLangueSource(code);
+    AsyncStorage.setItem(STORAGE_KEY_LANGUE_SOURCE, code).catch(() => {});
+    syncTopics(code ? [code] : [], langueCible ? [langueCible] : [], activeTopics.current)
       .then(t => { activeTopics.current = t; })
       .catch(() => {});
-  }, [languesCibles]);
+  }, [langueCible]);
 
   const handleSetNiveau = useCallback((code: string) => {
     setNiveauChoisi(code);
@@ -165,8 +166,8 @@ export default function BibliothequeScreen() {
   }, []);
 
   const livresFiltres = livres.filter(l => {
-    const matchCible  = languesCibles.length  === 0 || languesCibles.includes(l.langueCible);
-    const matchSource = languesSources.length === 0 || languesSources.includes(l.langueSource);
+    const matchCible  = !langueCible  || l.langueCible  === langueCible;
+    const matchSource = !langueSource || l.langueSource === langueSource;
     const matchNiveau = niveauChoisi === 'all' || l.niveau === niveauChoisi;
     return matchCible && matchSource && matchNiveau;
   });
@@ -196,23 +197,23 @@ export default function BibliothequeScreen() {
         <View style={styles.filtresRow}>
           <View style={styles.filtreItem}>
             <Text style={styles.filtreLabel}>{s.jeParle}</Text>
-            <MultiDropdown
-              values={languesCibles}
+            <Dropdown
+              value={langueCible}
               options={CIBLES}
               labelFn={labelLangue}
               allLabel={s.toutesLangues}
-              onChange={handleSetCibles}
+              onChange={handleSetCible}
             />
           </View>
           <View style={styles.filtreSep} />
           <View style={styles.filtreItem}>
             <Text style={styles.filtreLabel}>{s.jApprends}</Text>
-            <MultiDropdown
-              values={languesSources}
+            <Dropdown
+              value={langueSource}
               options={SOURCES}
               labelFn={labelLangue}
               allLabel={s.toutesLangues}
-              onChange={handleSetSources}
+              onChange={handleSetSource}
             />
           </View>
         </View>
@@ -248,7 +249,13 @@ export default function BibliothequeScreen() {
             />
           ))
         ) : (
-          <Text style={styles.empty}>{s.aucunLivre}</Text>
+          <View style={styles.emptyContainer}>
+            <Text style={styles.empty}>{s.aucunLivre}</Text>
+            <Text style={styles.empty}>{s.aucunLivreSuggerer}</Text>
+            <TouchableOpacity onPress={() => Linking.openURL('mailto:mytheoriginalsapp@gmail.com')} activeOpacity={0.7}>
+              <Text style={styles.emptyEmail}>mytheoriginalsapp@gmail.com</Text>
+            </TouchableOpacity>
+          </View>
         )}
       </ScrollView>
     </SafeAreaView>
@@ -328,7 +335,6 @@ const styles = StyleSheet.create({
     gap: 6,
     marginBottom: 8,
   },
-  // Dropdown
   dropdownBtn: {
     flex: 1,
     flexDirection: 'row',
@@ -352,7 +358,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: COLORS.textLight,
   },
-  // Modal dropdown
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.25)',
@@ -389,7 +394,6 @@ const styles = StyleSheet.create({
     color: COLORS.textDark,
     fontWeight: '600',
   },
-  // Pills niveau
   pill: {
     paddingHorizontal: 8,
     paddingVertical: 4,
@@ -423,12 +427,22 @@ const styles = StyleSheet.create({
     paddingTop: 16,
     paddingBottom: 40,
   },
+  emptyContainer: {
+    alignItems: 'center',
+    marginTop: 40,
+    paddingHorizontal: 24,
+    gap: 8,
+  },
   empty: {
     textAlign: 'center',
     color: COLORS.textLight,
     fontStyle: 'italic',
     fontSize: 15,
-    marginTop: 40,
-    paddingHorizontal: 24,
+  },
+  emptyEmail: {
+    fontSize: 15,
+    color: COLORS.accent,
+    textDecorationLine: 'underline',
+    fontWeight: '600',
   },
 });

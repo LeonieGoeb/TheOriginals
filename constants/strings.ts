@@ -11,7 +11,8 @@ export const STRINGS = {
     niveau: 'Niveau',
     toutesLangues: 'Toutes',
     tousNiveaux: 'Tous',
-    aucunLivre: "Aucun livre disponible pour cette combinaison. Essayez d'élargir vos filtres.",
+    aucunLivre: "Aucun livre disponible pour cette combinaison.",
+    aucunLivreSuggerer: "Vous avez un livre en tête ? Suggérez-le à",
     gratuit: 'Gratuit',
     verrouille: 'Verrouillé 🔒',
 
@@ -76,7 +77,8 @@ export const STRINGS = {
     niveau: 'Level',
     toutesLangues: 'All',
     tousNiveaux: 'All',
-    aucunLivre: 'No books available for this combination. Try widening your filters.',
+    aucunLivre: 'No books available for this combination.',
+    aucunLivreSuggerer: 'Have a book in mind? Suggest it to',
     gratuit: 'Free',
     verrouille: 'Locked 🔒',
 
